@@ -1,0 +1,195 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+body
+{
+  @apply bg-[whitesmoke];
+}
+/*use tailwind if possible*/
+/*do not use yet*/
+.divChange 
+{
+    padding-right: 10px;
+    margin: auto;
+    width: 100%;
+    height: 5px;
+}
+
+/* for scroll behavior */
+html
+{
+  @apply scroll-smooth;
+}
+/*start for NavBar only*/
+a:link, a:visited 
+{
+  @apply bg-[whitesmoke] text-[black] text-center no-underline text-[22px] inline-block px-5 py-2.5 border-2 border-solid border-[whitesmoke];
+}
+a:hover, a:active 
+{
+  @apply bg-[whitesmoke] text-[black];
+}
+button 
+{
+  @apply bg-[whitesmoke] text-[black] text-center no-underline inline-block px-5 py-2.5 border-2 border-solid border-[whitesmoke];
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+ul 
+{
+  @apply list-none overflow-hidden bg-[whitesmoke] m-0 p-0;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+li 
+{
+  @apply float-left;
+}
+li a 
+{
+  @apply inline-block text-[black] text-center no-underline hover:bg-[whitesmoke] hover:text-[palevioletred];
+  text-shadow: 2px 2px 5px palevioletred;
+}
+
+/*end for NavBar only*/
+
+/*start for TitleFirstImage only*/
+.titlefont 
+{
+    text-align: center;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    font-size: 40px;
+    font-weight: strong;
+}
+.firstpic
+{
+    width: 100%; 
+    height: auto; 
+    object-fit: cover;
+    object-position: 25% 25%; 
+    border-radius: 75px;
+    background-position: left top;
+    background-repeat: repeat;
+    padding: 25px;
+}
+  /*for hover button*/
+  .divMainImage 
+{
+    position: relative;
+}
+.divMainImage img 
+{
+    width: 98%;
+    height: auto;
+}
+.divMainImage .hyper 
+{
+    opacity: 1;
+    position: absolute;
+    top: 75%;
+    left: 5%;
+    text-align: center;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    font-size: 3vmin;
+    font-size: 1vmax;
+    padding: 12px 24px;
+    border: none;
+    background-color: palevioletred;
+    color: white;
+    cursor: pointer;
+    border-radius: 5px;
+}
+.divMainImage .hyper:hover 
+{
+    background-color: gray;
+}
+/*end for TitleFirstImage only*/
+
+/*start for FirstCategory only*/
+.divFirstArt
+{
+    display: grid;
+    grid-template-columns: 50% 50%;
+    border-radius: 75px;
+    text-shadow: 2px 2px 4px #ffffff;
+    background-color: rgb(240, 240, 240);
+    margin-right: 10px;
+}
+.secondpic
+{
+    width: 80%;
+    height: auto;
+    position: inherit;
+    border-radius: 75px;
+    padding-left: 50px;
+    padding-top: 50px;
+    padding-bottom: 50px;
+    padding-right: 50px;
+}
+
+/*end for FirstCategory only*/
+
+/*start for SecondCategory only*/
+.secondpic
+{
+    width: 80%;
+    height: auto;
+    position: inherit;
+    border-radius: 75px;
+    padding-left: 50px;
+    padding-top: 50px;
+    padding-bottom: 50px;
+    padding-right: 50px;
+}
+
+/*end for SecondCategory only*/
+
+/*start for DonoCat only*/
+.imgQR
+{
+    width: 25%;
+    height: auto;
+    text-align: center;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 10px;
+}
+.txtDonoGCash
+{
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    font-size: 20px;
+    text-align: center;
+    background-color: pink;
+    border-radius: 75px;
+}
+.txtDonoMaya
+{
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    font-size: 20px;
+    text-align: center;
+    background-color: pink;
+    border-radius: 75px;
+}
+/** rename class*/
+.room
+{
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
+
+/*end for DonoCat only*/
+
+/*start for footer only*/
+.footerText
+{
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    font-size: 15px;
+    text-align: center;
+    padding: 10px 10px 10px 10px;
+}
+.footerBG
+{
+    background-color: pink;
+    border-radius: 75px;
+    
+}
+
+/*end for footer only*/
