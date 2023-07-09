@@ -1,14 +1,14 @@
 {
   "files": {
     "main.css": "/Overseer1.github.io/BahayKalinga/static/css/main.0f9d774f.css",
-    "main.js": "/Overseer1.github.io/BahayKalinga/static/js/main.9ec1e046.js",
+    "main.js": "/Overseer1.github.io/BahayKalinga/static/js/main.40917da9.js",
     "static/media/MainPic.jpg": "/Overseer1.github.io/BahayKalinga/static/media/MainPic.8db9307ca3dc4210ebf3.jpg",
     "index.html": "/Overseer1.github.io/BahayKalinga/index.html",
     "main.0f9d774f.css.map": "/Overseer1.github.io/BahayKalinga/static/css/main.0f9d774f.css.map",
-    "main.9ec1e046.js.map": "/Overseer1.github.io/BahayKalinga/static/js/main.9ec1e046.js.map"
+    "main.40917da9.js.map": "/Overseer1.github.io/BahayKalinga/static/js/main.40917da9.js.map"
   },
   "entrypoints": [
     "static/css/main.0f9d774f.css",
-    "static/js/main.9ec1e046.js"
+    "static/js/main.40917da9.js"
   ]
 }
