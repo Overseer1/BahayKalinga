@@ -32,7 +32,7 @@ const NavBar = () =>
           <Link className='border-0 text-black bg-[#D0B49F] hover:bg-[#EFF1DB] font-medium hover:font-semibold hover:translate-x-3 rounded-md'>Bahay Kalinga</Link>
           <Link className='border-0 text-black bg-[#D0B49F] hover:bg-[#EFF1DB] font-medium hover:font-semibold hover:translate-x-3 rounded-md' onClick={Home}>Home</Link>
           <Link className='border-0 text-black bg-[#D0B49F] hover:bg-[#EFF1DB] font-medium hover:font-semibold hover:translate-x-3 rounded-md' onClick={About}>About</Link>
-          <Link className='border-0 text-black bg-[#D0B49F] hover:bg-[#EFF1DB] font-medium hover:font-semibold hover:translate-x-3 rounded-md' onClick={Dono}>Donate</Link>
+          <Link className='border-0 text-black bg-[#D0B49F] hover:bg-[#EFF1DB] font-medium hover:font-semibold hover:translate-x-3 rounded-md' nponClick={Dono}>Donate</Link>
           <Link className='border-0 text-black bg-[#D0B49F] hover:bg-[#EFF1DB] font-medium hover:font-semibold hover:translate-x-3 rounded-md' onClick={LogIn}>Login</Link>
           <Link className='border-0 text-black bg-[#D0B49F] hover:bg-[#EFF1DB] font-medium hover:font-semibold hover:translate-x-3 rounded-md' to='/register'onClick={Register}>Sign-up</Link>
         </div>
