@@ -8,13 +8,10 @@ const Home = () =>
     <div>
       <header className='sticky top-0'>
         <NavBar/>
-       
       </header>
-        <main>        
-          <TitleFirstImage/>
-        </main>
-        
-        
+      <main>        
+        <TitleFirstImage/>
+      </main>
     </div>
   )
 }
