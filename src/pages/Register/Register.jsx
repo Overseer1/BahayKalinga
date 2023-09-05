@@ -116,15 +116,12 @@ const Register = () => {
       navigate("/");
     }
   }
-  function handletest() {
-   
-  }
   function needPolish()
   {
     alert('Photo upload and OTP is still under development.');
   }
   return (
-    <div className="">
+    <div onLoad={needPolish()} className="">
       <Link to="/">
         <div className="flex ">
           <MdOutlineArrowForwardIos className="rotate-180" />
@@ -184,7 +181,7 @@ const Register = () => {
                     className=" rounded-xl p-2 bg-gray-300 text-black"
                     placeholder="OTP CODE"
                   />
-                  <button className="bg-gray-300 p-2 rounded-xl hover:bg-white hover:border-2 border-2 border-gray-300 hover:border-blue-600" onClick={needPolish()}>
+                  <button className="bg-gray-300 p-2 rounded-xl hover:bg-white hover:border-2 border-2 border-gray-300 hover:border-blue-600" >
                     Send OTP
                   </button>
                   {formError&& console.log(formError)}
