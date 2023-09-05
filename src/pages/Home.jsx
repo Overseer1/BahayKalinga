@@ -1,9 +1,11 @@
 import React from 'react'
 import NavBar from '../components/NavBar'
 import TitleFirstImage from '../components/TitleFirstImage'
+import supabase from '../config/supabaseClient'
 
 const Home = () => 
 {
+  console.log(supabase)
   return (
     <div>
       <header className='sticky top-0'>

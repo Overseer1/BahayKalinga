@@ -268,7 +268,7 @@ li a
   height: 100px;
   flex-shrink: 0; 
 }
-.buttonUpload
+#buttonUpload
 {
   width: auto;
   height: 52px;

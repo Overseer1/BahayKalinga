@@ -6,9 +6,9 @@ import Footer from './Footer';
 
 const TitleFirstImage = () => {
   return (
-    <div className='bg-[#EFF1DB]  place-content-center text-black'>
-
-      <div className='' id='#Home'>
+    <div className='bg-[#EFF1DB]  place-content-center text-black '>
+      <div id='#Home'  className='pt-5'/>
+      <div className='' >
         {/* first */}
         <header className='font-semibold font-sans pt-[3%] text-center text-[50px]'>Bahay Kalinga San Jose Patag</header>
         <h1 className='text-center text-[30px] font-sans font-semibold'>A shelter for the elderly women</h1>
@@ -18,6 +18,7 @@ const TitleFirstImage = () => {
             <img src={MainPic} className='ml-[5%] h-[80%] w-[90%] rounded-lg mt-[5%] snap-center'></img>
           </div>
           {/* second */}
+          <div id='#AboutUs'  className=''/>
           <div href=""
             className='bg-black bg-opacity-[4%] h-[70%] m-[5%] rounded-[2%]'>
 
