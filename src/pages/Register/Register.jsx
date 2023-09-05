@@ -116,12 +116,8 @@ const Register = () => {
       navigate("/");
     }
   }
-  function needPolish()
-  {
-    alert('Photo upload and OTP is still under development.');
-  }
   return (
-    <div onLoad={needPolish()} className="">
+    <div className="">
       <Link to="/">
         <div className="flex ">
           <MdOutlineArrowForwardIos className="rotate-180" />
@@ -131,6 +127,10 @@ const Register = () => {
       <div className=" bg-white h-screen font-mono place-content-center">
         <center>
           <div className="bg-slate-100 w-screen ">
+            {/* remove note after module polish and clean-up */}
+            <div className="font-mono pb-[5%] md:text-[16px] text-[13px]">
+              Note: Photo upload and OTP is still under development.
+            </div>
             <div className="pb-[1%] font-sans font-semibold pt-10 md:text-[30px] text-[26px]">
               REGISTER YOUR INFORMATION AND CREATE AN ACCOUNT
             </div>
@@ -139,7 +139,6 @@ const Register = () => {
             </div>
           </div>
         </center>
-
         <div className=" rounded-md w-[100%] ">
           {/* REGISTRATION */}
           <div className=" grid md:grid-cols-2 grid-cols-1 w-[100%]  p-[2%] bg-slate-200">
@@ -184,9 +183,8 @@ const Register = () => {
                   <button className="bg-gray-300 p-2 rounded-xl hover:bg-white hover:border-2 border-2 border-gray-300 hover:border-blue-600" >
                     Send OTP
                   </button>
-                  {formError&& console.log(formError)}
+                  {formError && console.log(formError)}
                 </div>
-
               </form>
             </center>
 
