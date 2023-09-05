@@ -105,6 +105,7 @@ const Register = () => {
   };
 
   function handletest() {
+    alert('Data registered! Only the Name, Address, and contact number has been uploaded.');
     navigate("/");
   }
   function needPolish()
