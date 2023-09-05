@@ -127,8 +127,8 @@ const Register = () => {
       <div className=" bg-white h-screen font-mono place-content-center">
         <center>
           <div className="bg-slate-100 w-screen ">
-            {/* remove note after module polish and clean-up */}
-            <div className="font-mono pb-[5%] md:text-[16px] text-[13px]">
+            {/* remove note after module polish and */}
+            <div className="font-mono md:text-[16px] text-[13px]">
               Note: Photo upload and OTP is still under development.
             </div>
             <div className="pb-[1%] font-sans font-semibold pt-10 md:text-[30px] text-[26px]">
