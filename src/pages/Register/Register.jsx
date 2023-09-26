@@ -1,137 +1,84 @@
 import { BsPersonVcardFill } from "react-icons/bs";
 import { MdOutlineArrowForwardIos } from "react-icons/md";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate, useParams, Link } from "react-router-dom";
 import supabase from "../../config/supabaseClient";
-import { Radio } from "@material-tailwind/react";
 
-import {v4 as uuidv4} from 'uuid';
+import { v4 as uuidv4 } from "uuid";
 
 const Register = () => {
   const [image] = useState(null);
 
   const [ins, setIns] = useState(true);
-
-  //for update only
-  const id = 10;
-  
+  //modal box
+  const [TeCo, setTeCo] = useState();
   //navigation
   const navigate = useNavigate();
 
-  // error syntax
-  const [Error, setError] = useState("");
-
-  // for errors only (read and write)
+  //* for errors
   const [formError, setFormError] = useState("");
 
-  // for insert data
+  //* for insert data
   const [FullName, setFullName] = useState("");
   const [Address, setAddress] = useState("");
   const [ContactNumber, setContactNumber] = useState("");
   const [ApptDateTime, setApptDateTime] = useState("");
   const [ImageVerif, setImageVerif] = useState("");
-
-  // code reconstruction
-  const connect = async (e) => 
-  {
-    e.preventDefault();
+  const connect = async (e) => {
+    //e.preventDefault();
     if (!FullName || !Address || !ContactNumber) {
-      //appointment date and time is allowed nullable. revert to not allowed after select date and time is finished.
-     setFormError("Can't process due to empty text box");
+      //! appointment date and time is allowed nullable. revert to not allowed after select date and time is finished.
+      setFormError("Can't process due to empty text box");
       return;
     }
     const { data, error } = await supabase
-      .from('VisitorAcc')
+      .from("VisitorAcc")
       .insert([{ FullName, Address, ContactNumber }]);
-    if (error) 
-    {
-      console.log("Hell no");
-    }
-    if (data) {
-      console.log("Hell yes");
+    if (error) {
+      console.log("error" + " " + setFormError);
+    } else if (data) {
+      console.log("inserted");
       setFormError(null);
     }
-    let img = e.target.files[0];
-    
-    const {data: imageUplink, error: imageUplinkErr} = await supabase
-      .storage
-      .from('ImageVerif')
-      .upload(FullName + "/" + uuidv4(), img)
-
-      if (imageUplink)
-      {
-          console.log("uploaded")
-      }
-      else
-      {
-        console.log(imageUplinkErr)
-      }
+  };
+  //TODO: add a code where it will not add if there is already a match in the storage bucket
+  const imageAdd = async (e) => {
+    const { data: getID, error: getIDErr } = await supabase
+      .from("VisitorAcc")
+      .select("id")
+      .eq(FullName, "FullName")
+      .single();
+    let img = ImageVerif;
+    const { data: imgData, error: imgErr } = await supabase.storage
+      .from("ImageVerif")
+      .upload(getID.id + "/" + uuidv4(), img);
+    if (imgErr) {
+      console.log(imgErr);
+    } else if (imgData) {
+      console.log("uploaded");
+      setFormError(null);
+    }
   };
   const forTandCs = () => {
-    //for terms and conditions. must be put inside the modal box
+    //*for terms and conditions.
+    //TODO: put the mf t&c to the mf system like right tf now
+    setTeCo(false);
   };
-  // transfer this function to the needed class
-  //for read data
-  const [VisitorAcc, setVisitorAcc] = useState("");
-  const [readError, setReadError] = useState("");
-  const Read = () => {
-    useEffect(() => {
-      const fetchVisitorAcc = async () => {
-        const { data, error } = await supabase.from("VisitorAcc").select();
-        if (error) {
-          setReadError("Fetch data err");
-          setVisitorAcc(null);
-          console.log(error);
-        }
-        if (data) {
-          //this is currently not finished
-          setVisitorAcc(data);
-          setReadError(null);
-        }
-      };
-      fetchVisitorAcc();
-    }, []);
-  };
-
-  // transfer this function to the needed class
-  const update = async (e) => {
-    e.preventDefault();
-    if (!FullName || !Address || !ContactNumber) {
-      //error variable used is the same in the connect function. change after testing is complete.
-      setFormError("empty shits");
-      return;
-    }
-    const { data: test, error } = await supabase
-      .from('VisitorAcc')
-      .update({ FullName: FullName, Address: Address, ContactNumber: ContactNumber })
-      .eq('id', id)
-      .single();
-    // if (error) {
-    //   console.log(error);
-    // }
-    // if (test) {
-    //   console.log(test);
-    //   setFormError(null);
-    //   navigate("/");
-    // }
-  };
-  // transfer this function to the needed class
-  const Delete = () => {
-    //
-  };
-
   function handletest() {
-    if (!FullName || !Address || !ContactNumber) 
-    {
-      alert('Data not registered! Text box/boxes empty.');
+    if (!FullName || !Address || !ContactNumber) {
+      alert("Data not registered! Text box/boxes empty.");
+    } else if (document.getElementById("checkTandCs").value) {
+      alert("Data not registered! Please accept the Terms & Conditions.");
+    } else {
+      alert(
+        "Data registered! Only the Name, Address, and contact number has been uploaded."
+      );
       navigate("/");
     }
-    else
-    {
-      alert('Data registered! Only the Name, Address, and contact number has been uploaded.');
-      navigate("/");
-    }
+  }
+  function returnToHome() {
+    navigate("/Admin");
   }
   return (
     <div className="">
@@ -144,10 +91,6 @@ const Register = () => {
       <div className=" bg-white h-screen font-mono place-content-center">
         <center>
           <div className="bg-slate-100 w-screen ">
-            {/* remove note after module polish and */}
-            <div className="font-mono md:text-[16px] text-[13px]">
-              Note: Photo upload and OTP is still under development.
-            </div>
             <div className="pb-[1%] font-sans font-semibold pt-10 md:text-[30px] text-[26px]">
               REGISTER YOUR INFORMATION AND CREATE AN ACCOUNT
             </div>
@@ -157,12 +100,12 @@ const Register = () => {
           </div>
         </center>
         <div className=" rounded-md w-[100%] ">
-          {/* REGISTRATION */}
+          {/* //!REGISTRATION */}
           <div className=" grid md:grid-cols-2 grid-cols-1 w-[100%]  p-[2%] bg-slate-200">
             <center>
               <form
                 className="justify-center flex-col  items-center grid  gap-y-2"
-                onSubmit={connect}
+                id="Registration"
               >
                 <div className="font-sans font-semibold text-[25px]">
                   REGISTRATION
@@ -170,8 +113,8 @@ const Register = () => {
                 <input
                   type="text"
                   className="p-2 rounded-xl bg-gray-300 text-black md:w-[300px] w-[100%]"
-                  placeholder="FullName"
-                  id="FullName"
+                  placeholder="Full name"
+                  id="FullNameID"
                   value={FullName}
                   onChange={(e) => setFullName(e.target.value)}
                 />
@@ -197,19 +140,20 @@ const Register = () => {
                     className=" rounded-xl p-2 bg-gray-300 text-black"
                     placeholder="OTP CODE"
                   />
-                  <button className="bg-gray-300 p-2 rounded-xl hover:bg-white hover:border-2 border-2 border-gray-300 hover:border-blue-600" >
-                    Send OTP
+                  <button className="bg-gray-300 p-2 rounded-xl hover:bg-white hover:border-2 border-2 border-gray-300 hover:border-blue-600">
+                    Send OTP/test insert
                   </button>
-                  {formError && console.log(formError)}
                 </div>
               </form>
             </center>
 
             <div className="md:mt-0 mt-[5%] w-[100%] place-items-center">
               <center>
+                {/* !!PICTURE UPLOAD FOR VERIFICATION IS PAUSED DUE TO DATA UPLOAD ERROR!! */}
                 {ins ? (
                   <div className="">
                     <div className="bg-slate-400 p-[10%] w-[60%] mb-[2%] rounded-md">
+                      {/* change to illustration */}
                       Picture to
                     </div>
                     <div className="text-center md:text-[17px] text-[11px]">
@@ -237,15 +181,18 @@ const Register = () => {
                         </div>
                       </div>
                     )}
-                    <div></div>
-                    <input className="" type="file"/>
+                    <input
+                      className=""
+                      type="file"
+                      on={(e) => setImageVerif(e.target.files[0])}
+                    />
                   </div>
                 )}
               </center>
             </div>
           </div>
 
-          {/*  SELECT THE DATE OF VISIT */}
+          {/*  //!SELECT THE DATE OF VISIT */}
           <div className="md:p-[3%] p-[10%] bg-slate-100 ">
             <center>
               <div>
@@ -349,11 +296,11 @@ const Register = () => {
             </center>
 
             <center>
-              <form
-                className=" justify-center grid  p-5 gap-2 "
-              >
+              <form className=" justify-center grid  p-5 gap-2 ">
                 {/* add onSubmit={} */}
-                <div className="font-sans font-semibold text-[25px]">Summary</div>
+                <div className="font-sans font-semibold text-[25px]">
+                  Summary
+                </div>
                 {/* add this if needed | value = {Address} onChange={(e) => setAddress(e.target.value)} */}
                 <div className="w-[100%] grid gap-y-1">
                   <input
@@ -390,22 +337,56 @@ const Register = () => {
         <div className=" bg-slate-200 h-[160px] w-[100%] md:flex grid items-center md:justify-between justify-center ">
           <div className=" ml-[1%] flex">
             <div className="text-[20px] flex w-[320px]">
-              <input type="checkbox" className="mr-1" />
+              <input type="checkbox" className="mr-1" id="checkTandCs" />
               Read the
-              <div className="text-[20px] ml-1 text-blue-500 hover:underline cursor-pointer">
+              <div
+                className="text-[20px] ml-1 text-blue-500 hover:underline cursor-pointer"
+                onClick={forTandCs}
+              >
                 Terms & Conditions
               </div>
             </div>
           </div>
+
+          <div
+            className={`${
+              TeCo ? "hidden" : "visible w-screen justify-center flex"
+            }  `}
+          >
+            <div className="fixed inset-0 bg-black bg-opacity-10 backdrop-blur-sm flex  items-center  place-content-center ">
+              <div className="bg-slate-300 md:h-[40%] h-[30%] md:w-[25%] w-[65%] rounded-md">
+                <div className="justify-center flex font-semibold text-[20px] bg-slate-200 rounded-t-md p-1">
+                  TERMS AND CONDITIONS
+                </div>
+               <p>*T and Cs go here</p>
+                  <a
+                    onClick={() => setTeCo(!TeCo)}
+                    className="p-1 rounded-md mt-2 bg-slate-100 hover:bg-red-300 cursor-pointer text-center"
+                  >
+                    Close
+                  </a>
+              </div>
+            </div>
+          </div>
           <div className=" flex w-[100%]  md:justify-end justify-center">
+            {/* multiple function for this button */}
             <button
-              onClick={() => handletest()}
+              onClick={() => {
+                handletest();
+                connect();
+                imageAdd();
+              }}
               className="p-1 h-[50%]  md:w-[10%]   mr-2 rounded-md hover:border-2 border-0 hover:border-blue-600 bg-blue-400 hover:bg-slate-100 "
             >
               Register
             </button>
-            <button className="p-1 h-[50%]  md:w-[10%]   rounded-md hover:border-2 border-0 hover:border-blue-600 bg-blue-400 hover:bg-slate-100 ">
-              Cancel
+            {formError && console.log(formError)}
+            {/* remove view after UI is done */}
+            <button
+              onClick={() => returnToHome()}
+              className="p-1 h-[50%]  md:w-[10%]   rounded-md hover:border-2 border-0 hover:border-blue-600 bg-blue-400 hover:bg-slate-100 "
+            >
+              Cancel/View AdminDashboard here
             </button>
           </div>
         </div>

@@ -4,16 +4,17 @@ import { BsHouseFill } from "react-icons/bs";
 
 const NavBar = () => {
   const [openLogin, setOpenLogin] = useState(true);
-
+  const navigate = useNavigate();
   const LogIn = () => {
     setOpenLogin(false);
-    //to new HTML page
-    //add supabase API for GET
   };
-  const Register = (event) => {
-    //to new HTML page
-    //add supabase API for POST
-  };
+  const toAdmin = () => 
+  {
+    if(document.getElementById("user").value === "root" && document.getElementById("pass").value === "admin")
+    {
+      navigate("/Admin");
+    }
+  }
   const About = () => {
     document.getElementById("#AboutUs").scrollIntoView();
   };
@@ -58,7 +59,6 @@ const NavBar = () => {
           <Link
             className="border-0 text-black bg-[#D0B49F] hover:bg-[#EFF1DB] font-medium hover:font-semibold hover:translate-x-2 hover:mr-3 rounded-md"
             to="/register"
-            onClick={Register}
           >
             Sign-up
           </Link>
@@ -81,14 +81,16 @@ const NavBar = () => {
                 type="text"
                 className="w-[100%] rounded-md p-1 bg-slate-100"
                 placeholder="Enter Username"
+                id="user"
               />
               <div className="font-semibold text-[18px]">Password</div>
               <input
                 type="password"
                 className="w-[100%] rounded-md p-1 bg-slate-100"
                 placeholder="Enter Password"
+                id="pass"
               />
-              <a className="p-1 rounded-md mt-2 bg-slate-100 hover:bg-blue-400 cursor-pointer text-center">
+              <a className="p-1 rounded-md mt-2 bg-slate-100 hover:bg-blue-400 cursor-pointer text-center" onClick={toAdmin}>
                 LOGIN
               </a>
               <a
