@@ -1,24 +1,21 @@
 import { BsPersonVcardFill } from "react-icons/bs";
 import { MdOutlineArrowForwardIos } from "react-icons/md";
 
-import { BsPersonBoundingBox } from "react-icons/bs";
-import { AiFillCamera } from "react-icons/ai";
-import { AiOutlineCloudUpload } from "react-icons/ai";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams, Link } from "react-router-dom";
 import supabase from "../../config/supabaseClient";
 import { Radio } from "@material-tailwind/react";
 
-//test only. remove if done
-import ShowTableVA from "../../components/ShowTableVA";
+import {v4 as uuidv4} from 'uuid';
 
 const Register = () => {
-  const [image, setImage] = useState(null);
+  const [image] = useState(null);
 
   const [ins, setIns] = useState(true);
 
-  //parameters
-  const id  = 10;
+  //for update only
+  const id = 10;
+  
   //navigation
   const navigate = useNavigate();
 
@@ -27,18 +24,17 @@ const Register = () => {
 
   // for errors only (read and write)
   const [formError, setFormError] = useState("");
-  const [readError, setReadError] = useState("");
 
   // for insert data
   const [FullName, setFullName] = useState("");
   const [Address, setAddress] = useState("");
   const [ContactNumber, setContactNumber] = useState("");
   const [ApptDateTime, setApptDateTime] = useState("");
+  const [ImageVerif, setImageVerif] = useState("");
 
-  //for read data
-  const [VisitorAcc, setVisitorAcc] = useState("");
-
-  const connect = async (e) => {
+  // code reconstruction
+  const connect = async (e) => 
+  {
     e.preventDefault();
     if (!FullName || !Address || !ContactNumber) {
       //appointment date and time is allowed nullable. revert to not allowed after select date and time is finished.
@@ -46,17 +42,39 @@ const Register = () => {
       return;
     }
     const { data, error } = await supabase
-      .from("VisitorAcc")
+      .from('VisitorAcc')
       .insert([{ FullName, Address, ContactNumber }]);
-    if (error) {
-      console.log(error);
+    if (error) 
+    {
+      console.log("Hell no");
     }
     if (data) {
-      console.log(data);
+      console.log("Hell yes");
       setFormError(null);
     }
+    let img = e.target.files[0];
+    
+    const {data: imageUplink, error: imageUplinkErr} = await supabase
+      .storage
+      .from('ImageVerif')
+      .upload(FullName + "/" + uuidv4(), img)
+
+      if (imageUplink)
+      {
+          console.log("uploaded")
+      }
+      else
+      {
+        console.log(imageUplinkErr)
+      }
+  };
+  const forTandCs = () => {
+    //for terms and conditions. must be put inside the modal box
   };
   // transfer this function to the needed class
+  //for read data
+  const [VisitorAcc, setVisitorAcc] = useState("");
+  const [readError, setReadError] = useState("");
   const Read = () => {
     useEffect(() => {
       const fetchVisitorAcc = async () => {
@@ -75,6 +93,7 @@ const Register = () => {
       fetchVisitorAcc();
     }, []);
   };
+
   // transfer this function to the needed class
   const update = async (e) => {
     e.preventDefault();
@@ -97,11 +116,9 @@ const Register = () => {
     //   navigate("/");
     // }
   };
+  // transfer this function to the needed class
   const Delete = () => {
     //
-  };
-  const forTandCs = () => {
-    //for terms and conditions. must be put inside the modal box
   };
 
   function handletest() {
