@@ -12,7 +12,7 @@ const Register = () => {
 
   const [ins, setIns] = useState(true);
   //modal box
-  const [TeCo, setTeCo] = useState();
+  const [TeCo, setTeCo] = useState(true);
   //navigation
   const navigate = useNavigate();
 
