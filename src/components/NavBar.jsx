@@ -74,7 +74,7 @@ const NavBar = () => {
         }  `}
       >
         <div className="fixed inset-0 bg-black bg-opacity-10 backdrop-blur-sm flex  items-center  place-content-center ">
-          <div className="bg-slate-300 md:h-[40%] h-[30%] md:w-[25%] w-[65%] rounded-md">
+          <div className="bg-slate-300 md:h-[33%] h-[30%] md:w-[25%] w-[65%] rounded-md">
             <div className="justify-center flex font-semibold text-[20px] bg-slate-200 rounded-t-md p-1">
               LOGIN
             </div>

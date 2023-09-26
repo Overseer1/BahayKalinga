@@ -1,6 +1,6 @@
 import React from 'react'
 import NavBar from '../components/NavBar'
-import TitleFirstImage from '../components/TitleFirstImage'
+import HomeView from '../components/HomeView'
 import supabase from '../config/supabaseClient'
 
 const Home = () => 
@@ -11,7 +11,7 @@ const Home = () =>
         <NavBar/>
       </header>
       <main>        
-        <TitleFirstImage/>
+        <HomeView/>
       </main>
     </div>
   )

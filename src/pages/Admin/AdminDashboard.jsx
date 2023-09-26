@@ -1,8 +1,9 @@
 import React from "react";
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import supabase from "../../config/supabaseClient";
 const AdminDashboard = () => {
-  // transfer this function to the needed class
   //for read data
   const [VisitorAcc, setVisitorAcc] = useState("");
   const [readError, setReadError] = useState("");
@@ -16,7 +17,7 @@ const AdminDashboard = () => {
           console.log(error);
         }
         if (data) {
-          //this is currently not finished
+          //! this is currently not finished
           setVisitorAcc(data);
           setReadError(null);
         }
@@ -24,15 +25,12 @@ const AdminDashboard = () => {
       fetchVisitorAcc();
     }, []);
   };
-
-  // transfer this function to the needed class
   //for update only
   const id = 10;
   const update = async (e) => {
     e.preventDefault();
     if (true) {
-      //error variable used is the same in the connect function. change after testing is complete.
-      //setFormError("empty shits");
+      //setFormError("error");
       return;
     }
     const { data: test, error } = await supabase
@@ -49,15 +47,19 @@ const AdminDashboard = () => {
     //   navigate("/");
     // }
   };
-  // transfer this function to the needed class
-  const Delete = () => {
-    //
+  const Delete = () => {};
+
+  const navigate = useNavigate();
+  {/* //! CLEAR TOKEN FUNCTION HERE */}
+  const SignOff = () => {
+    navigate("/")
   };
-  //dito muna para do magulo sa Register
   return (
     <div className="h-screen w-screen gap-2 overflow-hidden">
       <div className="flex h-screen w-screen">
         <div className="bg-slate-400 w-[200px] h-[100%] flex-col items-center pt-[3.5%] p-2">
+          {/* //! CLEAR TOKEN FUNCTION HERE */}
+          <button className="text-sm w-[100%] bg-slate-300 border-none hover:bg-slate-200 rounded-md mb-[10%] duration-300 hover:translate-x-1.5 hover:text-red-500" onClick={SignOff}>Sign Out</button>
           <button className="text-sm w-[100%] bg-slate-300 border-none hover:bg-slate-200 rounded-md mb-[10%] duration-300 hover:translate-x-1.5">
             Pending Request
           </button>
