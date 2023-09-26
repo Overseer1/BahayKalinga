@@ -36,7 +36,7 @@ const Register = () => {
       .from("VisitorAcc")
       .insert([{ FullName, Address, ContactNumber }]);
     if (error) {
-      console.log("error" + " " + setFormError);
+      console.log("error " + setFormError);
     } else if (data) {
       console.log("inserted");
       setFormError(null);
@@ -100,7 +100,7 @@ const Register = () => {
           </div>
         </center>
         <div className=" rounded-md w-[100%] ">
-          {/* //!REGISTRATION */}
+          {/* //* REGISTRATION */}
           <div className=" grid md:grid-cols-2 grid-cols-1 w-[100%]  p-[2%] bg-slate-200">
             <center>
               <form
@@ -192,7 +192,7 @@ const Register = () => {
             </div>
           </div>
 
-          {/*  //!SELECT THE DATE OF VISIT */}
+          {/*  //* SELECT THE DATE OF VISIT */}
           <div className="md:p-[3%] p-[10%] bg-slate-100 ">
             <center>
               <div>
@@ -358,13 +358,14 @@ const Register = () => {
                 <div className="justify-center flex font-semibold text-[20px] bg-slate-200 rounded-t-md p-1">
                   TERMS AND CONDITIONS
                 </div>
-               <article>*T and Cs go here</article>
-                  <a
-                    onClick={() => setTeCo(!TeCo)}
-                    className="p-1 rounded-md mt-2 bg-slate-100 hover:bg-red-300 cursor-pointer text-center"
-                  >
-                    Close
-                  </a>
+                {/* //! add the mf t&cs here like right tf now u FOKIN DONKEY */}
+                <article>*T and Cs go here</article>
+                <a
+                  onClick={() => setTeCo(!TeCo)}
+                  className="p-1 rounded-md mt-2 bg-slate-100 hover:bg-red-300 cursor-pointer text-center place-content-center"
+                >
+                  Close
+                </a>
               </div>
             </div>
           </div>
@@ -381,12 +382,11 @@ const Register = () => {
               Register
             </button>
             {formError && console.log(formError)}
-            {/* remove view after UI is done */}
             <button
               onClick={() => returnToHome()}
               className="p-1 h-[50%]  md:w-[10%]   rounded-md hover:border-2 border-0 hover:border-blue-600 bg-blue-400 hover:bg-slate-100 "
             >
-              Cancel/View AdminDashboard here
+              Cancel
             </button>
           </div>
         </div>

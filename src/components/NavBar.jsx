@@ -5,6 +5,9 @@ import { BsHouseFill } from "react-icons/bs";
 const NavBar = () => {
   const [openLogin, setOpenLogin] = useState(true);
   const navigate = useNavigate();
+  //TODO: add token function for both admin and user
+  //TODO: add token checker for both admin and user
+  //! ADMIN FIRST BEFORE USER
   const LogIn = () => {
     setOpenLogin(false);
   };
