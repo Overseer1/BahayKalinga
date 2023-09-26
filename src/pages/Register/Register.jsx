@@ -69,9 +69,15 @@ const Register = () => {
   function handletest() {
     if (!FullName || !Address || !ContactNumber) {
       alert("Data not registered! Text box/boxes empty.");
-    } else if (document.getElementById("checkTandCs").value) {
-      alert("Data not registered! Please accept the Terms & Conditions.");
-    } else {
+    } 
+    if (!document.getElementById("checkT").checked)
+    {
+      alert("Please accept the Terms & Conditions.");
+    } 
+    else 
+    {
+      connect();
+      //imageAdd();
       alert(
         "Data registered! Only the Name, Address, and contact number has been uploaded."
       );
@@ -79,7 +85,7 @@ const Register = () => {
     }
   }
   function returnToHome() {
-    navigate("/Admin");
+    navigate("/");
   }
   return (
     <div className="h-screen overflow-hidden">
@@ -339,7 +345,7 @@ const Register = () => {
         <div className=" bg-slate-200 h-[160px] w-[100%] md:flex grid items-center md:justify-between justify-center ">
           <div className=" ml-[1%] flex">
             <div className="text-[20px] flex w-[320px]">
-              <input type="checkbox" className="mr-1" id="checkTandCs" />
+              <input type="checkbox" className="mr-1" id="checkT"/>
               Read the
               <div
                 className="text-[20px] ml-1 text-blue-500 hover:underline cursor-pointer"
@@ -361,9 +367,9 @@ const Register = () => {
             {/* multiple function for this button */}
             <button
               onClick={() => {
-                handletest();
-                connect();
-                imageAdd();
+                 handletest();
+                // connect();
+                // imageAdd();
               }}
               className="p-1 h-[50%]  md:w-[10%]   mr-2 rounded-md hover:border-2 border-0 hover:border-blue-600 bg-blue-400 hover:bg-slate-100 "
             >
