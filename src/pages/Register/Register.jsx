@@ -1,10 +1,8 @@
 import { BsPersonVcardFill } from "react-icons/bs";
 import { MdOutlineArrowForwardIos } from "react-icons/md";
-
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import supabase from "../../config/supabaseClient";
-
 import { v4 as uuidv4 } from "uuid";
 import TermsConditions from "./TermsConditions";
 
@@ -44,6 +42,7 @@ const Register = () => {
     }
   };
   //TODO: add a code where it will not add if there is already a match in the storage bucket
+  //TODO: add a promise object for the imageAdd system (if not working, try installing axios)
   const imageAdd = async (e) => {
     const { data: getID, error: getIDErr } = await supabase
       .from("VisitorAcc")
@@ -156,7 +155,8 @@ const Register = () => {
 
             <div className="md:mt-0 mt-[5%] w-[100%] place-items-center">
               <center>
-                {/* !!PICTURE UPLOAD FOR VERIFICATION IS PAUSED DUE TO DATA UPLOAD ERROR!! */}
+                {/* //!PICTURE UPLOAD FOR VERIFICATION IS PAUSED DUE TO DATA UPLOAD ERROR */}
+                {/* //? possible fix after InDef */}
                 {ins ? (
                   <div className="">
                     <div className="bg-slate-400 p-[10%] w-[60%] mb-[2%] rounded-md">
