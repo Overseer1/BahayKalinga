@@ -2,6 +2,9 @@ import React from 'react'
 import ReactDOM from 'react-dom';
 import { HashRouter } from 'react-router-dom';
 import MainPic from '../images/MainPic.jpg';
+import Chapel from '../images/Chapel.jpg';
+import Main from '../images/Main.jpg';
+import Facility1 from '../images/Facility1.jpg';
 import Footer from './Footer';
 
 const TitleFirstImage = () => {
