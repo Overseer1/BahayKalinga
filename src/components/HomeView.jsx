@@ -18,7 +18,7 @@ const TitleFirstImage = () => {
 
         <div className='grid place-content-center'>
           <div className='snap-center'>
-            <img src={MainPic} className='ml-[5%] h-[80%] w-[90%] rounded-lg mt-[5%] snap-center'></img>
+            <img src={Main} className='ml-[5%] h-[80%] w-[90%] rounded-lg mt-[5%] snap-center'></img>
           </div>
           {/* second */}
           <div id='#AboutUs'  className=''/>
@@ -28,7 +28,7 @@ const TitleFirstImage = () => {
             <div className='grid grid-cols-2 space-y-[10%] space-x-[4%]  m-[1%]'>
               <div >
                 {/* can change pic */}
-                <img src={MainPic} className='h-[90%] rounded-md mt-[2%] ml-[2%]'></img></div>
+                <img src={Chapel} className='h-[90%] rounded-md mt-[2%] ml-[2%]'></img></div>
               <div>
                 <h1 className='font-bold  text-md'>About Us</h1>
                 <p className='text-justify pr-[2%]'>Lorem ipsum dolor sit amet consectetur adipisicing elit. Recusandae qui ut delectus aut exercitationem. Temporibus quisquam vero ipsam fuga quo, impedit obcaecati, nisi illum facilis, facere praesentium libero corporis culpa reiciendis molestias sit iste. Enim quidem fuga id repudiandae, praesentium consequuntur earum reprehenderit doloribus unde ratione odit aspernatur porro blanditiis magni error iusto exercitationem, eaque maiores pariatur dolore facilis quod officia non quasi. Fugit inventore porro totam ut fuga placeat rerum saepe nulla odit dolorum molestias veritatis suscipit modi sit, voluptatem quisquam eveniet illum accusantium necessitatibus. Neque, repellendus quis. Quos veritatis quod nostrum officia inventore, nihil corporis fugit nulla! Consequuntur!</p>
@@ -45,7 +45,7 @@ const TitleFirstImage = () => {
               </div>
               <div >
                 {/* can change pic */}
-                <img src={MainPic} className='h-[95%]  rounded-md mt-[1%] ml-[1%]'></img>
+                <img src={Facility1} className='h-[95%]  rounded-md mt-[1%] ml-[1%]'></img>
               </div>
             </div>
           </div>

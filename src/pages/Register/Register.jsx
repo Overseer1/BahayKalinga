@@ -63,7 +63,6 @@ const Register = () => {
   };
   const forTandCs = () => {
     //*for terms and conditions.
-    //TODO: put the mf t&c to the mf system like right tf now
     setTeCo(true);
   };
   function handletest() {
