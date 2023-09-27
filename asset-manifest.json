@@ -1,16 +1,16 @@
 {
   "files": {
     "main.css": "/BahayKalinga/static/css/main.e855d0cc.css",
-    "main.js": "/BahayKalinga/static/js/main.faa13ed3.js",
+    "main.js": "/BahayKalinga/static/js/main.7b35251c.js",
     "static/media/Facility1.jpg": "/BahayKalinga/static/media/Facility1.a3d381de2e3747e53935.jpg",
     "static/media/Main.jpg": "/BahayKalinga/static/media/Main.e6c687631fc0720b7639.jpg",
     "static/media/Chapel.jpg": "/BahayKalinga/static/media/Chapel.fe1567b9f80f2d8ee248.jpg",
     "index.html": "/BahayKalinga/index.html",
     "main.e855d0cc.css.map": "/BahayKalinga/static/css/main.e855d0cc.css.map",
-    "main.faa13ed3.js.map": "/BahayKalinga/static/js/main.faa13ed3.js.map"
+    "main.7b35251c.js.map": "/BahayKalinga/static/js/main.7b35251c.js.map"
   },
   "entrypoints": [
     "static/css/main.e855d0cc.css",
-    "static/js/main.faa13ed3.js"
+    "static/js/main.7b35251c.js"
   ]
 }
