@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { BsHouseFill } from "react-icons/bs";
 
+
 const NavBar = () => {
   const [openLogin, setOpenLogin] = useState(true);
   const navigate = useNavigate();
@@ -31,7 +32,7 @@ const NavBar = () => {
     <header className="bg-[#D0B49F] sticky top-0">
       <nav className="">
         <p className="absolute mt-[1.5%] ml-[2%] text-[20px] font-bold flex">
-          <BsHouseFill className="text-[25px]" />
+          <img  className="text-[25px]" />
           BAHAY KALINGA{" "}
         </p>
         <div className="flex items-center place-content-center gap-[0.5%]  p-[0.6%]">
