@@ -1,9 +1,13 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Oooh+Baby&display=swap');
+
 body
 {
   @apply bg-[whitesmoke];
+  font-family: 'Montserrat', sans-serif;
 }
 /*use tailwind if possible*/
 /*do not use yet*/
@@ -21,7 +25,7 @@ html
   @apply scroll-smooth;
 }
 /*start for NavBar only*/
-a:link, a:visited 
+/* a:link, a:visited 
 {
   @apply bg-[whitesmoke] text-[black] text-center no-underline text-[22px] inline-block px-5 py-2.5 border-2 border-solid border-[whitesmoke];
 }
@@ -47,7 +51,7 @@ li a
 {
   @apply inline-block text-[black] text-center no-underline hover:bg-[whitesmoke] hover:text-[palevioletred];
   text-shadow: 2px 2px 5px palevioletred;
-}
+} */
 
 /*end for NavBar only*/
 
