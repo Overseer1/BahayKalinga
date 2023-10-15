@@ -167,7 +167,7 @@ const Register = () => {
                     type="button"
                     className="w-full bg-slate-500 text-warmGray-50 py-2 rounded-md"
                   >
-                    Upload
+                    Upload Image
                   </button>
                   <input
                     className="opacity-0 absolute top-0 left-0 right-0 bottom-0 z-10 h-full w-full"
