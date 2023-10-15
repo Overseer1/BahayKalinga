@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import logo from "../images/logo.png";
 import * as Dialog from "@radix-ui/react-dialog";
 import { Cross2Icon } from "@radix-ui/react-icons";
+import { EventBus } from "../eventbus";
 
 const NavBar = () => {
   const navigate = useNavigate();
@@ -18,15 +19,29 @@ const NavBar = () => {
     // TODO: implement login function here
     console.log(loginForm);
     setOpenLogin(false);
-    navigate("/admin");
+    navigate("/member");
   };
 
   const scrollIntoView = (id) => {
     const element = document.getElementById(id);
-    if (element) {
+    if (id === "home") {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    } else if (element) {
       element.scrollIntoView();
     }
   };
+
+  const showLogin = () => {
+    console.log("Show Login!!");
+    setOpenLogin(true);
+  };
+
+  useEffect(() => {
+    EventBus.on("show-login", showLogin);
+    return () => {
+      EventBus.off("show-login");
+    };
+  }, []);
 
   return (
     <>

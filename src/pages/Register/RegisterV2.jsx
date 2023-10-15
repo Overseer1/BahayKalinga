@@ -3,8 +3,12 @@ import * as Dialog from "@radix-ui/react-dialog";
 import { BsPersonVcardFill } from "react-icons/bs";
 import { useState } from "react";
 import { Cross2Icon } from "@radix-ui/react-icons";
+import { useNavigate } from "react-router-dom";
+import { EventBus } from "../../eventbus";
 
 const Register = () => {
+  const navigate = useNavigate();
+
   const [image, setImage] = useState(null);
   const [terms, setTerms] = useState(false);
   const [formData, setFormData] = useState({
@@ -12,7 +16,7 @@ const Register = () => {
     middleName: "",
     lastName: "",
     emailAddress: "",
-    mobileNumber: "",
+    address: "",
     verificationCode: "",
   });
 
@@ -29,6 +33,9 @@ const Register = () => {
     event.preventDefault();
     // TODO: call register function here
     console.log(formData);
+
+    navigate("/");
+    EventBus.emit("show-login");
   };
 
   return (
@@ -92,24 +99,24 @@ const Register = () => {
                   <input
                     className="h-10 p-3 border border-gray-400 rounded-md"
                     type="text"
-                    placeholder="Email Address"
-                    value={formData.emailAddress}
+                    placeholder="Address"
+                    value={formData.address}
                     onChange={(event) =>
                       setFormData({
                         ...formData,
-                        emailAddress: event.target.value,
+                        address: event.target.value,
                       })
                     }
                   />
                   <input
                     className="h-10 p-3 border border-gray-400 rounded-md"
                     type="text"
-                    placeholder="Mobile Number"
-                    value={formData.mobileNumber}
+                    placeholder="Email Address"
+                    value={formData.emailAddress}
                     onChange={(event) =>
                       setFormData({
                         ...formData,
-                        mobileNumber: event.target.value,
+                        emailAddress: event.target.value,
                       })
                     }
                   />
