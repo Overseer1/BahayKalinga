@@ -21,7 +21,9 @@ const Register = () => {
     console.log("Sending verification code...");
   };
 
-  const onImageChange = () => {};
+  const onImageChange = (e) => {
+    setImage(URL.createObjectURL(e.target.files[0]));
+  };
 
   const onSubmit = (event) => {
     event.preventDefault();
@@ -135,23 +137,36 @@ const Register = () => {
                 </div>
               </div>
               <div className="text-center shrink-0">
-                <div className="mb-2">
-                  <BsPersonVcardFill className="text-[100px] mx-auto text-gray-700" />
-                  <div className="text-[12px]">
-                    Attach a selfie with your valid ID.
+                {image ? (
+                  <img
+                    className="max-w-[217px] mx-auto mb-3"
+                    src={image}
+                    alt="uploaded_image"
+                  />
+                ) : (
+                  <div className="mb-2">
+                    <BsPersonVcardFill className="text-[100px] mx-auto text-gray-700" />
+                    <div className="text-[12px]">
+                      Attach a selfie with your valid ID.
+                    </div>
+                    <div className="text-[12px]">
+                      Please make sure the image is clear.
+                    </div>
                   </div>
-                  <div className="text-[12px]">
-                    Please make sure the image is clear.
-                  </div>
-                </div>
-                <label className="relative">
-                  <button className="w-full bg-slate-500 text-warmGray-50 py-2 rounded-md">
+                )}
+
+                <label className="relative block">
+                  <button
+                    type="button"
+                    className="w-full bg-slate-500 text-warmGray-50 py-2 rounded-md"
+                  >
                     Upload
                   </button>
                   <input
                     className="opacity-0 absolute top-0 left-0 right-0 bottom-0 z-10 h-full w-full"
                     type="file"
-                    onChange={(e) => setImage(e.target.files[0])}
+                    accept="image/png, image/gif, image/jpeg"
+                    onChange={onImageChange}
                   />
                 </label>
               </div>
