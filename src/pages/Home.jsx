@@ -8,7 +8,7 @@ const Home = () => {
       className="bg-cover"
       style={{ backgroundImage: `url(${FirstSection})` }}
     >
-      <div className="max-w-[1920px] m-auto">
+      <div className="max-w-[1920px] m-auto px-5">
         <div id="home" className="py-10 max-w-7xl mx-auto">
           <div className="bg-main min-h-[250px] text-center flex justify-center items-center flex-col gap-6">
             <div className="font-['Oooh_Baby'] text-7xl">

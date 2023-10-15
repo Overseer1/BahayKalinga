@@ -38,17 +38,40 @@ const NavBar = () => {
           <div className="h-full flex item gap-8 items-center">
             <Link
               className="text-black text-3xl"
-              onClick={() => scrollIntoView("home")}
+              onClick={() => {
+                setTimeout(() => {
+                  navigate("/");
+                  setTimeout(() => {
+                    scrollIntoView("home");
+                  });
+                });
+              }}
             >
               Home
             </Link>
             <Link
               className="text-black text-3xl"
-              onClick={() => scrollIntoView("about")}
+              onClick={() => {
+                setTimeout(() => {
+                  navigate("/");
+                  setTimeout(() => {
+                    scrollIntoView("about");
+                  });
+                });
+              }}
             >
               About Us
             </Link>
-            <Link className="text-black text-3xl">Register</Link>
+            <Link
+              onClick={() => {
+                setTimeout(() => {
+                  navigate("/register");
+                });
+              }}
+              className="text-black text-3xl"
+            >
+              Register
+            </Link>
             <Dialog.Root open={openLogin} onOpenChange={setOpenLogin}>
               <Dialog.Trigger asChild>
                 <Link className="text-black text-3xl">Login</Link>

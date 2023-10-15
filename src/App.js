@@ -1,5 +1,6 @@
 import React from "react";
 import Home from "./pages/Home";
+import Register from "./pages/Register/RegisterV2";
 import FrontLayout from "./pages/FrontLayout";
 import AdminLayout from "./pages/Admin/AdminLayout";
 import AdminDashboard from "./pages/Admin/AdminDashboard";
@@ -11,6 +12,7 @@ function App() {
       <Routes>
         <Route path="/" element={<FrontLayout />}>
           <Route index element={<Home />} />
+          <Route path="register" element={<Register />} />
         </Route>
         <Route path="/admin" element={<AdminLayout />}>
           <Route index element={<AdminDashboard />} />
