@@ -98,8 +98,11 @@ const MemberDashboard = () => {
 
     setOpenTime(true);
   };
+
+  const [selectedTime, setSelectedTime] = useState(null);
   const saveTime = (time) => {
-    console.log(selectedDate, time);
+    setSelectedTime(time);
+    setStep(3);
   };
 
   const [openTime, setOpenTime] = useState(false);
@@ -319,6 +322,35 @@ const MemberDashboard = () => {
             </Dialog.Portal>
           </Dialog.Root>
         </div>
+      )}
+      {step === 3 && (
+        <>
+          <div className="text-lg font-medium">Thank you!</div>
+          <div className="text-medium font-light mb-5">
+            Here is the summary of your appointment. An email will be sent to
+            your email address.
+          </div>
+          <div className="flex justify-center items-start gap-10">
+            <div className="flex flex-col gap-3 text-left">
+              <div className="text-medium font-normal">You are with:</div>
+              <ul className="font-semibold text-base">
+                {details.map((detail, index) => (
+                  <li key={index}>{detail.fullName}</li>
+                ))}
+              </ul>
+            </div>
+            <div className="flex flex-col gap-3">
+              <div className="bg-stone-600 text-white px-4 py-2">
+                {selectedDate.toDateString()}
+              </div>
+              <div className="bg-blue-600 text-white px-4 py-2">
+                {selectedTime === "morning"
+                  ? "7:00 AM - 10:00 AM"
+                  : "1:00 PM - 3:00 PM"}
+              </div>
+            </div>
+          </div>
+        </>
       )}
     </div>
   );
