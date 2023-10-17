@@ -325,21 +325,22 @@ const MemberDashboard = () => {
       )}
       {step === 3 && (
         <>
-          <div className="text-lg font-medium">Thank you!</div>
-          <div className="text-medium font-light mb-5">
+          <div className="text-2xl font-medium">Thank you!</div>
+          <div className="text-lg font-light mb-5">
             Here is the summary of your appointment. An email will be sent to
             your email address.
           </div>
           <div className="flex justify-center items-start gap-10">
             <div className="flex flex-col gap-3 text-left">
-              <div className="text-medium font-normal">You are with:</div>
-              <ul className="font-semibold text-base">
+              <div className="text-lg font-bold">You are with:</div>
+              <ul className="font-normal text-base flex flex-col gap-2">
                 {details.map((detail, index) => (
                   <li key={index}>{detail.fullName}</li>
                 ))}
               </ul>
             </div>
             <div className="flex flex-col gap-3">
+              <div className="text-lg font-bold">Schedule</div>
               <div className="bg-stone-600 text-white px-4 py-2">
                 {selectedDate.toDateString()}
               </div>
