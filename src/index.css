@@ -2,26 +2,23 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Oooh+Baby&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Oooh+Baby&display=swap");
 
-body
-{
+body {
   @apply bg-[whitesmoke];
-  font-family: 'Montserrat', sans-serif;
+  font-family: "Montserrat", sans-serif;
 }
 /*use tailwind if possible*/
 /*do not use yet*/
-.divChange 
-{
-    padding-right: 10px;
-    margin: auto;
-    width: 100%;
-    height: 5px;
+.divChange {
+  padding-right: 10px;
+  margin: auto;
+  width: 100%;
+  height: 5px;
 }
 
 /* for scroll behavior */
-html
-{
+html {
   @apply scroll-smooth;
 }
 /*start for NavBar only*/
@@ -56,158 +53,140 @@ li a
 /*end for NavBar only*/
 
 /*start for TitleFirstImage only*/
-.titlefont 
-{
-    text-align: center;
-    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
-    font-size: 40px;
-    font-weight: strong;
+.titlefont {
+  text-align: center;
+  font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
+  font-size: 40px;
+  font-weight: strong;
 }
-.firstpic
-{
-    width: 100%; 
-    height: auto; 
-    object-fit: cover;
-    object-position: 25% 25%; 
-    border-radius: 75px;
-    background-position: left top;
-    background-repeat: repeat;
-    padding: 25px;
+.firstpic {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  object-position: 25% 25%;
+  border-radius: 75px;
+  background-position: left top;
+  background-repeat: repeat;
+  padding: 25px;
 }
-  /*for hover button*/
-  .divMainImage 
-{
-    position: relative;
+/*for hover button*/
+.divMainImage {
+  position: relative;
 }
-.divMainImage img 
-{
-    width: 98%;
-    height: auto;
+.divMainImage img {
+  width: 98%;
+  height: auto;
 }
-.divMainImage .hyper 
-{
-    opacity: 1;
-    position: absolute;
-    top: 75%;
-    left: 5%;
-    text-align: center;
-    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
-    font-size: 3vmin;
-    font-size: 1vmax;
-    padding: 12px 24px;
-    border: none;
-    background-color: palevioletred;
-    color: white;
-    cursor: pointer;
-    border-radius: 5px;
+.divMainImage .hyper {
+  opacity: 1;
+  position: absolute;
+  top: 75%;
+  left: 5%;
+  text-align: center;
+  font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
+  font-size: 3vmin;
+  font-size: 1vmax;
+  padding: 12px 24px;
+  border: none;
+  background-color: palevioletred;
+  color: white;
+  cursor: pointer;
+  border-radius: 5px;
 }
-.divMainImage .hyper:hover 
-{
-    background-color: gray;
+.divMainImage .hyper:hover {
+  background-color: gray;
 }
 /*end for TitleFirstImage only*/
 
 /*start for FirstCategory only*/
-.divFirstArt
-{
-    display: grid;
-    grid-template-columns: 50% 50%;
-    border-radius: 75px;
-    text-shadow: 2px 2px 4px #ffffff;
-    background-color: rgb(240, 240, 240);
-    margin-right: 10px;
+.divFirstArt {
+  display: grid;
+  grid-template-columns: 50% 50%;
+  border-radius: 75px;
+  text-shadow: 2px 2px 4px #ffffff;
+  background-color: rgb(240, 240, 240);
+  margin-right: 10px;
 }
-.secondpic
-{
-    width: 80%;
-    height: auto;
-    position: inherit;
-    border-radius: 75px;
-    padding-left: 50px;
-    padding-top: 50px;
-    padding-bottom: 50px;
-    padding-right: 50px;
+.secondpic {
+  width: 80%;
+  height: auto;
+  position: inherit;
+  border-radius: 75px;
+  padding-left: 50px;
+  padding-top: 50px;
+  padding-bottom: 50px;
+  padding-right: 50px;
 }
 
 /*end for FirstCategory only*/
 
 /*start for SecondCategory only*/
-.secondpic
-{
-    width: 80%;
-    height: auto;
-    position: inherit;
-    border-radius: 75px;
-    padding-left: 50px;
-    padding-top: 50px;
-    padding-bottom: 50px;
-    padding-right: 50px;
+.secondpic {
+  width: 80%;
+  height: auto;
+  position: inherit;
+  border-radius: 75px;
+  padding-left: 50px;
+  padding-top: 50px;
+  padding-bottom: 50px;
+  padding-right: 50px;
 }
 
 /*end for SecondCategory only*/
 
 /*start for DonoCat only*/
-.imgQR
-{
-    width: 25%;
-    height: auto;
-    text-align: center;
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-    margin-bottom: 10px;
+.imgQR {
+  width: 25%;
+  height: auto;
+  text-align: center;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 10px;
 }
-.txtDonoGCash
-{
-    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
-    font-size: 20px;
-    text-align: center;
-    background-color: pink;
-    border-radius: 75px;
+.txtDonoGCash {
+  font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
+  font-size: 20px;
+  text-align: center;
+  background-color: pink;
+  border-radius: 75px;
 }
-.txtDonoMaya
-{
-    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
-    font-size: 20px;
-    text-align: center;
-    background-color: pink;
-    border-radius: 75px;
+.txtDonoMaya {
+  font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
+  font-size: 20px;
+  text-align: center;
+  background-color: pink;
+  border-radius: 75px;
 }
 /** rename class*/
-.room
-{
-    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+.room {
+  font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
 }
 
 /*end for DonoCat only*/
 
 /*start for footer only*/
-.footerText
-{
-    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
-    font-size: 15px;
-    text-align: center;
-    padding: 10px 10px 10px 10px;
+.footerText {
+  font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
+  font-size: 15px;
+  text-align: center;
+  padding: 10px 10px 10px 10px;
 }
-.footerBG
-{
-    background-color: pink;
-    border-radius: 75px;
-    
+.footerBG {
+  background-color: pink;
+  border-radius: 75px;
 }
 
 /*end for footer only*/
 
 /* start for register only */
 
-.layout
-{
+.layout {
   width: auto;
   height: 738px;
 }
 
-.head1
-{
+.head1 {
   width: auto;
   height: 72px;
   flex-shrink: 0;
@@ -222,13 +201,12 @@ li a
   letter-spacing: -0.72px;
 }
 
-.inst
-{
+.inst {
   width: auto;
   height: 100px;
   flex-shrink: 0;
 
-  color: rgba(0, 0, 0, 0.80);
+  color: rgba(0, 0, 0, 0.8);
   text-align: center;
 
   /* Body P Large */
@@ -238,17 +216,15 @@ li a
   line-height: 50px; /* 138.889% */
   letter-spacing: -0.54px;
 }
-.textBoxes
-{
+.textBoxes {
   width: 574px;
   height: 63px;
   margin: 10px;
   flex-shrink: 0;
   border-radius: 15px;
-  background: #D9D9D9;
+  background: #d9d9d9;
 }
-.buttonOTP
-{
+.buttonOTP {
   color: #000;
   text-align: center;
   font-family: Montserrat;
@@ -258,26 +234,23 @@ li a
   line-height: 50px; /* 200% */
   letter-spacing: -0.375px;
 }
-.buttonPic
-{
+.buttonPic {
   width: auto;
   height: 203px;
   flex-shrink: 0;
   border-radius: 15px;
-  background: #D9D9D9;
+  background: #d9d9d9;
 }
-.instrForID
-{
+.instrForID {
   width: auto;
   height: 100px;
-  flex-shrink: 0; 
+  flex-shrink: 0;
 }
-#buttonUpload
-{
+#buttonUpload {
   width: auto;
   height: 52px;
   flex-shrink: 0;
-  color: rgba(255, 0, 0, 0.80);
+  color: rgba(255, 0, 0, 0.8);
   text-align: center;
   font-size: 20px;
   font-style: normal;
@@ -290,3 +263,75 @@ li a
   font-family: Montserrat;
 }
 /* end for register only */
+
+.calendar .months-container .month-container {
+  height: 225px !important;
+}
+
+/* Tooltip container */
+.tooltip {
+  position: relative;
+  display: inline-block;
+}
+
+/* Tooltip text */
+.tooltip .tooltiptext {
+  visibility: hidden;
+  width: max-content;
+  background-color: black;
+  color: #fff;
+  text-align: left;
+  padding: 5px 15px;
+  border-radius: 6px;
+
+  /* Position the tooltip text - see examples below! */
+  position: absolute;
+  z-index: 1;
+}
+
+/* Show the tooltip text when you mouse over the tooltip container */
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+}
+
+.square {
+  width: 100%;
+  height: 100%;
+  background-image: linear-gradient(
+    to bottom right,
+    transparent 0%,
+    transparent 50%,
+    #0078d7 50%,
+    #0078d7 100%
+  );
+}
+
+.square.morning {
+  background-image: linear-gradient(
+    to bottom right,
+    #0078d7 0%,
+    #0078d7 50%,
+    transparent 50%,
+    transparent 100%
+  );
+}
+
+.square.afternoon {
+  background-image: linear-gradient(
+    to bottom right,
+    transparent 0%,
+    transparent 50%,
+    #0078d7 50%,
+    #0078d7 100%
+  );
+}
+
+.square.both {
+  background-image: linear-gradient(
+    to bottom right,
+    #0078d7 0%,
+    #0078d7 50%,
+    #0078d7 50%,
+    #0078d7 100%
+  );
+}

@@ -32,7 +32,6 @@ const NavBar = () => {
   };
 
   const showLogin = () => {
-    console.log("Show Login!!");
     setOpenLogin(true);
   };
 
