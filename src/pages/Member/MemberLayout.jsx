@@ -17,7 +17,6 @@ const MemberLayout = () => {
         </div>
         <div className="bg-gray-300 h-[1px] my-4"></div>
         <div className="flex flex-col gap-3">
-          <div className="font-medium text-lg cursor-pointer">Dashboard</div>
           <div onClick={logout} className="font-medium text-lg cursor-pointer">
             Logout
           </div>

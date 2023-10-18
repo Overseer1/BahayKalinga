@@ -16,7 +16,7 @@
     "ghpages": "^0.0.10",
     "git": "^0.1.5",
     "icons": "^1.0.0",
-    "rc-year-calendar": "^1.0.2",
+    "rc-year-calendar": "file:rc-year-calendar",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-icons": "^4.10.1",
