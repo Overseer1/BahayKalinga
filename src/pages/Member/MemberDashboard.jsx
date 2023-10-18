@@ -2,6 +2,7 @@ import React, { useMemo, useState } from "react";
 import Calendar from "rc-year-calendar";
 import * as Dialog from "@radix-ui/react-dialog";
 import { Cross2Icon } from "@radix-ui/react-icons";
+import TermsConditions from "../Register/TermsConditions";
 
 /**
  * Generates a function comment for the given function body.
@@ -47,23 +48,28 @@ const MemberDashboard = () => {
   const [step, setStep] = useState(1);
   const [details, setDetails] = useState([Object.assign({}, defaultDetail)]);
 
-  /**
-   * Adds details to the existing details array.
-   *
-   * @return {undefined} No return value
-   */
   const addDetails = () => {
     setDetails([...details, Object.assign({}, defaultDetail)]);
   };
 
-  /**
-   * Updates the details array with a new value at the specified index and field.
-   *
-   * @param {number} index - The index of the element in the details array to be updated.
-   * @param {string} field - The field in the element to be updated.
-   * @param {any} value - The new value to be assigned to the specified field.
-   * @return {void} This function does not return anything.
-   */
+  const submitDetails = () => {
+    const emptyDetails = details.filter((detail) => {
+      return (
+        detail.fullName === "" ||
+        detail.address === "" ||
+        detail.elderName === "" ||
+        detail.relationship === "" ||
+        detail.reason === "" ||
+        detail.image === null
+      );
+    });
+    if (emptyDetails.length > 0) {
+      alert("Please input all details");
+      return;
+    }
+    setStep(2);
+  };
+
   const handleInputChange = (index, field, value) => {
     const updatedDetails = [...details];
     updatedDetails[index][field] = value;
@@ -104,7 +110,6 @@ const MemberDashboard = () => {
     setSelectedTime(time);
     setStep(3);
   };
-
   const [openTime, setOpenTime] = useState(false);
 
   return (
@@ -216,13 +221,15 @@ const MemberDashboard = () => {
           <div className="flex justify-between mt-8">
             <div className="text-xl">
               Read the{" "}
-              <span className="text-blue-600 cursor: pointer;">
-                Terms & Condition
-              </span>
+              <TermsConditions>
+                <span className="text-blue-600 cursor: pointer;">
+                  Terms & Condition
+                </span>
+              </TermsConditions>
             </div>
             <div className="flex gap-5">
               <button
-                onClick={() => setStep(2)}
+                onClick={submitDetails}
                 className="border border-blue-600 text-white h-10 text-base bg-blue-600 px-10"
               >
                 Next
