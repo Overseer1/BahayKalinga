@@ -1,17 +1,16 @@
 {
   "files": {
-    "main.css": "/BahayKalinga/static/css/main.9dd83845.css",
-    "main.js": "/BahayKalinga/static/js/main.42457d35.js",
-    "static/media/AbaKa.png": "/BahayKalinga/static/media/AbaKa.eeaaddc28e72e828993f.png",
-    "static/media/Facility1.jpg": "/BahayKalinga/static/media/Facility1.a3d381de2e3747e53935.jpg",
-    "static/media/Main.jpg": "/BahayKalinga/static/media/Main.e6c687631fc0720b7639.jpg",
-    "static/media/Chapel.jpg": "/BahayKalinga/static/media/Chapel.fe1567b9f80f2d8ee248.jpg",
+    "main.css": "/BahayKalinga/static/css/main.ec8f3812.css",
+    "main.js": "/BahayKalinga/static/js/main.a60524af.js",
+    "static/media/FirstSection.png": "/BahayKalinga/static/media/FirstSection.582368e7a32ffbe94607.png",
+    "static/media/landing-1.png": "/BahayKalinga/static/media/landing-1.a61413c22b8720165482.png",
+    "static/media/logo.png": "/BahayKalinga/static/media/logo.b8467bfa6821ec905957.png",
     "index.html": "/BahayKalinga/index.html",
-    "main.9dd83845.css.map": "/BahayKalinga/static/css/main.9dd83845.css.map",
-    "main.42457d35.js.map": "/BahayKalinga/static/js/main.42457d35.js.map"
+    "main.ec8f3812.css.map": "/BahayKalinga/static/css/main.ec8f3812.css.map",
+    "main.a60524af.js.map": "/BahayKalinga/static/js/main.a60524af.js.map"
   },
   "entrypoints": [
-    "static/css/main.9dd83845.css",
-    "static/js/main.42457d35.js"
+    "static/css/main.ec8f3812.css",
+    "static/js/main.a60524af.js"
   ]
 }
