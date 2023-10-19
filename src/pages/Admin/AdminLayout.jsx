@@ -2,6 +2,7 @@ import { Outlet, useLocation } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import FirstSection from "../../images/FirstSection.png";
 import { useMemo } from "react";
+import { useEffect } from "react";
 
 const AdminLayout = () => {
   const navigate = useNavigate();
@@ -9,7 +10,7 @@ const AdminLayout = () => {
 
   const logout = () => {
     localStorage.removeItem("token");
-    navigate("/");
+    navigate("/admin/login");
   };
 
   const currentPageName = useMemo(() => {
@@ -19,6 +20,12 @@ const AdminLayout = () => {
     return page[location.pathname] || "Error";
   }, [location.pathname]);
 
+  useEffect(() => {
+    if (!localStorage.getItem("token")) {
+      navigate("/admin/login");
+    }
+  });
+
   return (
     <div
       className="min-h-screen flex bg-cover"
@@ -26,30 +33,30 @@ const AdminLayout = () => {
     >
       <div className="shrink-0 w-64 flex flex-col gap-3 p-4 bg-opacity-50 bg-black">
         <button
-          className={`font-medium rounded-md h-14 hover:bg-slate-500 hover:text-white ${
+          className={`font-medium rounded-md h-14 hover:bg-green-500 hover:text-white ${
             location.pathname === "/admin"
-              ? "bg-slate-500 text-white"
+              ? "bg-green-500 text-white"
               : "bg-white"
           }`}
         >
           Calendar
         </button>
-        <button className="font-medium bg-white rounded-md h-14 hover:bg-slate-500 hover:text-white">
+        <button className="font-medium bg-white rounded-md h-14 hover:bg-green-500 hover:text-white">
           Pending Appointments
         </button>
-        <button className="font-medium bg-white rounded-md h-14 hover:bg-slate-500 hover:text-white">
+        <button className="font-medium bg-white rounded-md h-14 hover:bg-green-500 hover:text-white">
           Upcoming Visitors
         </button>
-        <button className="font-medium bg-white rounded-md h-14 hover:bg-slate-500 hover:text-white">
+        <button className="font-medium bg-white rounded-md h-14 hover:bg-green-500 hover:text-white">
           Cancelled Requests
         </button>
-        <button className="font-medium bg-white rounded-md h-14 hover:bg-slate-500 hover:text-white">
+        <button className="font-medium bg-white rounded-md h-14 hover:bg-green-500 hover:text-white">
           List of Previous Visits
         </button>
-        <button className="font-medium bg-white rounded-md h-14 hover:bg-slate-500 hover:text-white">
+        <button className="font-medium bg-white rounded-md h-14 hover:bg-green-500 hover:text-white">
           List of Elders
         </button>
-        <button className="font-medium bg-white rounded-md h-14 hover:bg-slate-500 hover:text-white">
+        <button className="font-medium bg-white rounded-md h-14 hover:bg-green-500 hover:text-white">
           List of Visitors
         </button>
       </div>
