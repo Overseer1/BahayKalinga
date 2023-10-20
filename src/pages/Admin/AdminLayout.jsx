@@ -46,7 +46,7 @@ const AdminLayout = () => {
         <button
           onClick={() => navigate("/admin/pending-appointments")}
           className={`font-medium rounded-md h-14 hover:bg-green-500 hover:text-white ${
-            location.pathname === "/pending-appointments"
+            location.pathname === "/admin/pending-appointments"
               ? "bg-green-500 text-white"
               : "bg-white"
           }`}
