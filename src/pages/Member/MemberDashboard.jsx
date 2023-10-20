@@ -1,8 +1,8 @@
-import React, { useMemo, useState } from "react";
-import Calendar from "rc-year-calendar";
+import React, { useEffect, useMemo, useState } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
 import { Cross2Icon } from "@radix-ui/react-icons";
 import TermsConditions from "../Register/TermsConditions";
+import YearlyCalendar from "../../components/YearlyCalendar";
 
 /**
  * Generates a function comment for the given function body.
@@ -19,39 +19,11 @@ const MemberDashboard = () => {
     image: null, // Add image property to store the selected image file
   };
 
-  const currentYear = new Date().getFullYear();
-
-  const [markedDates, setMarkedDates] = useState([
-    {
-      date: new Date(currentYear, 4, 28),
-      occupied: {
-        morning: null,
-        afternoon: "Edward Guevarra",
-      },
-    },
-    {
-      date: new Date(currentYear, 5, 20),
-      occupied: {
-        morning: "Lloyd Badillo",
-        afternoon: "Lloyd Badillo",
-      },
-    },
-    {
-      date: new Date(currentYear, 5, 23),
-      occupied: {
-        morning: "Lloyd Badillo",
-        afternoon: null,
-      },
-    },
-  ]);
-
   const [step, setStep] = useState(1);
   const [details, setDetails] = useState([Object.assign({}, defaultDetail)]);
-
   const addDetails = () => {
     setDetails([...details, Object.assign({}, defaultDetail)]);
   };
-
   const submitDetails = () => {
     const emptyDetails = details.filter((detail) => {
       return (
@@ -67,22 +39,46 @@ const MemberDashboard = () => {
       alert("Please input all details");
       return;
     }
+    // TODO: set marked dates from database
+    const currentYear = new Date().getFullYear();
+    setMarkedDates([
+      {
+        date: new Date(currentYear, 4, 28),
+        occupied: {
+          morning: null,
+          afternoon: "Edward Guevarra",
+        },
+      },
+      {
+        date: new Date(currentYear, 5, 20),
+        occupied: {
+          morning: "Lloyd Badillo",
+          afternoon: "Lloyd Badillo",
+        },
+      },
+      {
+        date: new Date(currentYear, 5, 23),
+        occupied: {
+          morning: "Lloyd Badillo",
+          afternoon: null,
+        },
+      },
+    ]);
     setStep(2);
   };
-
   const handleInputChange = (index, field, value) => {
     const updatedDetails = [...details];
     updatedDetails[index][field] = value;
     setDetails(updatedDetails);
   };
-
-  // Function to handle image file changes
   const handleImageChange = (index, image) => {
     const updatedDetails = [...details];
     updatedDetails[index].image = image;
     setDetails(updatedDetails);
   };
 
+  // Calendar
+  const [markedDates, setMarkedDates] = useState(null);
   const [selectedDate, setSelectedDate] = useState(null);
   const selectedMarkedDate = useMemo(() => {
     if (selectedDate) {
@@ -93,6 +89,7 @@ const MemberDashboard = () => {
       return null;
     }
   }, [selectedDate, markedDates]);
+  const [openTime, setOpenTime] = useState(false);
   const onDatePicked = (day) => {
     if (day.date instanceof Date && !isNaN(day.date.getTime())) {
       setSelectedDate(new Date(day.date));
@@ -101,16 +98,13 @@ const MemberDashboard = () => {
         new Date(day.element.children[0].children[0].getAttribute("date"))
       );
     }
-
     setOpenTime(true);
   };
-
   const [selectedTime, setSelectedTime] = useState(null);
   const saveTime = (time) => {
     setSelectedTime(time);
     setStep(3);
   };
-  const [openTime, setOpenTime] = useState(false);
 
   return (
     <div className="text-center">
@@ -243,40 +237,12 @@ const MemberDashboard = () => {
       )}
       {step === 2 && (
         <div className="flex items-start flex-wrap justify-center gap-5">
-          <Calendar
-            onDayClick={onDatePicked}
-            dataSource={markedDates}
-            customDayRenderer={(html, date) => {
-              const markDate = markedDates.find((markedDate) => {
-                return (
-                  markedDate.date.getFullYear() === date.getFullYear() &&
-                  markedDate.date.getMonth() === date.getMonth() &&
-                  markedDate.date.getDate() === date.getDate()
-                );
-              });
-              if (markDate) {
-                html.innerHTML = `<div date="${date.toDateString()}" class="tooltip" style="position: relative;">
-                  <div>${html.innerHTML}</div>
-                  ${
-                    markDate.occupied.morning
-                      ? '<div class="square morning" style="position: absolute; bottom: 0; left: -2.5px; right: 0; top: -1px; opacity: 0.5; width: 20px; height: 20px;"></div>'
-                      : ""
-                  }
-                  ${
-                    markDate.occupied.afternoon
-                      ? '<div class="square afternoon" style="position: absolute; bottom: 0; left: -2.5px; right: 0; top: -1px; opacity: 0.5; width: 20px; height: 20px;"></div>'
-                      : ""
-                  }
-                  <div class="tooltiptext">
-                    <div>Morning: ${markDate.occupied.morning || "None"}</div>
-                    <div>Afternoon: ${
-                      markDate.occupied.afternoon || "None"
-                    }</div>
-                  </div>
-                </div>`;
-              }
-            }}
-          />
+          {markedDates && (
+            <YearlyCalendar
+              markedDates={markedDates}
+              onDatePicked={onDatePicked}
+            />
+          )}
           <Dialog.Root open={openTime} onOpenChange={setOpenTime}>
             <Dialog.Portal>
               <Dialog.Overlay className="bg-blackA6 data-[state=open]:animate-overlayShow fixed inset-0" />
