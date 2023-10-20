@@ -7,6 +7,7 @@ import AdminLogin from "./pages/Admin/AdminLogin";
 import MemberLayout from "./pages/Member/MemberLayout";
 import MemberDashboard from "./pages/Member/MemberDashboard";
 import AdminDashboard from "./pages/Admin/AdminDashboard";
+import AdminPendingAppointments from "./pages/Admin/AdminPendingAppointments";
 import { Routes, Route } from "react-router-dom";
 
 function App() {
@@ -25,6 +26,10 @@ function App() {
         <Route path="/admin/login" element={<AdminLogin />} />
         <Route path="/admin" element={<AdminLayout />}>
           <Route index element={<AdminDashboard />} />
+          <Route
+            path="pending-appointments"
+            element={<AdminPendingAppointments />}
+          />
         </Route>
       </Routes>
     </div>

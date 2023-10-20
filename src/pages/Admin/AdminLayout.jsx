@@ -16,6 +16,7 @@ const AdminLayout = () => {
   const currentPageName = useMemo(() => {
     const page = {
       "/admin": "Calendar",
+      "/admin/pending-appointments": "Pending Appointments",
     };
     return page[location.pathname] || "Error";
   }, [location.pathname]);
@@ -33,6 +34,7 @@ const AdminLayout = () => {
     >
       <div className="shrink-0 w-64 flex flex-col gap-3 p-4 bg-opacity-50 bg-black">
         <button
+          onClick={() => navigate("/admin")}
           className={`font-medium rounded-md h-14 hover:bg-green-500 hover:text-white ${
             location.pathname === "/admin"
               ? "bg-green-500 text-white"
@@ -41,7 +43,14 @@ const AdminLayout = () => {
         >
           Calendar
         </button>
-        <button className="font-medium bg-white rounded-md h-14 hover:bg-green-500 hover:text-white">
+        <button
+          onClick={() => navigate("/admin/pending-appointments")}
+          className={`font-medium rounded-md h-14 hover:bg-green-500 hover:text-white ${
+            location.pathname === "/pending-appointments"
+              ? "bg-green-500 text-white"
+              : "bg-white"
+          }`}
+        >
           Pending Appointments
         </button>
         <button className="font-medium bg-white rounded-md h-14 hover:bg-green-500 hover:text-white">
