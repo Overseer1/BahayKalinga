@@ -4,6 +4,37 @@ import FirstSection from "../../images/FirstSection.png";
 import { useMemo } from "react";
 import { useEffect } from "react";
 
+const buttons = [
+  {
+    name: "Calendar",
+    path: "/admin",
+  },
+  {
+    name: "Pending Appointments",
+    path: "/admin/pending-appointments",
+  },
+  {
+    name: "Upcoming Appointments",
+    path: "/admin/upcoming-appointments",
+  },
+  {
+    name: "Cancelled Requests",
+    path: "/admin/cancelled-requests",
+  },
+  {
+    name: "List of Previous Visits",
+    path: "/admin/list-previous-visits",
+  },
+  {
+    name: "List of Elders",
+    path: "/admin/list-elders",
+  },
+  {
+    name: "List of Visitors",
+    path: "/admin/list-visitors",
+  },
+];
+
 const AdminLayout = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -14,10 +45,10 @@ const AdminLayout = () => {
   };
 
   const currentPageName = useMemo(() => {
-    const page = {
-      "/admin": "Calendar",
-      "/admin/pending-appointments": "Pending Appointments",
-    };
+    const page = {};
+    buttons.forEach((button) => {
+      page[button.path] = button.name;
+    });
     return page[location.pathname] || "Error";
   }, [location.pathname]);
 
@@ -33,41 +64,19 @@ const AdminLayout = () => {
       style={{ backgroundImage: `url(${FirstSection})` }}
     >
       <div className="shrink-0 w-64 flex flex-col gap-3 p-4 bg-opacity-50 bg-black">
-        <button
-          onClick={() => navigate("/admin")}
-          className={`font-medium rounded-md h-14 hover:bg-green-500 hover:text-white ${
-            location.pathname === "/admin"
-              ? "bg-green-500 text-white"
-              : "bg-white"
-          }`}
-        >
-          Calendar
-        </button>
-        <button
-          onClick={() => navigate("/admin/pending-appointments")}
-          className={`font-medium rounded-md h-14 hover:bg-green-500 hover:text-white ${
-            location.pathname === "/admin/pending-appointments"
-              ? "bg-green-500 text-white"
-              : "bg-white"
-          }`}
-        >
-          Pending Appointments
-        </button>
-        <button className="font-medium bg-white rounded-md h-14 hover:bg-green-500 hover:text-white">
-          Upcoming Visitors
-        </button>
-        <button className="font-medium bg-white rounded-md h-14 hover:bg-green-500 hover:text-white">
-          Cancelled Requests
-        </button>
-        <button className="font-medium bg-white rounded-md h-14 hover:bg-green-500 hover:text-white">
-          List of Previous Visits
-        </button>
-        <button className="font-medium bg-white rounded-md h-14 hover:bg-green-500 hover:text-white">
-          List of Elders
-        </button>
-        <button className="font-medium bg-white rounded-md h-14 hover:bg-green-500 hover:text-white">
-          List of Visitors
-        </button>
+        {buttons.map((button) => (
+          <button
+            key={button.path}
+            onClick={() => navigate(button.path)}
+            className={`font-medium rounded-md h-14 hover:bg-green-500 hover:text-white ${
+              location.pathname === button.path
+                ? "bg-green-500 text-white"
+                : "bg-white"
+            }`}
+          >
+            {button.name}
+          </button>
+        ))}
       </div>
       <div className="grow">
         <div className="text-center text-lg font-medium bg-gray-200 py-2">

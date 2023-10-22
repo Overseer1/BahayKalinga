@@ -1,7 +1,7 @@
 /** @type {import('tailwindcss').Config} */
-const { violet, blackA, mauve, green } = require("@radix-ui/colors");
+const { violet, blackA, mauve, green, red } = require("@radix-ui/colors");
 const colors = require("tailwindcss/colors");
-
+console.log();
 module.exports = {
   content: ["./src/**/*.{js,jsx,ts,tsx}"],
   theme: {
@@ -12,6 +12,7 @@ module.exports = {
       ...violet,
       ...green,
       ...blackA,
+      ...red,
     },
     keyframes: {
       overlayShow: {

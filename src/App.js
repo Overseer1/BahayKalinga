@@ -8,6 +8,11 @@ import MemberLayout from "./pages/Member/MemberLayout";
 import MemberDashboard from "./pages/Member/MemberDashboard";
 import AdminDashboard from "./pages/Admin/AdminDashboard";
 import AdminPendingAppointments from "./pages/Admin/AdminPendingAppointments";
+import AdminUpcomingAppointments from "./pages/Admin/AdminUpcomingAppointments";
+import AdminCancelledRequests from "./pages/Admin/AdminCancelledRequests";
+import AdminListPreviousVisits from "./pages/Admin/AdminListPreviousVisits";
+import AdminListElders from "./pages/Admin/AdminListElders";
+import AdminListVisitors from "./pages/Admin/AdminListVisitors";
 import { Routes, Route } from "react-router-dom";
 
 function App() {
@@ -30,6 +35,20 @@ function App() {
             path="pending-appointments"
             element={<AdminPendingAppointments />}
           />
+          <Route
+            path="upcoming-appointments"
+            element={<AdminUpcomingAppointments />}
+          />
+          <Route
+            path="cancelled-requests"
+            element={<AdminCancelledRequests />}
+          />
+          <Route
+            path="list-previous-visits"
+            element={<AdminListPreviousVisits />}
+          />
+          <Route path="list-elders" element={<AdminListElders />} />
+          <Route path="list-visitors" element={<AdminListVisitors />} />
         </Route>
       </Routes>
     </div>
