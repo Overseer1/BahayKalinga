@@ -27,6 +27,7 @@ const Register = () => {
     setImage(URL.createObjectURL(e.target.files[0]));
   };
 
+  //TODO: clone connect from Register.jsx
   const onSubmit = (event) => {
     event.preventDefault();
     // TODO: call register function here
