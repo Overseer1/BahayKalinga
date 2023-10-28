@@ -1,36 +1,104 @@
-import { Outlet } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import FirstSection from "../../images/FirstSection.png";
+import { useMemo } from "react";
+import { useEffect } from "react";
+
+const buttons = [
+  {
+    name: "Calendar",
+    path: "/admin",
+  },
+  {
+    name: "Pending Appointments",
+    path: "/admin/pending-appointments",
+  },
+  {
+    name: "Upcoming Appointments",
+    path: "/admin/upcoming-appointments",
+  },
+  {
+    name: "Cancelled Requests",
+    path: "/admin/cancelled-requests",
+  },
+  {
+    name: "List of Previous Visits",
+    path: "/admin/list-previous-visits",
+  },
+  {
+    name: "List of Elders",
+    path: "/admin/list-elders",
+  },
+  {
+    name: "List of Visitors",
+    path: "/admin/list-visitors",
+  },
+];
 
 const AdminLayout = () => {
   const navigate = useNavigate();
+  const location = useLocation();
 
   const logout = () => {
-    navigate("/");
+    localStorage.removeItem("token");
+    navigate("/admin/login");
   };
 
+  const currentPageName = useMemo(() => {
+    const page = {};
+    buttons.forEach((button) => {
+      page[button.path] = button.name;
+    });
+    return page[location.pathname] || "Error";
+  }, [location.pathname]);
+
+  useEffect(() => {
+    if (!localStorage.getItem("token")) {
+      navigate("/admin/login");
+    }
+  });
+
   return (
-    <div className="h-screen w-screen gap-2 overflow-hidden">
-      <div className="flex h-screen w-screen">
-        <div className="bg-slate-400 w-[200px] h-[100%] flex-col items-center pt-[3.5%] p-2">
-          {/* //! CLEAR TOKEN FUNCTION HERE */}
+    <div
+      className="min-h-screen flex bg-cover"
+      style={{ backgroundImage: `url(${FirstSection})` }}
+    >
+      <div className="shrink-0 w-64 flex flex-col gap-3 p-4 bg-opacity-50 bg-black">
+        {buttons.map((button) => (
           <button
-            className="text-sm w-[100%] bg-slate-300 border-none hover:bg-slate-200 rounded-md mb-[10%] duration-300 hover:translate-x-1.5 hover:text-red-500"
-            onClick={logout}
+            key={button.path}
+            onClick={() => navigate(button.path)}
+            className={`font-medium rounded-md h-14 hover:bg-green-500 hover:text-white ${
+              location.pathname === button.path
+                ? "bg-green-500 text-white"
+                : "bg-white"
+            }`}
           >
-            Sign Out
+            {button.name}
           </button>
-          <button className="text-sm w-[100%] bg-slate-300 border-none hover:bg-slate-200 rounded-md mb-[10%] duration-300 hover:translate-x-1.5">
-            Pending Request
-          </button>
-          <button className="text-sm w-[100%] bg-slate-300 border-none hover:bg-slate-200 rounded-md mb-[10%] duration-300 hover:translate-x-1.5">
-            List of Elders
-          </button>
-          <button className="text-sm w-[100%] bg-slate-300 border-none hover:bg-slate-200 rounded-md mb-[10%] duration-300 hover:translate-x-1.5">
-            List of Appointments
-          </button>
-          <button className="text-sm w-[100%] bg-slate-300 border-none hover:bg-slate-200 rounded-md mb-[10%] duration-300 hover:translate-x-1.5">
-            Cancelled Request
-          </button>
+        ))}
+      </div>
+      <div className="grow">
+        <div className="text-center text-lg font-medium bg-gray-200 py-2">
+          Admin Dashboard
+        </div>
+        <div className="text-center flex justify-between p-4 items-center">
+          <div className="flex items-center">
+            <button className="font-medium text-xl bg-white rounded-md h-10 cursor-default px-4">
+              {currentPageName}
+            </button>
+          </div>
+          <div className="flex gap-3">
+            <button className="font-medium bg-white rounded-md h-10 hover:bg-slate-500 hover:text-white px-4">
+              Notifications
+            </button>
+            <button
+              onClick={logout}
+              className="font-medium bg-white rounded-md h-10 hover:bg-slate-500 hover:text-white px-4"
+            >
+              Sign Out
+            </button>
+          </div>
         </div>
         <Outlet />
       </div>
