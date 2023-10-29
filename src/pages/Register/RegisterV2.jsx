@@ -3,12 +3,21 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { EventBus } from "../../eventbus";
 import TermsConditions from "./TermsConditions";
+import supabase from "../../config/supabaseClient";
 
 const Register = () => {
   const navigate = useNavigate();
 
+  const [formError, setFormError] = useState("");
   const [image, setImage] = useState(null);
   const [terms, setTerms] = useState(false);
+
+  //for insert data
+  const [FirstName, setFirstName] = useState("");
+  const [MiddleName, setMiddleName] = useState("");
+  const [LastName, setLastName] = useState("");
+  const [Address, setAddress] = useState("");
+  const [EmailAddress, setEmailAddress] = useState("");
   const [formData, setFormData] = useState({
     firstName: "",
     middleName: "",
@@ -27,7 +36,6 @@ const Register = () => {
     setImage(URL.createObjectURL(e.target.files[0]));
   };
 
-  //TODO: clone connect from Register.jsx
   const onSubmit = (event) => {
     event.preventDefault();
     // TODO: call register function here
@@ -36,7 +44,24 @@ const Register = () => {
     navigate("/");
     EventBus.emit("show-login");
   };
-
+  //! NOTICE: Password code is missing. To check if will use OTP instead of password.
+  const submitToDB = async (e) =>
+  {
+    // if (!FullName || !Address || !ContactNumber) {
+    //   setFormError("Can't process due to empty text box");
+    //   return;
+    // }
+    const { data, error } = await supabase
+      .from("VisitorAcc")
+      .insert([{LastName, FirstName, MiddleName, Address, EmailAddress}]);
+    if (error) {
+      console.log("error " + setFormError);
+    } else if (data) {
+      console.log("inserted");
+      setFormError(null);
+    }
+    navigate("/");
+  }
   return (
     <div
       className="bg-cover py-10"
@@ -52,7 +77,7 @@ const Register = () => {
               Please input the following details required:
             </div>
           </div>
-          <form onSubmit={onSubmit}>
+          <form onSubmit={submitToDB}>
             <div className="flex gap-16 items-center justify-center pt-6 px-5 max-w-5xl mx-auto">
               <div className="grow">
                 <div className="text-lg font-semibold mb-3">Registration</div>
@@ -62,62 +87,38 @@ const Register = () => {
                       className="h-10 p-3 border border-gray-400 rounded-md"
                       type="text"
                       placeholder="First Name"
-                      value={formData.firstName}
-                      onChange={(event) =>
-                        setFormData({
-                          ...formData,
-                          firstName: event.target.value,
-                        })
+                      value={FirstName}
+                      onChange={(e) => setFirstName(e.target.value)
                       }
                     />
                     <input
                       className="h-10 p-3 border border-gray-400 rounded-md"
                       type="text"
                       placeholder="Middle Name"
-                      value={formData.middleName}
-                      onChange={(event) =>
-                        setFormData({
-                          ...formData,
-                          middleName: event.target.value,
-                        })
-                      }
+                      value={MiddleName}
+                      onChange={(e) => setMiddleName(e.target.value)}
                     />
                     <input
                       className="h-10 p-3 border border-gray-400 rounded-md"
                       type="text"
                       placeholder="Last Name"
-                      value={formData.lastName}
-                      onChange={(event) =>
-                        setFormData({
-                          ...formData,
-                          lastName: event.target.value,
-                        })
-                      }
+                      value={LastName}
+                      onChange={(e) => setLastName(e.target.value)}
                     />
                   </div>
                   <input
                     className="h-10 p-3 border border-gray-400 rounded-md"
                     type="text"
                     placeholder="Address"
-                    value={formData.address}
-                    onChange={(event) =>
-                      setFormData({
-                        ...formData,
-                        address: event.target.value,
-                      })
-                    }
+                    value={Address}
+                    onChange={(e) =>setAddress(e.target.value)}
                   />
                   <input
                     className="h-10 p-3 border border-gray-400 rounded-md"
                     type="text"
                     placeholder="Email Address"
-                    value={formData.emailAddress}
-                    onChange={(event) =>
-                      setFormData({
-                        ...formData,
-                        emailAddress: event.target.value,
-                      })
-                    }
+                    value={EmailAddress}
+                    onChange={(e) => setEmailAddress(e.target.value)}
                   />
                 </div>
                 <div className="flex mt-2 gap-1">
@@ -126,6 +127,7 @@ const Register = () => {
                     type="text"
                     placeholder="Verification Code"
                     value={formData.verificationCode}
+                    //! change code here once OTP send is complete
                     onChange={(event) =>
                       setFormData({
                         ...formData,
