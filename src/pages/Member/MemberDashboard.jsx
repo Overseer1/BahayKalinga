@@ -241,6 +241,7 @@ const MemberDashboard = () => {
             <YearlyCalendar
               markedDates={markedDates}
               onDatePicked={onDatePicked}
+              isMonthlyView={true}
             />
           )}
           <Dialog.Root open={openTime} onOpenChange={setOpenTime}>

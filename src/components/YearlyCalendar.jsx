@@ -1,4 +1,6 @@
 import Calendar from "rc-year-calendar";
+import { useEffect, useState } from "react";
+import { AiOutlineArrowLeft, AiOutlineArrowRight } from "react-icons/ai";
 
 /**
  * A component that displays a yearly calendar with marked dates and tooltips.
@@ -10,21 +12,59 @@ import Calendar from "rc-year-calendar";
  * @param {Function} onDatePicked - A function to be called when a date is clicked on the calendar.
  * @returns {JSX.Element} - A JSX element representing the yearly calendar.
  */
-const YearlyCalendar = ({ markedDates, onDatePicked }) => {
+const YearlyCalendar = ({
+  markedDates,
+  onDatePicked,
+  isMonthlyView = false,
+}) => {
+  console.log(new Date().getMonth());
+  const [activeMonth, setActiveMonth] = useState(new Date().getMonth());
+
+  useEffect(() => {
+    document.getElementsByClassName("calendar-header")[0].style.display =
+      isMonthlyView ? "none" : "block";
+  }, [isMonthlyView]);
+
+  useEffect(() => {
+    Array.from(document.getElementsByClassName("month-container")).forEach(
+      (monthContainer) => {
+        if (
+          Number(activeMonth) ===
+          Number(monthContainer.getAttribute("data-month-id"))
+        ) {
+          monthContainer.style.display = "block";
+        } else {
+          monthContainer.style.display = "none";
+        }
+      }
+    );
+  }, [activeMonth]);
+
   return (
-    <Calendar
-      onDayClick={onDatePicked}
-      dataSource={markedDates}
-      customDayRenderer={(html, date) => {
-        const markDate = markedDates.find((markedDate) => {
-          return (
-            markedDate.date.getFullYear() === date.getFullYear() &&
-            markedDate.date.getMonth() === date.getMonth() &&
-            markedDate.date.getDate() === date.getDate()
-          );
-        });
-        if (markDate) {
-          html.innerHTML = `<div date="${date.toDateString()}" class="tooltip" style="position: relative;">
+    <>
+      {isMonthlyView && (
+        <div
+          onClick={() => {
+            if (activeMonth >= 1) setActiveMonth(activeMonth - 1);
+          }}
+          className="cursor-pointer"
+        >
+          <AiOutlineArrowLeft />
+        </div>
+      )}
+      <Calendar
+        onDayClick={onDatePicked}
+        dataSource={markedDates}
+        customDayRenderer={(html, date) => {
+          const markDate = markedDates.find((markedDate) => {
+            return (
+              markedDate.date.getFullYear() === date.getFullYear() &&
+              markedDate.date.getMonth() === date.getMonth() &&
+              markedDate.date.getDate() === date.getDate()
+            );
+          });
+          if (markDate) {
+            html.innerHTML = `<div date="${date.toDateString()}" class="tooltip" style="position: relative;">
             <div>${html.innerHTML}</div>
             ${
               markDate.occupied.morning
@@ -41,9 +81,20 @@ const YearlyCalendar = ({ markedDates, onDatePicked }) => {
             <div>Afternoon: ${markDate.occupied.afternoon || "None"}</div>
             </div>
         </div>`;
-        }
-      }}
-    />
+          }
+        }}
+      />
+      {isMonthlyView && (
+        <div
+          onClick={() => {
+            if (activeMonth < 11) setActiveMonth(activeMonth + 1);
+          }}
+          className="cursor-pointer"
+        >
+          <AiOutlineArrowRight />
+        </div>
+      )}
+    </>
   );
 };
 
