@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { EventBus } from "../../eventbus";
 import TermsConditions from "./TermsConditions";
 import supabase from "../../config/supabaseClient";
+import { v4 as uuidv4 } from "uuid";
 
 const Register = () => {
   const navigate = useNavigate();
@@ -13,11 +14,14 @@ const Register = () => {
   const [terms, setTerms] = useState(false);
 
   //for insert data
+  const [ImageID, setImageID] = useState(uuidv4);
   const [FirstName, setFirstName] = useState("");
   const [MiddleName, setMiddleName] = useState("");
   const [LastName, setLastName] = useState("");
   const [Address, setAddress] = useState("");
   const [EmailAddress, setEmailAddress] = useState("");
+  const [Password, setPassword] = useState("");
+  const [ConfPassword, setConfPassword] = useState("");
   const [formData, setFormData] = useState({
     firstName: "",
     middleName: "",
@@ -26,16 +30,18 @@ const Register = () => {
     address: "",
     verificationCode: "",
   });
-
-  const sendVerification = () => {
+  //TODO: OTP System currently inactive
+  const sendVerification = () => 
+  {
     // TODO: send verification code here
     console.log("Sending verification code...");
   };
 
-  const onImageChange = (e) => {
+  //! NOTICE: onImageChange is needed. Fix error code or merge with imageadd.
+  const onImageChange = (e) => 
+  {
     setImage(URL.createObjectURL(e.target.files[0]));
   };
-
   const onSubmit = (event) => {
     event.preventDefault();
     // TODO: call register function here
@@ -44,24 +50,61 @@ const Register = () => {
     navigate("/");
     EventBus.emit("show-login");
   };
-  //! NOTICE: Password code is missing. To check if will use OTP instead of password.
-  const submitToDB = async (e) =>
+  //! NOTICE: Password code is missing. 
+  const submitToDB = async (e) => 
   {
-    // if (!FullName || !Address || !ContactNumber) {
-    //   setFormError("Can't process due to empty text box");
-    //   return;
-    // }
-    const { data, error } = await supabase
-      .from("VisitorAcc")
-      .insert([{LastName, FirstName, MiddleName, Address, EmailAddress}]);
-    if (error) {
-      console.log("error " + setFormError);
-    } else if (data) {
-      console.log("inserted");
+    //! BUG: system will redirect despite of not landing to else
+    if (!FirstName || !MiddleName || !LastName || !Address || !EmailAddress) 
+    {
+      alert("Textbox/es empty");
+      return;
+    }
+    if (document.getElementById("confirmPass") !== document.getElementById("finalPass"))
+    {
+      alert("Password did not match");
+    }
+    if (!document.getElementById("checkT").checked)
+    {
+      alert("Please accept the Terms & Conditions.")
+    }
+    if(setImage == null)
+    {
+        console.log("HELL")
+    }
+    else 
+    {
+      const { data, error } = await supabase
+        .from("VisitorAcc")
+        .insert([{ LastName, FirstName, MiddleName, Address, EmailAddress, ImageID }]);
+      if (error) 
+      {
+        console.log("error " + setFormError);
+      }
+      else if (data) 
+      {
+        console.log("inserted");
+        setFormError(null);
+      }
+      imageAdd();
+      navigate("/");
+    }
+  };
+  const imageAdd = async (e) => 
+  {
+    let img = image;
+    const { data: imgData, error: imgErr } = await supabase.storage
+      .from("ImageVerif")
+      .upload(ImageID + "/" + ImageID, img);
+    if (imgErr) 
+    {
+      console.log(imgErr);
+    } 
+    else if (imgData) 
+    {
+      console.log("uploaded");
       setFormError(null);
     }
-    navigate("/");
-  }
+  };
   return (
     <div
       className="bg-cover py-10"
@@ -88,8 +131,7 @@ const Register = () => {
                       type="text"
                       placeholder="First Name"
                       value={FirstName}
-                      onChange={(e) => setFirstName(e.target.value)
-                      }
+                      onChange={(e) => setFirstName(e.target.value)}
                     />
                     <input
                       className="h-10 p-3 border border-gray-400 rounded-md"
@@ -111,7 +153,7 @@ const Register = () => {
                     type="text"
                     placeholder="Address"
                     value={Address}
-                    onChange={(e) =>setAddress(e.target.value)}
+                    onChange={(e) => setAddress(e.target.value)}
                   />
                   <input
                     className="h-10 p-3 border border-gray-400 rounded-md"
@@ -119,6 +161,22 @@ const Register = () => {
                     placeholder="Email Address"
                     value={EmailAddress}
                     onChange={(e) => setEmailAddress(e.target.value)}
+                  />
+                 <input
+                    className="h-10 p-3 border border-gray-400 rounded-md"
+                    type="password"
+                    placeholder="Password"
+                    value={Password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    id="confirmPass"
+                  />
+                   <input
+                    className="h-10 p-3 border border-gray-400 rounded-md"
+                    type="password"
+                    placeholder="Confirm password"
+                    value={ConfPassword}
+                    id = "finalPass"
+                    onChange={(e) => setConfPassword(e.target.value)}
                   />
                 </div>
                 <div className="flex mt-2 gap-1">
@@ -174,7 +232,8 @@ const Register = () => {
                     className="opacity-0 absolute top-0 left-0 right-0 bottom-0 z-10 h-full w-full"
                     type="file"
                     accept="image/png, image/gif, image/jpeg"
-                    onChange={onImageChange}
+                    
+                    onChange={(e) => setImage(e.target.files[0])}
                   />
                 </label>
               </div>
@@ -185,6 +244,7 @@ const Register = () => {
                   value={terms}
                   onChange={(e) => setTerms(e.target.value)}
                   type="checkbox"
+                  id="checkT"
                 />
                 <div>
                   Read the{" "}

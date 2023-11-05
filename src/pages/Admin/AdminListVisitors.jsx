@@ -2,6 +2,7 @@ import * as AlertDialog from "@radix-ui/react-alert-dialog";
 import * as Dialog from "@radix-ui/react-dialog";
 import { Cross2Icon } from "@radix-ui/react-icons";
 import { useState } from "react";
+import supabase from "../../config/supabaseClient";
 
 const AdminListVisitors = () => {
   const [deniedDialog, setDeniedDialog] = useState(false);

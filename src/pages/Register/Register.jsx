@@ -8,6 +8,8 @@ import TermsConditions from "./TermsConditions";
 
 
 //! NOTICE: This page is no longer usable. For references only
+//! NOTICE: This page is no longer usable. For references only
+//! NOTICE: This page is no longer usable. For references only
 const Register = () => {
   const [image] = useState(null);
 
