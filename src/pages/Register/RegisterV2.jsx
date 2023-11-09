@@ -5,6 +5,7 @@ import { EventBus } from "../../eventbus";
 import TermsConditions from "./TermsConditions";
 import supabase from "../../config/supabaseClient";
 import { v4 as uuidv4 } from "uuid";
+import bcrypt from "bcryptjs"
 
 const Register = () => {
   const navigate = useNavigate();
@@ -59,7 +60,7 @@ const Register = () => {
       alert("Textbox/es empty");
       return;
     }
-    if (document.getElementById("confirmPass") !== document.getElementById("finalPass"))
+    if (document.getElementById("confirmPass").value !== document.getElementById("finalPass").value)
     {
       alert("Password did not match");
     }
@@ -67,9 +68,9 @@ const Register = () => {
     {
       alert("Please accept the Terms & Conditions.")
     }
-    if(setImage == null)
+    if(image === null)
     {
-        console.log("HELL")
+      alert("Please insert an image for verification.")
     }
     else 
     {
@@ -86,9 +87,25 @@ const Register = () => {
         setFormError(null);
       }
       imageAdd();
+      addUser();
       navigate("/");
     }
   };
+  const addUser = async (e) =>
+  {
+    const {data, error} = await supabase.auth.signUp({
+      email: EmailAddress,
+      password: ConfPassword,
+    });
+    if (data)
+    {
+      console.log(data)
+    }
+    if (error) 
+    {
+      console.log(error)
+    }
+  }
   const imageAdd = async (e) => 
   {
     let img = image;
@@ -166,9 +183,9 @@ const Register = () => {
                     className="h-10 p-3 border border-gray-400 rounded-md"
                     type="password"
                     placeholder="Password"
+                    id="confirmPass"
                     value={Password}
                     onChange={(e) => setPassword(e.target.value)}
-                    id="confirmPass"
                   />
                    <input
                     className="h-10 p-3 border border-gray-400 rounded-md"
