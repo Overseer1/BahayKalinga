@@ -47,7 +47,7 @@ const NavBar = () => {
       <header className="h-20 bg-main">
         <div className="max-w-[1920px] h-full m-auto justify-between flex items-start px-5">
           <div className="mt-5 w-32 relative">
-            <img className="w-full absolute" src={logo} alt="AbaKa Logo" />
+            <img className="w-full absolute rounded-full" src={logo} alt="AbaKa Logo" />
           </div>
           <div className="h-full flex item gap-8 items-center">
             <Link
