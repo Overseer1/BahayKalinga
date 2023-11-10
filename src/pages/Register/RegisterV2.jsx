@@ -5,14 +5,17 @@ import { EventBus } from "../../eventbus";
 import TermsConditions from "./TermsConditions";
 import supabase from "../../config/supabaseClient";
 import { v4 as uuidv4 } from "uuid";
-import bcrypt from "bcryptjs"
+import axios from "axios";
+import bcrypt from "bcryptjs";
 
+//! NOTICE: Error messages show once user is done registering.
 const Register = () => {
   const navigate = useNavigate();
 
   const [formError, setFormError] = useState("");
   const [image, setImage] = useState(null);
   const [terms, setTerms] = useState(false);
+  const [verifCheck,setVerifCheck] = useState("verifying");
 
   //for insert data
   const [ImageID, setImageID] = useState(uuidv4);
@@ -31,16 +34,37 @@ const Register = () => {
     address: "",
     verificationCode: "",
   });
-  //TODO: OTP System currently inactive
-  const sendVerification = () => 
-  {
-    // TODO: send verification code here
-    console.log("Sending verification code...");
+  const tokin = formData.verificationCode;
+  const sendVerification = async () => {
+    const { data, error } = await supabase.auth.signInWithOtp({
+      email: EmailAddress,
+    });
+    if (error) {
+      console.log("haha bobo mag code tanga");
+    }
+    if (data) {
+      console.log("Sending verification code...");
+    }
   };
-
-  //! NOTICE: onImageChange is needed. Fix error code or merge with imageadd.
-  const onImageChange = (e) => 
+  const viewVerification = async () => 
   {
+    const { data, error } = await supabase.auth.verifyOtp({
+      email: EmailAddress,
+      token: tokin,
+      type: "email",
+    });
+    if (error) 
+    {
+      console.log("bobo");
+    }
+    if (data) 
+    {
+      console.log("ok");
+      setVerifCheck("cleared");
+    }
+  };
+  //! NOTICE: onImageChange is needed. Fix error code or merge with imageadd.
+  const onImageChange = (e) => {
     setImage(URL.createObjectURL(e.target.files[0]));
   };
   const onSubmit = (event) => {
@@ -51,36 +75,41 @@ const Register = () => {
     navigate("/");
     EventBus.emit("show-login");
   };
-  //! NOTICE: Password code is missing. 
-  const submitToDB = async (e) => 
-  {
-    //! BUG: system will redirect despite of not landing to else
-    if (!FirstName || !MiddleName || !LastName || !Address || !EmailAddress) 
-    {
+  const submitToDB = async (e) => {
+    viewVerification();
+    if (!FirstName || !MiddleName || !LastName || !Address || !EmailAddress) {
       alert("Textbox/es empty");
       return;
     }
-    if (document.getElementById("confirmPass").value !== document.getElementById("finalPass").value)
-    {
+    if (
+      document.getElementById("confirmPass").value !==
+      document.getElementById("finalPass").value
+    ) {
       alert("Password did not match");
     }
-    if (!document.getElementById("checkT").checked)
+    if (!document.getElementById("checkT").checked) 
     {
-      alert("Please accept the Terms & Conditions.")
+      alert("Please accept the Terms & Conditions.");
     }
-    if(image === null)
+    if (image === null) 
     {
-      alert("Please insert an image for verification.")
+      alert("Please insert an image for verification.");
     }
+    if (verifCheck === "cleared") 
+    {
+      console.log("ios ios")
+    } 
     else 
     {
       const { data, error } = await supabase
         .from("VisitorAcc")
-        .insert([{ LastName, FirstName, MiddleName, Address, EmailAddress, ImageID }]);
+        .insert([
+          { LastName, FirstName, MiddleName, Address, EmailAddress, ImageID },
+        ]);
       if (error) 
       {
         console.log("error " + setFormError);
-      }
+      } 
       else if (data) 
       {
         console.log("inserted");
@@ -91,33 +120,26 @@ const Register = () => {
       navigate("/");
     }
   };
-  const addUser = async (e) =>
-  {
-    const {data, error} = await supabase.auth.signUp({
+  const addUser = async (e) => {
+    const { data, error } = await supabase.auth.signUp({
       email: EmailAddress,
       password: ConfPassword,
     });
-    if (data)
-    {
-      console.log(data)
+    if (data) {
+      console.log(data);
     }
-    if (error) 
-    {
-      console.log(error)
+    if (error) {
+      console.log(error);
     }
-  }
-  const imageAdd = async (e) => 
-  {
+  };
+  const imageAdd = async (e) => {
     let img = image;
     const { data: imgData, error: imgErr } = await supabase.storage
       .from("ImageVerif")
       .upload(ImageID + "/" + ImageID, img);
-    if (imgErr) 
-    {
+    if (imgErr) {
       console.log(imgErr);
-    } 
-    else if (imgData) 
-    {
+    } else if (imgData) {
       console.log("uploaded");
       setFormError(null);
     }
@@ -179,7 +201,7 @@ const Register = () => {
                     value={EmailAddress}
                     onChange={(e) => setEmailAddress(e.target.value)}
                   />
-                 <input
+                  <input
                     className="h-10 p-3 border border-gray-400 rounded-md"
                     type="password"
                     placeholder="Password"
@@ -187,12 +209,12 @@ const Register = () => {
                     value={Password}
                     onChange={(e) => setPassword(e.target.value)}
                   />
-                   <input
+                  <input
                     className="h-10 p-3 border border-gray-400 rounded-md"
                     type="password"
                     placeholder="Confirm password"
                     value={ConfPassword}
-                    id = "finalPass"
+                    id="finalPass"
                     onChange={(e) => setConfPassword(e.target.value)}
                   />
                 </div>
@@ -249,7 +271,6 @@ const Register = () => {
                     className="opacity-0 absolute top-0 left-0 right-0 bottom-0 z-10 h-full w-full"
                     type="file"
                     accept="image/png, image/gif, image/jpeg"
-                    
                     onChange={(e) => setImage(e.target.files[0])}
                   />
                 </label>
