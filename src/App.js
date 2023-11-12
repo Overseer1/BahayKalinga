@@ -14,8 +14,16 @@ import AdminListPreviousVisits from "./pages/Admin/AdminListPreviousVisits";
 import AdminListElders from "./pages/Admin/AdminListElders";
 import AdminListVisitors from "./pages/Admin/AdminListVisitors";
 import { Routes, Route } from "react-router-dom";
+import { useState } from "react";
 
 function App() {
+
+  const [openLogin, setOpenLogin] = useState(false);
+  const [loginForm, setLoginForm] = useState({
+    username: "",
+    password: "",
+  });
+
   return (
     <div>
       <Routes>

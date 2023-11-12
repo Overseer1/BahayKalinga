@@ -5,24 +5,11 @@ import * as Dialog from "@radix-ui/react-dialog";
 import { Cross2Icon } from "@radix-ui/react-icons";
 import { EventBus } from "../eventbus";
 import supabase from "../config/supabaseClient";
+import { OnLoginSubmit, AuthValues } from "../components/Auth";
 
 const NavBar = () => {
   const navigate = useNavigate();
-
   // Login
-  const [openLogin, setOpenLogin] = useState(false);
-  const [loginForm, setLoginForm] = useState({
-    username: "",
-    password: "",
-  });
-  //! NOTICE: add login bullshit fuck shit here.
-  const onLoginSubmit = (event) => {
-    event.preventDefault();
-    // TODO: implement login function here
-    console.log(loginForm);
-    setOpenLogin(false);
-    navigate("/member");
-  };
 
   const scrollIntoView = (id) => {
     const element = document.getElementById(id);
@@ -49,7 +36,11 @@ const NavBar = () => {
       <header className="h-20 bg-main">
         <div className="max-w-[1920px] h-full m-auto justify-between flex items-start px-5">
           <div className="mt-5 w-32 relative">
-            <img className="w-full absolute rounded-full" src={logo} alt="AbaKa Logo" />
+            <img
+              className="w-full absolute rounded-full"
+              src={logo}
+              alt="AbaKa Logo"
+            />
           </div>
           <div className="h-full flex item gap-8 items-center">
             <Link
@@ -101,7 +92,9 @@ const NavBar = () => {
                   <Dialog.Description className="text-mauve11 mt-[10px] mb-5 text-[15px] leading-normal">
                     Input your login credentials here.
                   </Dialog.Description>
-                  <form onSubmit={onLoginSubmit}>
+                  <form
+                    onSubmit={() => {OnLoginSubmit()}}
+                  >
                     <fieldset className="mb-[15px] flex items-center gap-5">
                       <label
                         className="text-violet11 w-[90px] text-right text-[15px]"

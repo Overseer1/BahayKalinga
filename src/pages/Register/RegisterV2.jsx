@@ -5,8 +5,6 @@ import { EventBus } from "../../eventbus";
 import TermsConditions from "./TermsConditions";
 import supabase from "../../config/supabaseClient";
 import { v4 as uuidv4 } from "uuid";
-import axios from "axios";
-import bcrypt from "bcryptjs";
 
 //! NOTICE: Error messages show once user is done registering.
 const Register = () => {
