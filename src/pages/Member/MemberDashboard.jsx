@@ -3,12 +3,14 @@ import * as Dialog from "@radix-ui/react-dialog";
 import { Cross2Icon } from "@radix-ui/react-icons";
 import TermsConditions from "../Register/TermsConditions";
 import YearlyCalendar from "../../components/YearlyCalendar";
+import supabase from "../../config/supabaseClient";
 
 /**
  * Generates a function comment for the given function body.
  *
  * @return {undefined} No return value
  */
+
 const MemberDashboard = () => {
   const defaultDetail = {
     fullName: "",
@@ -18,7 +20,6 @@ const MemberDashboard = () => {
     reason: "",
     image: null, // Add image property to store the selected image file
   };
-
   const [step, setStep] = useState(1);
   const [details, setDetails] = useState([Object.assign({}, defaultDetail)]);
   const addDetails = () => {
