@@ -1,12 +1,31 @@
 import { Outlet } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import supabase from "../../config/supabaseClient";
 
 const MemberLayout = () => {
   const navigate = useNavigate();
 
-  const logout = () => {
-    navigate("/");
+  const logout = async() => 
+  {
+    const { error } = await supabase.auth.signOut()
+    if (error)
+    {
+      alert(error);
+    }
+    else
+    {
+      navigate("/");
+    }
   };
+  const showData = async() =>
+  {
+    
+    const { data: { user } } = await supabase.auth.getUser()
+    if (user)
+    {
+      console.log(user);
+    }
+  }
 
   return (
     <div className="max-w-7xl mx-auto px-5 flex min-h-[calc(100vh-144px)]">
@@ -17,7 +36,7 @@ const MemberLayout = () => {
         </div>
         <div className="bg-gray-300 h-[1px] my-4"></div>
         <div className="flex flex-col gap-3">
-          <div onClick={logout} className="font-medium text-lg cursor-pointer">
+          <div onClick={showData} className="font-medium text-lg cursor-pointer">
             Logout
           </div>
         </div>

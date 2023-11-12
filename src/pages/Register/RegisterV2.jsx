@@ -10,13 +10,11 @@ import { v4 as uuidv4 } from "uuid";
 const Register = () => {
   const navigate = useNavigate();
 
-  const [formError, setFormError] = useState("");
-  const [image, setImage] = useState(null);
   const [terms, setTerms] = useState(false);
-  const [verifCheck,setVerifCheck] = useState("verifying");
 
   //for insert data
   const [ImageID, setImageID] = useState(uuidv4);
+  //!
   const [FirstName, setFirstName] = useState("");
   const [MiddleName, setMiddleName] = useState("");
   const [LastName, setLastName] = useState("");
@@ -24,41 +22,17 @@ const Register = () => {
   const [EmailAddress, setEmailAddress] = useState("");
   const [Password, setPassword] = useState("");
   const [ConfPassword, setConfPassword] = useState("");
-  const [formData, setFormData] = useState({
-    firstName: "",
-    middleName: "",
-    lastName: "",
-    emailAddress: "",
-    address: "",
-    verificationCode: "",
-  });
-  const tokin = formData.verificationCode;
+  const [verificationCode, setVerificationCode] = useState("");
+  const [image, setImage] = useState(null);
   const sendVerification = async () => {
     const { data, error } = await supabase.auth.signInWithOtp({
       email: EmailAddress,
     });
     if (error) {
-      console.log("haha bobo mag code tanga");
+      console.log("error in sending OTP");
     }
     if (data) {
       console.log("Sending verification code...");
-    }
-  };
-  const viewVerification = async () => 
-  {
-    const { data, error } = await supabase.auth.verifyOtp({
-      email: EmailAddress,
-      token: tokin,
-      type: "email",
-    });
-    if (error) 
-    {
-      console.log("bobo");
-    }
-    if (data) 
-    {
-      console.log("ok");
-      setVerifCheck("cleared");
     }
   };
   //! NOTICE: onImageChange is needed. Fix error code or merge with imageadd.
@@ -68,67 +42,95 @@ const Register = () => {
   const onSubmit = (event) => {
     event.preventDefault();
     // TODO: call register function here
-    console.log(formData);
 
     navigate("/");
     EventBus.emit("show-login");
   };
   const submitToDB = async (e) => {
-    viewVerification();
-    if (!FirstName || !MiddleName || !LastName || !Address || !EmailAddress) {
-      alert("Textbox/es empty");
-      return;
-    }
-    if (
-      document.getElementById("confirmPass").value !==
-      document.getElementById("finalPass").value
-    ) {
-      alert("Password did not match");
-    }
-    if (!document.getElementById("checkT").checked) 
-    {
-      alert("Please accept the Terms & Conditions.");
-    }
-    if (image === null) 
-    {
-      alert("Please insert an image for verification.");
-    }
-    if (verifCheck === "cleared") 
-    {
-      console.log("ios ios")
-    } 
-    else 
-    {
-      const { data, error } = await supabase
-        .from("VisitorAcc")
-        .insert([
-          { LastName, FirstName, MiddleName, Address, EmailAddress, ImageID },
-        ]);
-      if (error) 
-      {
-        console.log("error " + setFormError);
-      } 
-      else if (data) 
-      {
-        console.log("inserted");
-        setFormError(null);
+    try {
+      if (!FirstName || !MiddleName || !LastName || !Address || !EmailAddress) {
+        alert("Textbox/es empty");
+        return;
       }
-      imageAdd();
-      addUser();
-      navigate("/");
-    }
+      if (
+        document.getElementById("confirmPass").value !==
+        document.getElementById("finalPass").value
+      ) 
+      {
+        alert("Password did not match");
+      }
+      if (!document.getElementById("checkT").checked) {
+        alert("Please accept the Terms & Conditions.");
+      }
+      if (image === null) {
+        alert("Please insert an image for verification.");
+      } 
+      else 
+      {
+        const { data: OTPD, error: errOTP } = await supabase.auth.verifyOtp({
+          email: EmailAddress,
+          token: verificationCode,
+          type: 'email',
+        });
+        if (OTPD) 
+        {
+          const { data, error } = await supabase
+            .from("VisitorAcc")
+            .insert([
+              {
+                LastName,
+                FirstName,
+                MiddleName,
+                Address,
+                EmailAddress,
+                ImageID,
+              },
+            ]);
+          if (error) 
+          {
+            console.log("error");
+          } 
+          else if (data) 
+          {
+            console.log("inserted");
+          }
+          imageAdd();
+          addUser();
+          navigate("/");
+        }
+        if (errOTP)
+        {
+          alert("no");
+        }
+      }
+    } catch (err) {}
   };
   const addUser = async (e) => {
-    const { data, error } = await supabase.auth.signUp({
-      email: EmailAddress,
-      password: ConfPassword,
-    });
-    if (data) {
-      console.log(data);
-    }
-    if (error) {
-      console.log(error);
-    }
+    try {
+      const { data, error } = await supabase.auth.signUp({
+        email: EmailAddress,
+        password: ConfPassword,
+      });
+      if (data) 
+      {
+        console.log("goodshit" + data);
+        const { data: logs, error: logsError } = await supabase.auth.api.getLogs({
+          limit: 1,
+          type: 'signup',
+        })
+      
+        if (logsError) {
+          console.error(logsError)
+        } else {
+          console.log(logs)
+        }
+      }
+      if (error) 
+      {
+        console.log("u fucked");
+      alert("u fucked")
+      }
+    } catch (err) {}
   };
   const imageAdd = async (e) => {
     let img = image;
@@ -139,7 +141,6 @@ const Register = () => {
       console.log(imgErr);
     } else if (imgData) {
       console.log("uploaded");
-      setFormError(null);
     }
   };
   return (
@@ -221,14 +222,9 @@ const Register = () => {
                     className="h-10 p-3 border border-gray-400 rounded-md grow"
                     type="text"
                     placeholder="Verification Code"
-                    value={formData.verificationCode}
+                    value={verificationCode}
                     //! change code here once OTP send is complete
-                    onChange={(event) =>
-                      setFormData({
-                        ...formData,
-                        verificationCode: event.target.value,
-                      })
-                    }
+                    onChange={(e) => setVerificationCode(e.target.value)}
                   />
                   <button
                     type="button"

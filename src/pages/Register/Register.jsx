@@ -6,7 +6,6 @@ import supabase from "../../config/supabaseClient";
 import { v4 as uuidv4 } from "uuid";
 import TermsConditions from "./TermsConditions";
 
-
 //! NOTICE: This page is no longer usable. For references only
 //! NOTICE: This page is no longer usable. For references only
 //! NOTICE: This page is no longer usable. For references only

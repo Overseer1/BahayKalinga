@@ -10,6 +10,40 @@ import { OnLoginSubmit, AuthValues } from "../components/Auth";
 const NavBar = () => {
   const navigate = useNavigate();
   // Login
+  const [openLogin, setOpenLogin] = useState(false);
+  const [loginForm, setLoginForm] = useState({
+    username: "",
+    password: "",
+  });
+  const user = loginForm.username;
+  const pass = loginForm.password;
+  const onLoginSubmit = async (e) => {
+    e.preventDefault();
+    // TODO: implement login function here
+    //! NOTICE: error in logging in
+    try 
+    {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: user,
+        password: pass,
+      })
+      if (error)
+      {
+        alert("bugok")
+      }
+      if (data)
+      {
+        alert("aight");
+        console.log(loginForm);
+        setOpenLogin(false);
+        navigate("/member");
+      }
+    } 
+    catch (error) 
+    {
+      alert("error in log in " + error);
+    }
+  };
 
   const scrollIntoView = (id) => {
     const element = document.getElementById(id);
@@ -106,10 +140,10 @@ const NavBar = () => {
                         className="text-violet11 shadow-violet7 focus:shadow-violet8 inline-flex h-[35px] w-full flex-1 items-center justify-center rounded-[4px] px-[10px] text-[15px] leading-none shadow-[0_0_0_1px] outline-none focus:shadow-[0_0_0_2px]"
                         id="username"
                         value={loginForm.username}
-                        onChange={(event) =>
+                        onChange={(e) =>
                           setLoginForm({
                             ...loginForm,
-                            username: event.target.value,
+                            username: e.target.value,
                           })
                         }
                       />
@@ -126,10 +160,10 @@ const NavBar = () => {
                         id="password"
                         type="password"
                         value={loginForm.password}
-                        onChange={(event) =>
+                        onChange={(e) =>
                           setLoginForm({
                             ...loginForm,
-                            password: event.target.value,
+                            password: e.target.value,
                           })
                         }
                       />
