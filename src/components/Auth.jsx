@@ -8,14 +8,30 @@ export const authValues = {
   "password": null
 }
 
-export const OnLoginSubmit = (event) => {
-  const [openLogin, setOpenLogin, loginForm, setLoginForm] = AuthValues();
-
-  //! NOTICE: add login bullshit fuck shit here.
-  //event.preventDefault();
-  // TODO: implement login function here
-
-  //console.log(loginForm);
-  //setOpenLogin(false);
-	console.log('login!')
+export const OnLoginSubmit = async (e) => {
+  e.preventDefault();
+    // TODO: implement login function here
+    //! NOTICE: error in logging in
+    try 
+    {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: user,
+        password: pass,
+      })
+      if (error)
+      {
+        alert("bugok")
+      }
+      if (data)
+      {
+        alert("aight");
+        console.log(loginForm);
+        setOpenLogin(false);
+        navigate("/member");
+      }
+    } 
+    catch (error) 
+    {
+      alert("error in log in " + error);
+    }
 };
