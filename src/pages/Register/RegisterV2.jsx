@@ -52,10 +52,7 @@ const Register = () => {
         alert("Textbox/es empty");
         return;
       }
-      if (
-        document.getElementById("confirmPass").value !==
-        document.getElementById("finalPass").value
-      ) 
+      if (document.getElementById("confirmPass").value !==document.getElementById("finalPass").value) 
       {
         alert("Password did not match");
       }
@@ -93,10 +90,10 @@ const Register = () => {
           else if (data) 
           {
             console.log("inserted");
+            imageAdd();
+            addUser();
+            navigate("/");
           }
-          imageAdd();
-          addUser();
-          navigate("/");
         }
         if (errOTP)
         {
