@@ -102,33 +102,7 @@ const Register = () => {
       }
     } catch (err) {}
   };
-  const addUser = async (e) => {
-    try {
-      const { data, error } = await supabase.auth.signUp({
-        email: EmailAddress,
-        password: ConfPassword,
-      });
-      if (data) 
-      {
-        console.log("goodshit" + data);
-        const { data: logs, error: logsError } = await supabase.auth.api.getLogs({
-          limit: 1,
-          type: 'signup',
-        })
-      
-        if (logsError) {
-          console.error(logsError)
-        } else {
-          console.log(logs)
-        }
-      }
-      if (error) 
-      {
-        console.log("u fucked");
-      alert("u fucked")
-      }
-    } catch (err) {}
-  };
+  
   const imageAdd = async (e) => {
     let img = image;
     const { data: imgData, error: imgErr } = await supabase.storage
