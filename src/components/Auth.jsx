@@ -20,6 +20,7 @@ export const authValues = {
   image: null,
 };
 
+//! Not in use
 export const OnLoginSubmit = async (e) => {
   const navigate = useNavigate();
   e.preventDefault();
@@ -44,30 +45,24 @@ export const OnLoginSubmit = async (e) => {
   }
 };
 
-const addUser = async (e) => {
+export const addUser = async (e) => {
   try {
     const { data, error } = await supabase.auth.signUp({
       email: authValues.email,
       password: authValues.password,
     });
-    if (data) {
-      console.log("goodshit" + data);
-      const { data: logs, error: logsError } = await supabase.auth.api.getLogs({
-        limit: 1,
-        type: "signup",
-      });
-
-      if (logsError) {
-        console.error(logsError);
-      } else {
-        console.log(logs);
-      }
+    if (data) 
+    {
+      console.log(data);
     }
-    if (error) {
-      console.log("u fucked");
-      alert("u fucked");
+    if (error) 
+    {
+      console.log("err in signUp");
     }
-  } catch (err) {
+  } 
+  catch (err) 
+  {
     //no function
   }
 };
+

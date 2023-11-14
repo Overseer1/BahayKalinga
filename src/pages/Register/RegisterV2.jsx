@@ -5,15 +5,17 @@ import { EventBus } from "../../eventbus";
 import TermsConditions from "./TermsConditions";
 import supabase from "../../config/supabaseClient";
 import { v4 as uuidv4 } from "uuid";
+//!
+import { addUser } from "../../components/Auth";
+
 
 //! NOTICE: Error messages show once user is done registering.
 const Register = () => {
   const navigate = useNavigate();
 
   const [terms, setTerms] = useState(false);
-
+  const [ImageID, setImageID] = useState(uuidv4); 
   //for insert data
-  const [ImageID, setImageID] = useState(uuidv4);
   //!
   const [FirstName, setFirstName] = useState("");
   const [MiddleName, setMiddleName] = useState("");
@@ -23,10 +25,11 @@ const Register = () => {
   const [Password, setPassword] = useState("");
   const [ConfPassword, setConfPassword] = useState("");
   const [verificationCode, setVerificationCode] = useState("");
+  const [isMfVerified, setIsMfVerified] = useState(false);
   const [image, setImage] = useState(null);
   const sendVerification = async () => {
     const { data, error } = await supabase.auth.signInWithOtp({
-      email: EmailAddress,
+      email: EmailAddress
     });
     if (error) {
       console.log("error in sending OTP");
@@ -46,30 +49,45 @@ const Register = () => {
     navigate("/");
     EventBus.emit("show-login");
   };
+  const verifier = async() =>
+  {
+    setIsMfVerified(true);//! PAG ETO DI GUMANA EWAN KO NA LANG
+    const { data: OTPD, error: errOTP } = await supabase.auth.verifyOtp({
+      email: EmailAddress,
+      token: verificationCode,
+      type: 'email',
+    });
+    if (errOTP)
+    {
+      setIsMfVerified(false);
+    }
+    else
+    {
+      console.log("ok *thumbs up emoji");
+    }
+    return;
+  }
   const submitToDB = async (e) => {
-    try {
-      if (!FirstName || !MiddleName || !LastName || !Address || !EmailAddress) {
-        alert("Textbox/es empty");
-        return;
-      }
-      if (document.getElementById("confirmPass").value !==document.getElementById("finalPass").value) 
+    try 
+    {
+     verifier();
+      if (isMfVerified)
       {
-        alert("Password did not match");
-      }
-      if (!document.getElementById("checkT").checked) {
-        alert("Please accept the Terms & Conditions.");
-      }
-      if (image === null) {
-        alert("Please insert an image for verification.");
-      } 
-      else 
-      {
-        const { data: OTPD, error: errOTP } = await supabase.auth.verifyOtp({
-          email: EmailAddress,
-          token: verificationCode,
-          type: 'email',
-        });
-        if (OTPD) 
+        if (!FirstName || !MiddleName || !LastName || !Address || !EmailAddress) {
+          alert("Textbox/es empty");
+          return;
+        }
+        else if (document.getElementById("confirmPass").value !==document.getElementById("finalPass").value) 
+        {
+          alert("Password did not match");
+        }
+        else if (!document.getElementById("checkT").checked) {
+          alert("Please accept the Terms & Conditions.");
+        }
+        else if (image === null) {
+          alert("Please insert an image for verification.");
+        } 
+        else 
         {
           const { data, error } = await supabase
             .from("VisitorAcc")
@@ -87,7 +105,7 @@ const Register = () => {
           {
             console.log("error");
           } 
-          else if (data) 
+          else
           {
             console.log("inserted");
             imageAdd();
@@ -95,14 +113,18 @@ const Register = () => {
             navigate("/");
           }
         }
-        if (errOTP)
-        {
-          alert("no");
-        }
       }
-    } catch (err) {}
+      else
+      {
+        console.log("iyak ka na");
+      }
+    } 
+    catch (err) 
+    {
+      console.log(err);
+    }
   };
-  
+
   const imageAdd = async (e) => {
     let img = image;
     const { data: imgData, error: imgErr } = await supabase.storage
