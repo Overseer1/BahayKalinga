@@ -91,7 +91,8 @@ const Register = () => {
   };
  
   const submitToDB = async (e) => {
-    try {
+    try 
+    {
         if (!FirstName || !MiddleName || !LastName || !Address || !EmailAddress) 
         {
           alert("Textbox/es empty");
@@ -115,7 +116,9 @@ const Register = () => {
           if (error) throw error
           else 
           {
-            toast.info("Now please verify your OTP.")
+            setIsSignedUp(true)
+            setIsPressed(true)
+            toast.info("Please wait and verify your OTP.")
             sendForSignUp();
             imageAdd();
             setHasSignUp(true);
@@ -305,7 +308,7 @@ const Register = () => {
                   className={`bg-slate-500 text-warmGray-50 py-2 rounded-md px-8 ${
                     !isPressed ? "none" : "hidden"
                   }`}
-                  onClick={(e) => {setIsPressed(true); setIsSignedUp(true)}}
+                  // onClick={(e) => {setIsSignedUp(true)}}
                 >
                   Send OTP
                 </button>
