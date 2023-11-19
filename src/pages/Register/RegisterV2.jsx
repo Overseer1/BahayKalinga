@@ -93,9 +93,10 @@ const Register = () => {
   const submitToDB = async (e) => {
     try 
     {
+        const checker = document.getElementById("finalPass").value;
         if (!FirstName || !MiddleName || !LastName || !Address || !EmailAddress) 
         {
-          alert("Textbox/es empty");
+          alert("Please fill out the form completely empty");
           return;
         } 
         else if (document.getElementById("confirmPass").value !== document.getElementById("finalPass").value) 
@@ -109,7 +110,11 @@ const Register = () => {
         else if (image === null) 
         {
           alert("Please insert an image for verification.");
-        } 
+        }
+        else if (checker.length < 8)
+        {
+          alert("Your password should be at least 8 characters");
+        }
         else 
         {
           const { error } = await supabase.from("VisitorAcc").insert([{ LastName, FirstName, MiddleName, Address, EmailAddress, ImageID, },]);
