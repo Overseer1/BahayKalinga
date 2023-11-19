@@ -79,6 +79,8 @@
  * @license MIT
  */
 
-//! NOTICE: error in logging in
+//! USE supabase.auth.admin AT THIS AREA
 
-//! PAG ETO DI GUMANA EWAN KO NA LANG
+//! for registration, and admin login
+
+//! universal variables
