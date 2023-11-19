@@ -10,6 +10,9 @@ import supabase from "../../config/supabaseClient";
  *
  * @return {undefined} No return value
  */
+//! TODO: Create Read for appointment, Can only submit an appointment once *(max. of 2 / year).
+//! *optional
+
 
 const MemberDashboard = () => {
   const defaultDetail = {
@@ -106,7 +109,18 @@ const MemberDashboard = () => {
     setSelectedTime(time);
     setStep(3);
   };
-
+  const testOnly = async() =>
+  {
+    const { data, error } = await supabase.auth.getSession()
+    if (error)
+    {
+      console.log(error);
+    }
+    else if (data)
+    {
+      console.log(data);
+    }
+  }
   return (
     <div className="text-center">
       {step === 1 && (

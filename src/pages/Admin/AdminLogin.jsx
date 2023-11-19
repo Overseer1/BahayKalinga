@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import supabase from "../../config/supabaseClient";
 
 const AdminLogin = () => {
   const navigate = useNavigate();
@@ -10,6 +11,7 @@ const AdminLogin = () => {
     e.preventDefault();
 
     // Perform login logic here
+    //! USE supabase.auth.admin AT THIS AREA
     if (username === "admin" && password === "password") {
       localStorage.setItem("token", "insertauthtokenhere");
       navigate("/admin");

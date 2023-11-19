@@ -1,3 +1,8 @@
+/*
+    register: clean up
+    reconstruct code (e.g. register first before verify OTP)
+*/
+
 import { BsPersonVcardFill } from "react-icons/bs";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -5,18 +10,15 @@ import { EventBus } from "../../eventbus";
 import TermsConditions from "./TermsConditions";
 import supabase from "../../config/supabaseClient";
 import { v4 as uuidv4 } from "uuid";
-//!
-import { addUser } from "../../components/Auth";
+import { addUser, authValues } from "../../components/Auth";
+import { ToastContainer, toast } from "react-toastify";
 
-
-//! NOTICE: Error messages show once user is done registering.
 const Register = () => {
   const navigate = useNavigate();
 
   const [terms, setTerms] = useState(false);
-  const [ImageID, setImageID] = useState(uuidv4); 
+  const [ImageID] = useState(uuidv4);
   //for insert data
-  //!
   const [FirstName, setFirstName] = useState("");
   const [MiddleName, setMiddleName] = useState("");
   const [LastName, setLastName] = useState("");
@@ -25,102 +27,102 @@ const Register = () => {
   const [Password, setPassword] = useState("");
   const [ConfPassword, setConfPassword] = useState("");
   const [verificationCode, setVerificationCode] = useState("");
-  const [isMfVerified, setIsMfVerified] = useState(false);
   const [image, setImage] = useState(null);
-  const sendVerification = async () => {
-    const { data, error } = await supabase.auth.signInWithOtp({
-      email: EmailAddress
-    });
-    if (error) {
-      console.log("error in sending OTP");
-    }
-    if (data) {
-      console.log("Sending verification code...");
-    }
-  };
+
+  const [hasSignUp, setHasSignUp] = useState(true);
+
+  const [isPressed, setIsPressed] = useState(false);
+
+  const [isSignedUp, setIsSignedUp] = useState(false);
+
+  const sendForSignUp = () =>
+  {
+    authValues.email = EmailAddress;
+    authValues.confpassword = ConfPassword;
+    addUser(EmailAddress, ConfPassword);
+  } 
   //! NOTICE: onImageChange is needed. Fix error code or merge with imageadd.
   const onImageChange = (e) => {
     setImage(URL.createObjectURL(e.target.files[0]));
   };
-  const onSubmit = (event) => {
-    event.preventDefault();
-    // TODO: call register function here
 
-    navigate("/");
-    EventBus.emit("show-login");
-  };
-  const verifier = async() =>
+  //! NOT IN USE
+  const sendVerification = async () => 
   {
-    setIsMfVerified(true);//! PAG ETO DI GUMANA EWAN KO NA LANG
-    const { data: OTPD, error: errOTP } = await supabase.auth.verifyOtp({
+    const { data, error } = await supabase.auth.signInWithOtp({
       email: EmailAddress,
-      token: verificationCode,
-      type: 'email',
     });
-    if (errOTP)
+    if (error) 
     {
-      setIsMfVerified(false);
+      setHasSignUp(false);
+      toast.error("error in sending OTP");
+      console.log(error);
+    }
+    else if (data) 
+    {
+      toast.info("OTP sent to your email!");
+    }
+  };
+
+  const verifier = async () => 
+  {
+    if (hasSignUp)
+    {
+      const { data: OTPD, error: errOTP } = await supabase.auth.verifyOtp({
+        email: EmailAddress,
+        token: verificationCode,
+        type: "email",
+      });
+      if (errOTP) 
+      {
+        toast.error("Wrong OTP submitted.");
+      } 
+      else if (OTPD) 
+      {
+        toast.info("OTP verified!, You have been registered.");
+        navigate("/");
+      }
+      return;
     }
     else
     {
-      console.log("ok *thumbs up emoji");
+      toast.warning("Please finish signing up first.");
     }
-    return;
-  }
+  };
+ 
   const submitToDB = async (e) => {
-    try 
-    {
-     verifier();
-      if (isMfVerified)
-      {
-        if (!FirstName || !MiddleName || !LastName || !Address || !EmailAddress) {
+    try {
+        if (!FirstName || !MiddleName || !LastName || !Address || !EmailAddress) 
+        {
           alert("Textbox/es empty");
           return;
-        }
-        else if (document.getElementById("confirmPass").value !==document.getElementById("finalPass").value) 
+        } 
+        else if (document.getElementById("confirmPass").value !== document.getElementById("finalPass").value) 
         {
           alert("Password did not match");
-        }
-        else if (!document.getElementById("checkT").checked) {
+        } 
+        else if (!document.getElementById("checkT").checked) 
+        {
           alert("Please accept the Terms & Conditions.");
-        }
-        else if (image === null) {
+        } 
+        else if (image === null) 
+        {
           alert("Please insert an image for verification.");
         } 
         else 
         {
-          const { data, error } = await supabase
-            .from("VisitorAcc")
-            .insert([
-              {
-                LastName,
-                FirstName,
-                MiddleName,
-                Address,
-                EmailAddress,
-                ImageID,
-              },
-            ]);
-          if (error) 
+          const { error } = await supabase.from("VisitorAcc").insert([{ LastName, FirstName, MiddleName, Address, EmailAddress, ImageID, },]);
+          if (error) throw error
+          else 
           {
-            console.log("error");
-          } 
-          else
-          {
-            console.log("inserted");
+            toast.info("Now please verify your OTP.")
+            sendForSignUp();
             imageAdd();
-            addUser();
-            navigate("/");
+            setHasSignUp(true);
+            //handleCheck();
           }
         }
-      }
-      else
-      {
-        console.log("iyak ka na");
-      }
-    } 
-    catch (err) 
-    {
+    } catch (err) {
       console.log(err);
     }
   };
@@ -130,9 +132,12 @@ const Register = () => {
     const { data: imgData, error: imgErr } = await supabase.storage
       .from("ImageVerif")
       .upload(ImageID + "/" + ImageID, img);
-    if (imgErr) {
+    if (imgErr) 
+    {
       console.log(imgErr);
-    } else if (imgData) {
+    } 
+    else if (imgData) 
+    {
       console.log("uploaded");
     }
   };
@@ -161,6 +166,7 @@ const Register = () => {
                       className="h-10 p-3 border border-gray-400 rounded-md"
                       type="text"
                       placeholder="First Name"
+                      disabled={isSignedUp}
                       value={FirstName}
                       onChange={(e) => setFirstName(e.target.value)}
                     />
@@ -168,6 +174,7 @@ const Register = () => {
                       className="h-10 p-3 border border-gray-400 rounded-md"
                       type="text"
                       placeholder="Middle Name"
+                      disabled={isSignedUp}
                       value={MiddleName}
                       onChange={(e) => setMiddleName(e.target.value)}
                     />
@@ -175,6 +182,7 @@ const Register = () => {
                       className="h-10 p-3 border border-gray-400 rounded-md"
                       type="text"
                       placeholder="Last Name"
+                      disabled={isSignedUp}
                       value={LastName}
                       onChange={(e) => setLastName(e.target.value)}
                     />
@@ -183,6 +191,7 @@ const Register = () => {
                     className="h-10 p-3 border border-gray-400 rounded-md"
                     type="text"
                     placeholder="Address"
+                    disabled={isSignedUp}
                     value={Address}
                     onChange={(e) => setAddress(e.target.value)}
                   />
@@ -190,6 +199,7 @@ const Register = () => {
                     className="h-10 p-3 border border-gray-400 rounded-md"
                     type="text"
                     placeholder="Email Address"
+                    disabled={isSignedUp}
                     value={EmailAddress}
                     onChange={(e) => setEmailAddress(e.target.value)}
                   />
@@ -197,6 +207,7 @@ const Register = () => {
                     className="h-10 p-3 border border-gray-400 rounded-md"
                     type="password"
                     placeholder="Password"
+                    disabled={isSignedUp}
                     id="confirmPass"
                     value={Password}
                     onChange={(e) => setPassword(e.target.value)}
@@ -205,34 +216,41 @@ const Register = () => {
                     className="h-10 p-3 border border-gray-400 rounded-md"
                     type="password"
                     placeholder="Confirm password"
+                    disabled={isSignedUp}
                     value={ConfPassword}
                     id="finalPass"
                     onChange={(e) => setConfPassword(e.target.value)}
                   />
                 </div>
+                {/* //!OTP AREA */}
                 <div className="flex mt-2 gap-1">
                   <input
-                    className="h-10 p-3 border border-gray-400 rounded-md grow"
+                    id="otpHolder"
+                    className={`h-10 p-3 border border-gray-400 rounded-md grow  ${!isPressed ? "hidden" : "none"}`}
                     type="text"
                     placeholder="Verification Code"
                     value={verificationCode}
-                    //! change code here once OTP send is complete
-                    onChange={(e) => setVerificationCode(e.target.value)}
+                    onChange={(e) => {setVerificationCode(e.target.value); }}
                   />
-                  <button
+                  {/* <button
                     type="button"
-                    className="bg-slate-500 text-white px-4 rounded-md"
-                    onClick={sendVerification}
+                    id="sendVerify"
+                    className={`bg-slate-500 text-white px-4 rounded-md ${
+                      !isPressed ? "hidden" : "none"
+                    }`}
+                    // onClick={() => {
+                    //   setIsPressed(true);}}
                   >
                     Send Code
                   </button>
+                  <ToastContainer /> */}
                 </div>
               </div>
               <div className="text-center shrink-0">
                 {image ? (
                   <img
                     className="max-w-[217px] mx-auto mb-3"
-                    src={image}
+                    src={URL.createObjectURL(image)}
                     alt="uploaded_image"
                   />
                 ) : (
@@ -258,7 +276,7 @@ const Register = () => {
                     className="opacity-0 absolute top-0 left-0 right-0 bottom-0 z-10 h-full w-full"
                     type="file"
                     accept="image/png, image/gif, image/jpeg"
-                    onChange={(e) => setImage(e.target.files[0])}
+                    onChange={(e) => {setImage(e.target.files[0])}}
                   />
                 </label>
               </div>
@@ -281,13 +299,27 @@ const Register = () => {
                   </TermsConditions>
                 </div>
               </label>
-              <div>
+              <div className="flex mt-2 gap-1">
                 <button
                   type="submit"
-                  className="bg-slate-500 text-warmGray-50 py-2 rounded-md px-8"
+                  className={`bg-slate-500 text-warmGray-50 py-2 rounded-md px-8 ${
+                    !isPressed ? "none" : "hidden"
+                  }`}
+                  onClick={(e) => {setIsPressed(true); setIsSignedUp(true)}}
                 >
-                  Register
+                  Send OTP
                 </button>
+                <ToastContainer />
+                <button
+                    type="button"
+                    className={`bg-slate-500 text-warmGray-50 py-2 rounded-md px-8 ${
+                      !isPressed ? "hidden" : "none"
+                    }`}
+                    onClick={verifier}
+                  >
+                    Register
+                  </button>
+                  <ToastContainer />
               </div>
             </div>
           </form>

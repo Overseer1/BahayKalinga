@@ -39,7 +39,8 @@ const AdminLayout = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const logout = () => {
+  const logout = () => 
+  {
     localStorage.removeItem("token");
     navigate("/admin/login");
   };
@@ -52,8 +53,10 @@ const AdminLayout = () => {
     return page[location.pathname] || "Error";
   }, [location.pathname]);
 
-  useEffect(() => {
-    if (!localStorage.getItem("token")) {
+  useEffect(() => 
+  {
+    if (!localStorage.getItem("token")) 
+    {
       navigate("/admin/login");
     }
   });

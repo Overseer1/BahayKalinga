@@ -2,8 +2,10 @@ import { useState } from "react";
 import supabase from "../config/supabaseClient";
 import { useNavigate } from "react-router-dom";
 import {} from "bcryptjs-react";
+import { toast } from "react-toastify";
 
-//! for registration, login, and admin login
+
+//! for registration, and admin login
 
 //! universal variables
 export const authValues = {
@@ -19,50 +21,58 @@ export const authValues = {
   verificationCode: null,
   image: null,
 };
-
-//! Not in use
-export const OnLoginSubmit = async (e) => {
-  const navigate = useNavigate();
-  e.preventDefault();
-  // TODO: implement login function here
-  //! NOTICE: error in logging in
+export const onLoginAdminSubmit = async (Email, Password) => {
+  //e.preventDefault();
+  //const navigate = useNavigate();
+  //! NOTICE: NOT IN USE.
   try {
+    supabase.auth.onAuthStateChange((event, session) => {
+      console.log(event, session)
+    })
+    console.log(Email, Password);
     const { data, error } = await supabase.auth.signInWithPassword({
-      email: authValues.email,
-      password: authValues.password,
+      email: Email,
+      password: Password,
     });
-    if (error) {
-      alert("bugok");
-    }
-    if (data) {
-      alert("aight");
-      console.log("call: LOGIN FORM");
+    if (error) throw error;
+    else if (data) 
+    {
+      
+      //localStorage.setItem("token", JSON.stringify(data));
+      // const { data, error } = await supabase.auth.getSession();
+      // if (error) 
+      // {
+      //   console.log(error);
+      // } 
+      // else if (data) 
+      // {
+      //   console.log(data);
+      // }
       //setOpenLogin(false);
-      navigate("/member");
-    }
-  } catch (error) {
-    alert("error in log in " + error);
-  }
-};
-
-export const addUser = async (e) => {
-  try {
-    const { data, error } = await supabase.auth.signUp({
-      email: authValues.email,
-      password: authValues.password,
-    });
-    if (data) 
-    {
-      console.log(data);
-    }
-    if (error) 
-    {
-      console.log("err in signUp");
+      //navigate("/member");
     }
   } 
-  catch (err) 
+  catch (error) 
   {
-    //no function
+    toast.error(error);
+    console.log(error);
   }
 };
 
+export const addUser = async (userEmailR, userPassword) => {
+  const { data, error } = await supabase.auth.signUp({
+    email: userEmailR,
+    password: userPassword,
+  });
+  if (error) {
+    console.log(error);
+  }
+  else if (data) {
+    console.log(data);
+    const { error } = await supabase.auth.signOut();
+    if (error)
+    {
+      console.log(error)
+    }
+  }
+};

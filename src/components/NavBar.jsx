@@ -5,38 +5,71 @@ import * as Dialog from "@radix-ui/react-dialog";
 import { Cross2Icon } from "@radix-ui/react-icons";
 import { EventBus } from "../eventbus";
 import supabase from "../config/supabaseClient";
-import { OnLoginSubmit, AuthValues } from "../components/Auth";
+import { authValues } from "../components/Auth";
+import { ToastContainer, toast} from "react-toastify";
 
 const NavBar = () => {
   const navigate = useNavigate();
+
   // Login
   const [openLogin, setOpenLogin] = useState(false);
   const [loginForm, setLoginForm] = useState({
-    username: "",
+    email: "",
     password: "",
   });
-  const user = loginForm.username;
-  const pass = loginForm.password;
-
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const scrollIntoView = (id) => {
     const element = document.getElementById(id);
-    if (id === "home") {
+    if (id === "home") 
+    {
       window.scrollTo({ top: 0, behavior: "smooth" });
-    } else if (element) {
+    } 
+    else if (element) 
+    {
       element.scrollIntoView();
     }
   };
-
   const showLogin = () => {
     setOpenLogin(true);
   };
-
-  useEffect(() => {
-    EventBus.on("show-login", showLogin);
-    return () => {
-      EventBus.off("show-login");
-    };
-  }, []);
+  // const sendForLogIn = () =>
+  // {
+  //   authValues.email = loginForm.email;
+  //   authValues.password = loginForm.password;
+  //   onLoginSubmit(authValues.email, authValues.password);
+  // }
+  const onLoginSubmit = async (e) => {
+    try 
+    {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: loginForm.email,
+        password: loginForm.password,
+      });
+      if (error) throw error;
+      else if (data) 
+      {
+        setIsLoggedIn(true);
+        setOpenLogin(false);
+        localStorage.setItem("token", JSON.stringify(data));
+        navigate("/member");
+      }
+    } 
+    catch (error) 
+    {
+      console.log(error);
+    }
+  }
+  useEffect(() => 
+  {
+      if (localStorage.getItem("token"))
+      {
+        setIsLoggedIn(true);
+      }
+      else
+      {
+        setIsLoggedIn(false);
+      }
+  });
 
   return (
     <>
@@ -88,7 +121,7 @@ const NavBar = () => {
             </Link>
             <Dialog.Root open={openLogin} onOpenChange={setOpenLogin}>
               <Dialog.Trigger asChild>
-                <Link className="text-black text-3xl">Login</Link>
+                <Link className="text-black text-3xl" hidden={isLoggedIn}>Login</Link>
               </Dialog.Trigger>
               <Dialog.Portal>
                 <Dialog.Overlay className="bg-blackA6 data-[state=open]:animate-overlayShow fixed inset-0" />
@@ -100,23 +133,23 @@ const NavBar = () => {
                     Input your login credentials here.
                   </Dialog.Description>
                   <form
-                    onSubmit={() => {OnLoginSubmit()}}
+                    onSubmit={() => {onLoginSubmit()}}
                   >
                     <fieldset className="mb-[15px] flex items-center gap-5">
                       <label
                         className="text-violet11 w-[90px] text-right text-[15px]"
                         htmlFor="username"
                       >
-                        Username
+                        Email
                       </label>
                       <input
                         className="text-violet11 shadow-violet7 focus:shadow-violet8 inline-flex h-[35px] w-full flex-1 items-center justify-center rounded-[4px] px-[10px] text-[15px] leading-none shadow-[0_0_0_1px] outline-none focus:shadow-[0_0_0_2px]"
-                        id="username"
-                        value={loginForm.username}
+                        id="email"
+                        value={loginForm.email}
                         onChange={(e) =>
                           setLoginForm({
                             ...loginForm,
-                            username: e.target.value,
+                            email: e.target.value,
                           })
                         }
                       />
@@ -146,8 +179,9 @@ const NavBar = () => {
                         type="submit"
                         className="bg-green4 text-green11 hover:bg-green5 focus:shadow-green7 inline-flex h-[35px] items-center justify-center rounded-[4px] px-[15px] font-medium leading-none focus:shadow-[0_0_0_2px] focus:outline-none"
                       >
-                        Submit
+                        Log in
                       </button>
+                      <ToastContainer/>
                     </div>
                   </form>
                   <Dialog.Close asChild>
@@ -161,6 +195,16 @@ const NavBar = () => {
                 </Dialog.Content>
               </Dialog.Portal>
             </Dialog.Root>
+            <Link
+              onClick={() => {
+                setTimeout(() => {
+                  navigate("/member");
+                });
+              }}
+              className={`text-black text-3xl ${!isLoggedIn ? "hidden" : "none"}`}
+            >
+              Appointment
+            </Link>
           </div>
         </div>
       </header>
