@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import YearlyCalendar from "../../components/YearlyCalendar";
+import supabase from "../../config/supabaseClient";
 
 const AdminDashboard = () => {
   const [markedDates, setMarkedDates] = useState(null);
@@ -7,29 +8,45 @@ const AdminDashboard = () => {
   useEffect(() => {
     // TODO: set marked dates from database
     const currentYear = new Date().getFullYear();
-    setMarkedDates([
-      {
-        date: new Date(currentYear, 4, 28),
-        occupied: {
-          morning: null,
-          afternoon: "Edward Guevarra",
-        },
-      },
-      {
-        date: new Date(currentYear, 5, 20),
-        occupied: {
-          morning: "Lloyd Badillo",
-          afternoon: "Lloyd Badillo",
-        },
-      },
-      {
-        date: new Date(currentYear, 5, 23),
-        occupied: {
-          morning: "Lloyd Badillo",
-          afternoon: null,
-        },
-      },
-    ]);
+
+    const getMarkedDates = async () => {
+      // Get all dates from AppointedDates table
+      const { data: appointedDates } = await supabase
+        .from("AppointedDates")
+        .select("*");
+
+      const combinedAppointedDates = [];
+
+      appointedDates.forEach((appointedDate) => {
+        const date = appointedDate.date;
+        const schedule = appointedDate.schedule;
+
+        const combinedAppointedDate = combinedAppointedDates.find((date) => {
+          return appointedDate.date === date.compareDate;
+        });
+
+        if (combinedAppointedDate) {
+          if (schedule === "morning") {
+            combinedAppointedDate.occupied.morning = "occupied";
+          } else if (schedule === "afternoon") {
+            combinedAppointedDate.occupied.afternoon = "occupied";
+          }
+        } else {
+          combinedAppointedDates.push({
+            compareDate: date,
+            date: new Date(date),
+            occupied: {
+              morning: schedule === "morning" ? "occupied" : null,
+              afternoon: schedule === "afternoon" ? "occupied" : null,
+            },
+          });
+        }
+      });
+
+      setMarkedDates(combinedAppointedDates);
+    };
+
+    getMarkedDates();
   }, []);
 
   return (
