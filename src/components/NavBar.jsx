@@ -40,22 +40,24 @@ const NavBar = () => {
         password: loginForm.password,
       });
       if (error) throw error;
-      else if (data) {
+      else if (data) 
+      {
         const response = await supabase
           .from("VisitorAcc")
           .select("*")
           .eq("EmailAddress", data.user.email)
           .single();
-
-        if (response.error) {
+        if (response.error) 
+        {
           alert(response.error.message);
           return;
         }
 
-        if (response.data) {
+        if (response.data) 
+        {
           updateUser(response.data);
         }
-
+        
         setIsLoggedIn(true);
         setOpenLogin(false);
         localStorage.setItem("token", JSON.stringify(data));

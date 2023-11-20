@@ -2,23 +2,10 @@ import * as AlertDialog from "@radix-ui/react-alert-dialog";
 import * as Dialog from "@radix-ui/react-dialog";
 import { Cross2Icon } from "@radix-ui/react-icons";
 import { useEffect, useState } from "react";
-import elderList from "../components/elderTableList"
 import supabase from "../../config/supabaseClient";
 
 const AdminListElders = () => {
   const [deniedDialog, setDeniedDialog] = useState(false);
-
-  //! Data holder
-  const [nameOfElder, setElderName] = useState("");
-  const [birthday, setBirthday] = useState("");
-  const [age, setAge] = useState("");
-  const [address, setAddress] = useState("");
-  const [lastVisited, setLastVisited] = useState("");
-  const [family, setFamily] = useState("");
-  const [imageOfElder, setImageOfElder] = useState("");
-  const [remarks, setRemarks] = useState("");
-  
-  //! 
   const [tableElder, setTableElder] = useState("");
   useEffect(() => 
   {
@@ -56,15 +43,26 @@ const AdminListElders = () => {
             <th className="py-3 px-5 border-b border-gray-200">Remarks</th>
           </tr>
         </thead>
-        <tbody>
+        
         {tableElder && (
-            <tr>
+            <tbody>
               {tableElder.map(elderList =>(
-                 
+                   <tr>
+                   <td className="py-3 px-5">{elderList.NameOfElder}</td>
+                   <td className="py-3 px-5">{elderList.Birthday}</td>
+                   <td className="py-3 px-5">{elderList.Age}</td>
+                   <td className="py-3 px-5">{elderList.Address}</td>
+                   <td className="py-3 px-5">{elderList.LastVisited}</td>
+                   <td className="py-3 px-5">{elderList.Family}</td>
+                   <td className="py-3 px-5">
+                    <img className="w-14 h-14 m-auto" src="https://unsplash.it/100/100" alt="placeholder"/>
+                   </td>
+                   <td className="py-3 px-5">{elderList.Remarks}</td>
+                   </tr>
               ))}
-           </tr>
+           </tbody>
           )} 
-          </tbody>
+          
         {/* <tbody>
           <tr className="text-center">
             <td className="py-3 px-5">Lolo Juan</td>
