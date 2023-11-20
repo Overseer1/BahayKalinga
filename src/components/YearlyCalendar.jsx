@@ -17,7 +17,6 @@ const YearlyCalendar = ({
   onDatePicked,
   isMonthlyView = false,
 }) => {
-  console.log(new Date().getMonth());
   const [activeMonth, setActiveMonth] = useState(new Date().getMonth());
 
   useEffect(() => {
@@ -26,19 +25,21 @@ const YearlyCalendar = ({
   }, [isMonthlyView]);
 
   useEffect(() => {
-    Array.from(document.getElementsByClassName("month-container")).forEach(
-      (monthContainer) => {
-        if (
-          Number(activeMonth) ===
-          Number(monthContainer.getAttribute("data-month-id"))
-        ) {
-          monthContainer.style.display = "block";
-        } else {
-          monthContainer.style.display = "none";
+    if (isMonthlyView) {
+      Array.from(document.getElementsByClassName("month-container")).forEach(
+        (monthContainer) => {
+          if (
+            Number(activeMonth) ===
+            Number(monthContainer.getAttribute("data-month-id"))
+          ) {
+            monthContainer.style.display = "block";
+          } else {
+            monthContainer.style.display = "none";
+          }
         }
-      }
-    );
-  }, [activeMonth]);
+      );
+    }
+  }, [activeMonth, isMonthlyView]);
 
   return (
     <>
