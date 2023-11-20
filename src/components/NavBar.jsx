@@ -1,15 +1,16 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import logo from "../images/logo.png";
 import * as Dialog from "@radix-ui/react-dialog";
 import { Cross2Icon } from "@radix-ui/react-icons";
-import { EventBus } from "../eventbus";
 import supabase from "../config/supabaseClient";
-import { authValues } from "../components/Auth";
-import { ToastContainer, toast} from "react-toastify";
+import { ToastContainer, toast } from "react-toastify";
+import { UserContext } from "../providers/UserProvider";
 
 const NavBar = () => {
   const navigate = useNavigate();
+
+  const { updateUser } = useContext(UserContext);
 
   // Login
   const [openLogin, setOpenLogin] = useState(false);
@@ -20,17 +21,11 @@ const NavBar = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const scrollIntoView = (id) => {
     const element = document.getElementById(id);
-    if (id === "home") 
-    {
+    if (id === "home") {
       window.scrollTo({ top: 0, behavior: "smooth" });
-    } 
-    else if (element) 
-    {
+    } else if (element) {
       element.scrollIntoView();
     }
-  };
-  const showLogin = () => {
-    setOpenLogin(true);
   };
   // const sendForLogIn = () =>
   // {
@@ -39,36 +34,43 @@ const NavBar = () => {
   //   onLoginSubmit(authValues.email, authValues.password);
   // }
   const onLoginSubmit = async (e) => {
-    try 
-    {
+    try {
       const { data, error } = await supabase.auth.signInWithPassword({
         email: loginForm.email,
         password: loginForm.password,
       });
       if (error) throw error;
-      else if (data) 
-      {
+      else if (data) {
+        const response = await supabase
+          .from("VisitorAcc")
+          .select("*")
+          .eq("EmailAddress", data.user.email)
+          .single();
+
+        if (response.error) {
+          alert(response.error.message);
+          return;
+        }
+
+        if (response.data) {
+          updateUser(response.data);
+        }
+
         setIsLoggedIn(true);
         setOpenLogin(false);
         localStorage.setItem("token", JSON.stringify(data));
         navigate("/member");
       }
-    } 
-    catch (error) 
-    {
+    } catch (error) {
       console.log(error);
     }
-  }
-  useEffect(() => 
-  {
-      if (localStorage.getItem("token"))
-      {
-        setIsLoggedIn(true);
-      }
-      else
-      {
-        setIsLoggedIn(false);
-      }
+  };
+  useEffect(() => {
+    if (localStorage.getItem("token")) {
+      setIsLoggedIn(true);
+    } else {
+      setIsLoggedIn(false);
+    }
   });
 
   return (
@@ -121,7 +123,9 @@ const NavBar = () => {
             </Link>
             <Dialog.Root open={openLogin} onOpenChange={setOpenLogin}>
               <Dialog.Trigger asChild>
-                <Link className="text-black text-3xl" hidden={isLoggedIn}>Login</Link>
+                <Link className="text-black text-3xl" hidden={isLoggedIn}>
+                  Login
+                </Link>
               </Dialog.Trigger>
               <Dialog.Portal>
                 <Dialog.Overlay className="bg-blackA6 data-[state=open]:animate-overlayShow fixed inset-0" />
@@ -133,7 +137,9 @@ const NavBar = () => {
                     Input your login credentials here.
                   </Dialog.Description>
                   <form
-                    onSubmit={() => {onLoginSubmit()}}
+                    onSubmit={() => {
+                      onLoginSubmit();
+                    }}
                   >
                     <fieldset className="mb-[15px] flex items-center gap-5">
                       <label
@@ -181,7 +187,7 @@ const NavBar = () => {
                       >
                         Log in
                       </button>
-                      <ToastContainer/>
+                      <ToastContainer />
                     </div>
                   </form>
                   <Dialog.Close asChild>
@@ -201,7 +207,9 @@ const NavBar = () => {
                   navigate("/member");
                 });
               }}
-              className={`text-black text-3xl ${!isLoggedIn ? "hidden" : "none"}`}
+              className={`text-black text-3xl ${
+                !isLoggedIn ? "hidden" : "none"
+              }`}
             >
               Appointment
             </Link>
