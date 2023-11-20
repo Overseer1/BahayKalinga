@@ -14,54 +14,48 @@ import AdminListPreviousVisits from "./pages/Admin/AdminListPreviousVisits";
 import AdminListElders from "./pages/Admin/AdminListElders";
 import AdminListVisitors from "./pages/Admin/AdminListVisitors";
 import { Routes, Route } from "react-router-dom";
-import { useState } from "react";
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { UserProvider } from "./providers/UserProvider";
+import "react-toastify/dist/ReactToastify.css";
 
 function App() {
-
-  const [openLogin, setOpenLogin] = useState(false);
-  const [loginForm, setLoginForm] = useState({
-    username: "",
-    password: "",
-  });
-
   return (
-    <div>
-      <Routes>
-        {/* Front */}
-        <Route path="/" element={<FrontLayout />}>
-          <Route index element={<Home />} />
-          <Route path="register" element={<Register />} />
-          <Route path="member" element={<MemberLayout />}>
-            <Route index element={<MemberDashboard />} />
+    <UserProvider>
+      <div>
+        <Routes>
+          {/* Front */}
+          <Route path="/" element={<FrontLayout />}>
+            <Route index element={<Home />} />
+            <Route path="register" element={<Register />} />
+            <Route path="member" element={<MemberLayout />}>
+              <Route index element={<MemberDashboard />} />
+            </Route>
           </Route>
-        </Route>
-        {/* Admin */}
-        <Route path="/admin/login" element={<AdminLogin />} />
-        <Route path="/admin" element={<AdminLayout />}>
-          <Route index element={<AdminDashboard />} />
-          <Route
-            path="pending-appointments"
-            element={<AdminPendingAppointments />}
-          />
-          <Route
-            path="upcoming-appointments"
-            element={<AdminUpcomingAppointments />}
-          />
-          <Route
-            path="cancelled-requests"
-            element={<AdminCancelledRequests />}
-          />
-          <Route
-            path="list-previous-visits"
-            element={<AdminListPreviousVisits />}
-          />
-          <Route path="list-elders" element={<AdminListElders />} />
-          <Route path="list-visitors" element={<AdminListVisitors />} />
-        </Route>
-      </Routes>
-    </div>
+          {/* Admin */}
+          <Route path="/admin/login" element={<AdminLogin />} />
+          <Route path="/admin" element={<AdminLayout />}>
+            <Route index element={<AdminDashboard />} />
+            <Route
+              path="pending-appointments"
+              element={<AdminPendingAppointments />}
+            />
+            <Route
+              path="upcoming-appointments"
+              element={<AdminUpcomingAppointments />}
+            />
+            <Route
+              path="cancelled-requests"
+              element={<AdminCancelledRequests />}
+            />
+            <Route
+              path="list-previous-visits"
+              element={<AdminListPreviousVisits />}
+            />
+            <Route path="list-elders" element={<AdminListElders />} />
+            <Route path="list-visitors" element={<AdminListVisitors />} />
+          </Route>
+        </Routes>
+      </div>
+    </UserProvider>
   );
 }
 
