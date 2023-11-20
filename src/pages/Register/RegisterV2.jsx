@@ -109,7 +109,7 @@ const Register = () => {
         } 
         else if (image === null) 
         {
-          alert("Please insert an image for verification.");
+          alert("Please upload a selfie for verification.");
         }
         else if (checker.length < 8)
         {
@@ -205,7 +205,7 @@ const Register = () => {
                   />
                   <input
                     className="h-10 p-3 border border-gray-400 rounded-md"
-                    type="text"
+                    type="email"
                     placeholder="Email Address"
                     disabled={isSignedUp}
                     value={EmailAddress}
