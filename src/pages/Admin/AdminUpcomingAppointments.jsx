@@ -1,63 +1,69 @@
 import * as Dialog from "@radix-ui/react-dialog";
 import { Cross2Icon } from "@radix-ui/react-icons";
 import { useState } from "react";
+import supabase from "../../config/supabaseClient";
+import Loader from "../../components/Loader";
 
 const AdminUpcomingAppointments = () => {
   const [deniedDialog, setDeniedDialog] = useState(false);
 
+  // get appointments from database
+  const [appointments, setAppointments] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const fetchAppointments = async () => {
+    // join users and elder table
+    const { data, error } = await supabase
+      .from("Appointments")
+      .select(
+        `*,
+        VisitorAcc: UserId (
+          FirstName,
+          MiddleName,
+          LastName
+        ),
+        ElderTable: ElderToVisit (
+          NameOfElder
+        )`
+      )
+      .eq("Status", "approved");
+
+    console.log(data);
+
+    if (error) console.log(error);
+    else {
+      setAppointments(data);
+      setLoading(false);
+    }
+  };
+  if (loading) fetchAppointments();
+
   return (
     <div className="mx-4 rounded-md">
+      {loading && <Loader />}
       <table className="w-full bg-white">
         <thead>
           <tr>
+            <th className="py-3 px-5 border-b border-gray-200">User Name</th>
+            <th className="py-3 px-5 border-b border-gray-200">Elder Name</th>
             <th className="py-3 px-5 border-b border-gray-200">
-              Name of Visitor
+              Date of Appointment
             </th>
-            <th className="py-3 px-5 border-b border-gray-200">
-              Elder to Visit
-            </th>
-            <th className="py-3 px-5 border-b border-gray-200">
-              Date of Appoinment
-            </th>
-            <th className="py-3 px-5 border-b border-gray-200">Email</th>
-            <th className="py-3 px-5 border-b border-gray-200">Address</th>
-            <th className="py-3 px-5 border-b border-gray-200">
-              Attached Photo
-            </th>
-            <th className="py-3 px-5 border-b border-gray-200">Status</th>
           </tr>
         </thead>
         <tbody>
-          <tr className="text-center">
-            <td className="py-3 px-5">Edward Guevarra</td>
-            <td className="py-3 px-5">Lolo Pedro</td>
-            <td className="py-3 px-5">September 21, 2021</td>
-            <td className="py-3 px-5">edwardguevarra2003@gmail.com</td>
-            <td className="py-3 px-5">San Juan City</td>
-            <td className="py-3 px-5">
-              <img
-                className="w-14 h-14 m-auto"
-                src="https://dummyimage.com/100x100.jpg"
-                alt=""
-              />
-            </td>
-            <td className="py-3 px-5">Arriving</td>
-          </tr>
-          <tr className="text-center">
-            <td className="py-3 px-5">John Doe</td>
-            <td className="py-3 px-5">Lola Maria</td>
-            <td className="py-3 px-5">September 22, 2021</td>
-            <td className="py-3 px-5">johndoe@example.com</td>
-            <td className="py-3 px-5">Quezon City</td>
-            <td className="py-3 px-5">
-              <img
-                className="w-14 h-14 m-auto"
-                src="https://dummyimage.com/100x100.jpg"
-                alt=""
-              />
-            </td>
-            <td className="py-3 px-5">Ongoing</td>
-          </tr>
+          {appointments.map((appointment) => (
+            <tr key={appointment.id} className="text-center">
+              <td className="py-3 px-5">
+                {appointment.ElderTable.NameOfElder}
+              </td>
+              <td className="py-3 px-5">
+                {appointment.VisitorAcc.FirstName}{" "}
+                {appointment.VisitorAcc.MiddleName}{" "}
+                {appointment.VisitorAcc.LastName}
+              </td>
+              <td className="py-3 px-5">{appointment.Date}</td>
+            </tr>
+          ))}
         </tbody>
       </table>
       <Dialog.Root open={deniedDialog} onOpenChange={setDeniedDialog}>

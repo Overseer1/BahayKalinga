@@ -1,9 +1,11 @@
-import React, { useMemo, useState, useEffect } from "react";
+import React, { useMemo, useState, useEffect, useContext } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
 import { Cross2Icon } from "@radix-ui/react-icons";
 import TermsConditions from "../Register/TermsConditions";
 import YearlyCalendar from "../../components/YearlyCalendar";
 import supabase from "../../config/supabaseClient";
+import Loader from "../../components/Loader";
+import { UserContext } from "../../providers/UserProvider";
 
 /**
  * Generates a function comment for the given function body.
@@ -14,7 +16,10 @@ import supabase from "../../config/supabaseClient";
 //! *optional
 
 const MemberDashboard = () => {
+  const { user } = useContext(UserContext);
+
   const relationshipOptions = [
+    "Select Relationship",
     "Daughter",
     "Son",
     "Spouse",
@@ -24,13 +29,13 @@ const MemberDashboard = () => {
     "Granddaughter",
     "Grandson",
   ];
+
   const [elderOptions, setElderOptions] = useState([]);
+  const [elderId, setElderId] = useState(null);
+
   const defaultDetail = {
     fullName: "",
-    address: "",
-    elderName: "",
-    relationship: "Daughter",
-    reason: "",
+    relationship: "Select Relationship",
     image: null, // Add image property to store the selected image file
   };
   const [step, setStep] = useState(1);
@@ -45,26 +50,18 @@ const MemberDashboard = () => {
   };
   const submitDetails = async () => {
     const emptyDetails = details.filter((detail) => {
-      console.log(
-        detail.fullName === "",
-        detail.address === "",
-        detail.elderName === "",
-        detail.relationship === "",
-        detail.image === null
-      );
       return (
         detail.fullName === "" ||
-        detail.address === "" ||
-        detail.elderName === "" ||
-        detail.relationship === "" ||
+        detail.relationship === "Select Relationship" ||
         detail.image === null
       );
     });
-    if (emptyDetails.length > 0) {
+
+    console.log(emptyDetails.length > 0, elderId === null);
+    if (emptyDetails.length > 0 || elderId === null) {
       alert("Please input all details");
       return;
     }
-    const currentYear = new Date().getFullYear();
 
     // Get all dates from AppointedDates table
     const { data: appointedDates } = await supabase
@@ -142,52 +139,65 @@ const MemberDashboard = () => {
   };
   const [selectedTime, setSelectedTime] = useState(null);
   const saveTime = async (time) => {
+    setIsLoading(true);
     setSelectedTime(time);
 
     const BUCKET_NAME = "ImageCompanion";
 
     const submitDate = new Date(selectedDate);
     submitDate.setHours(0, 0, 0, 0);
-    // add one day
     submitDate.setDate(submitDate.getDate() + 1);
 
+    /* Add Appointment */
+    const { data, error } = await supabase
+      .from("Appointments")
+      .insert([
+        {
+          ElderToVisit: elderId,
+          Date: submitDate,
+          Schedule: time,
+          Status: "pending",
+          UserId: user.id,
+        },
+      ])
+      .select();
+
+    if (error) {
+      alert(error.message);
+      return;
+    }
+
+    // get id of inserted appointment
+    const appointmentId = data[0].id;
+
+    /* Add Visitor */
     await Promise.all(
       details.map(async (detail) => {
         const randomString = Math.random().toString(36).substring(2, 15);
         const filePath = `${randomString}-${detail.image.name}`;
-
         const { error: uploadError } = await supabase.storage
           .from(BUCKET_NAME)
           .upload(filePath, detail.image);
-
         if (uploadError) {
           console.error(uploadError);
           return;
         }
-
         const response = supabase.storage
           .from(BUCKET_NAME)
           .getPublicUrl(filePath);
-
         const publicURL = response?.data?.publicUrl;
-
-        const { error } = await supabase.from("Appointments").insert([
+        const { error } = await supabase.from("AppointmentVisitors").insert([
           {
-            NameOfVisitor: detail.fullName,
-            Address: detail.address,
-            ElderToVisit: detail.elderName,
-            ElderRelationship: detail.relationship,
-            Image: publicURL,
-            Date: submitDate,
-            Schedule: time,
+            name: detail.fullName,
+            relationship: detail.relationship,
+            image_url: publicURL,
+            appointment_id: appointmentId,
           },
         ]);
-
         if (error) {
           alert(error.message);
           return;
         }
-
         // insert to AppointedDates table
         const { error: error2 } = await supabase.from("AppointedDates").insert([
           {
@@ -195,7 +205,6 @@ const MemberDashboard = () => {
             schedule: time,
           },
         ]);
-
         if (error2) {
           alert(error2.message);
           return;
@@ -203,10 +212,30 @@ const MemberDashboard = () => {
       })
     );
 
+    setIsLoading(false);
+
     setStep(3);
   };
 
   useEffect(() => {
+    // validate if has appointment already
+    const getAppointment = async () => {
+      // const { data: appointments, error } = await supabase
+      //   .from("Appointments")
+      //   .select("*")
+      //   .eq("UserId", user.id)
+      //   .eq("Status", "pending");
+      // if (error) {
+      //   alert(error.message);
+      //   return;
+      // }
+      // if (appointments.length > 0) {
+      //   setStep(3);
+      // }
+    };
+
+    getAppointment();
+
     // get ElderTable data and set to elderOptions
     const getElderOptions = async () => {
       const { data: elders, error } = await supabase
@@ -227,24 +256,42 @@ const MemberDashboard = () => {
             };
           })
         );
-        // set default elderName to first elder
-        const updatedDetails = [...details];
-        updatedDetails[0].elderName = elders[0].id;
-        setDetails(updatedDetails);
+
+        setElderId(elders[0].id);
       }
     };
 
     getElderOptions();
-  }, []); // Empty dependency array means this runs once on mount
+  }, [user]); // Empty dependency array means this runs once on mount
+
+  const [isLoading, setIsLoading] = useState(false);
 
   return (
     <div className="text-center">
+      {isLoading && <Loader />}
       {step === 1 && (
         <>
           <div className="text-2xl font-bold">Who are you with?</div>
           <div className="text-md font-light">
             Please input the following details required:
           </div>
+          <div className="flex flex-col gap-2 items-start justify-center mt-10">
+            <label>Name of Elder to Visit</label>
+            <div>
+              <select
+                className="h-12 px-4 rounded-md border border-gray-400 bg-white"
+                placeholder="Relationship with the elder"
+                onChange={(e) => setElderId(e.target.value)}
+              >
+                {elderOptions.map((option) => (
+                  <option key={option.id} value={option.id}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+
           {details.map((detail, index) => {
             return (
               <div
@@ -252,6 +299,7 @@ const MemberDashboard = () => {
                 key={index}
               >
                 <div className="flex flex-col gap-2 grow">
+                  <label className="text-left">Visitor Details</label>
                   <input
                     className="h-12 px-4 rounded-md border border-gray-400"
                     type="text"
@@ -261,28 +309,6 @@ const MemberDashboard = () => {
                       handleInputChange(index, "fullName", e.target.value)
                     }
                   />
-                  <input
-                    className="h-12 px-4 rounded-md border border-gray-400"
-                    type="text"
-                    placeholder="Address"
-                    value={detail.address}
-                    onChange={(e) =>
-                      handleInputChange(index, "address", e.target.value)
-                    }
-                  />
-                  <select
-                    className="h-12 px-4 rounded-md border border-gray-400 bg-white"
-                    placeholder="Relationship with the elder"
-                    onChange={(e) =>
-                      handleInputChange(index, "elderName", e.target.value)
-                    }
-                  >
-                    {elderOptions.map((option) => (
-                      <option key={option.id} value={option.id}>
-                        {option.label}
-                      </option>
-                    ))}
-                  </select>
                   <select
                     className="h-12 px-4 rounded-md border border-gray-400 bg-white"
                     placeholder="Relationship with the elder"

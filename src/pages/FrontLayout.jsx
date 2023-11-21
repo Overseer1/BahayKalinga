@@ -33,7 +33,7 @@ const FrontLayout = () => {
     };
 
     setUserData();
-  });
+  }, []);
 
   return (
     <div>
