@@ -14,11 +14,11 @@ const buttons = [
     path: "/admin/pending-appointments",
   },
   {
-    name: "Upcoming Appointments",
+    name: "Approved Appointments",
     path: "/admin/upcoming-appointments",
   },
   {
-    name: "Cancelled Requests",
+    name: "Cancelled Appointments",
     path: "/admin/cancelled-requests",
   },
   {
@@ -53,10 +53,8 @@ const AdminLayout = () => {
     return page[location.pathname] || "Error";
   }, [location.pathname]);
 
-  useEffect(() => 
-  {
-    if (!localStorage.getItem("tokenAdmin")) 
-    {
+  useEffect(() => {
+    if (!localStorage.getItem("tokenAdmin")) {
       navigate("/admin/login");
     }
   });
