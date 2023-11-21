@@ -57,7 +57,6 @@ const NavBar = () => {
         {
           updateUser(response.data);
         }
-        
         setIsLoggedIn(true);
         setOpenLogin(false);
         localStorage.setItem("token", JSON.stringify(data));

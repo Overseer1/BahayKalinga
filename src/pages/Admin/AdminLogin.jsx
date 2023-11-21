@@ -7,39 +7,38 @@ const AdminLogin = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleLogin = async(e) => {
+  const handleLogin = (e) => {
     e.preventDefault();
 
     // Perform login logic here
     //! USE supabase.auth.admin AT THIS AREA
-    const {data, error} = await supabase.auth.signInWithPassword({
-      email: username,
-      password: password,
-    })
-    if (error) throw error
-    else if (data)
-    {
-      const response = await supabase
-      .from('users')
-      .select()
-      .eq('id', process.env.adminID)
-      if (response.error)
-      {
-        console.log(error)
-        navigate("/admin/login")
-      }
-      else if (response.data)
-      {
-        localStorage.setItem("tokenAdmin", process.env.adminID);
-        navigate("/admin")
-      }
-    }
-    // if (username === "admin" && password === "password") {
-    //   localStorage.setItem("tokenAdmin", "insertauthtokenhere");
-    //   navigate("/admin");
-    // } else {
-    //   alert("Login failed");
+    // const {data, error} = await supabase.auth.signInWithPassword({
+    //   email: username,
+    //   password: password,
+    // })
+    // if (error) throw error
+    // else if (data)
+    // {
+    //   const response = await supabase
+    //   .from('users')
+    //   .select()
+    //   .eq('id', process.env.adminID)
+    //   if (response.error)
+    //   {
+    //     navigate("/admin/login")
+    //   }
+    //   else if (response.data)
+    //   {
+    //     localStorage.setItem("tokenAdmin", process.env.adminID);
+    //     navigate("/admin/login")
+    //   }
     // }
+    if (username === "admin" && password === "password") {
+      localStorage.setItem("tokenAdmin", "insertauthtokenhere");
+      navigate("/admin");
+    } else {
+      alert("Login failed");
+    }
   };
 
   return (
