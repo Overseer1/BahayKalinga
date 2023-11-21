@@ -4,6 +4,7 @@ import { Cross2Icon } from "@radix-ui/react-icons";
 import { useState } from "react";
 import supabase from "../../config/supabaseClient";
 import Loader from "../../components/Loader";
+import emailjs from '@emailjs/browser';
 
 const AdminPendingAppointments = () => {
   const [deniedDialog, setDeniedDialog] = useState(false);
@@ -14,6 +15,11 @@ const AdminPendingAppointments = () => {
   // get appointments from database
   const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  const [visitor_name, setvisitorName] = useState(true);
+  const [dateOfAppointment, setAppointmentDate] = useState(true);
+  const [timeSched, setTimeSched] = useState(true);
+
   const fetchAppointments = async () => {
     // join users and elder table
     const { data, error } = await supabase
@@ -41,7 +47,16 @@ const AdminPendingAppointments = () => {
   };
   if (loading) fetchAppointments();
 
+  // const EmailShit = () =>
+  // {
+  //   const sendEmailApproval = (e) =>
+  //   {
+  //     e.preventDefault();
+  //     emailjs.sendForm('service_kyd5pgu', 'template_green', )
+  //   }
+  // }
   const approve = async (appointment) => {
+
     // update appointment status to approved
     setLoading(true);
     await supabase
