@@ -13,6 +13,7 @@ import AdminCancelledRequests from "./pages/Admin/AdminCancelledRequests";
 import AdminListPreviousVisits from "./pages/Admin/AdminListPreviousVisits";
 import AdminListElders from "./pages/Admin/AdminListElders";
 import AdminListVisitors from "./pages/Admin/AdminListVisitors";
+import PasswordReset from "./pages/Member/PasswordReset";
 import { Routes, Route } from "react-router-dom";
 import { UserProvider } from "./providers/UserProvider";
 import "react-toastify/dist/ReactToastify.css";
@@ -27,6 +28,7 @@ function App() {
             <Route index element={<Home />} />
             <Route path="register" element={<Register />} />
             <Route path="member" element={<MemberLayout />}>
+            <Route path="resetPass" element={<PasswordReset />} />
               <Route index element={<MemberDashboard />} />
             </Route>
           </Route>

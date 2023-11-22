@@ -53,13 +53,13 @@ const AdminUpcomingAppointments = () => {
         <tbody>
           {appointments.map((appointment) => (
             <tr key={appointment.id} className="text-center">
-              <td className="py-3 px-5">
-                {appointment.ElderTable.NameOfElder}
-              </td>
-              <td className="py-3 px-5">
+               <td className="py-3 px-5">
                 {appointment.VisitorAcc.FirstName}{" "}
                 {appointment.VisitorAcc.MiddleName}{" "}
                 {appointment.VisitorAcc.LastName}
+              </td>
+              <td className="py-3 px-5">
+                {appointment.ElderTable.NameOfElder}
               </td>
               <td className="py-3 px-5">{appointment.Date}</td>
             </tr>

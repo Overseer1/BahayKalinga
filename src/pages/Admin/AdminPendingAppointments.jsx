@@ -1,7 +1,7 @@
 import * as AlertDialog from "@radix-ui/react-alert-dialog";
 import * as Dialog from "@radix-ui/react-dialog";
 import { Cross2Icon } from "@radix-ui/react-icons";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import supabase from "../../config/supabaseClient";
 import Loader from "../../components/Loader";
 import emailjs from '@emailjs/browser';
@@ -47,14 +47,21 @@ const AdminPendingAppointments = () => {
   };
   if (loading) fetchAppointments();
 
-  // const EmailShit = () =>
-  // {
-  //   const sendEmailApproval = (e) =>
-  //   {
-  //     e.preventDefault();
-  //     emailjs.sendForm('service_kyd5pgu', 'template_green', )
-  //   }
-  // }
+  const form = useRef();
+  const sendEmailApproval = (e) =>
+  {
+    e.preventDefault();  
+    emailjs.sendForm('service_kyd5pgu', 'template_green', form.current, 'nvnvA876L4ftHfSIf')
+    .then(
+      (result) => {
+        console.log(result.text)
+      },
+      (error) => {
+        console.log(error.text)
+      }
+    )
+  }
+
   const approve = async (appointment) => {
 
     // update appointment status to approved
@@ -132,12 +139,20 @@ const AdminPendingAppointments = () => {
               </td>
               <td className="py-3 px-5">
                 <div className="flex items-center gap-2 justify-center">
-                  <div
+                  {/* <form ref={form} onSubmit={sendEmailApproval} hidden={true}>
+                    <input type="text" name="visitor_name" value={appointment.VisitorAcc.FirstName + " " +appointment.VisitorAcc.MiddleName + " " +appointment.VisitorAcc.LastName}/>
+                    <input type="text" name="dateOfAppointment" value={appointment.Date}/>
+                    <input type="text" name="timeSched" value={appointment.Schedule === "morning"
+                  ? "7:00 AM - 10:00 AM"
+                  : "1:00 PM - 3:00 PM"}/>
+                  </form> */}
+                  <button
+                    type="submit"
                     onClick={() => approve(appointment)}
                     className="cursor-pointer text-blue-600"
                   >
                     Approve
-                  </div>
+                  </button>
                   <div>/</div>
                   <AlertDialog.Root>
                     <AlertDialog.Trigger asChild>
@@ -181,7 +196,7 @@ const AdminPendingAppointments = () => {
                       </AlertDialog.Content>
                     </AlertDialog.Portal>
                   </AlertDialog.Root>
-                </div>
+                </div>  
               </td>
             </tr>
           ))}

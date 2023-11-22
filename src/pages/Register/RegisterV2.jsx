@@ -41,29 +41,7 @@ const Register = () => {
     authValues.confpassword = ConfPassword;
     addUser(EmailAddress, ConfPassword);
   } 
-  //! NOTICE: onImageChange is needed. Fix error code or merge with imageadd.
-  const onImageChange = (e) => {
-    setImage(URL.createObjectURL(e.target.files[0]));
-  };
-
-  //! NOT IN USE
-  const sendVerification = async () => 
-  {
-    const { data, error } = await supabase.auth.signInWithOtp({
-      email: EmailAddress,
-    });
-    if (error) 
-    {
-      setHasSignUp(false);
-      toast.error("error in sending OTP");
-      console.log(error);
-    }
-    else if (data) 
-    {
-      toast.info("OTP sent to your email!");
-    }
-  };
-
+  
   const verifier = async () => 
   {
     if (hasSignUp)
@@ -94,7 +72,7 @@ const Register = () => {
     try 
     {
         const checker = document.getElementById("finalPass").value;
-        if (!FirstName || !MiddleName || !LastName || !Address || !EmailAddress) 
+        if (!FirstName || !LastName || !Address || !EmailAddress) 
         {
           alert("Please fill out the form completely empty");
           return;
