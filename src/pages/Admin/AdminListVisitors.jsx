@@ -27,6 +27,7 @@ const AdminListVisitors = () => {
             <th className="py-3 px-5 border-b border-gray-200">
               Accompanied By
             </th>
+            <th className="py-3 px-5 border-b border-gray-200">Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -44,6 +45,14 @@ const AdminListVisitors = () => {
               />
             </td>
             <td className="py-3 px-5">Edward Guevarra</td>
+            <td className="py-3 px-5 text-center">
+              <button className="mb-2 bg-green4 text-green11 hover:bg-green5 focus:shadow-green7 inline-flex h-[35px] items-center justify-center rounded-[4px] px-[15px] font-medium leading-none focus:shadow-[0_0_0_2px] focus:outline-none">
+                Edit
+              </button>
+              <button className="bg-red4 text-red11 hover:bg-red5 focus:shadow-red7 inline-flex h-[35px] items-center justify-center rounded-[4px] px-[15px] font-medium leading-none focus:shadow-[0_0_0_2px] focus:outline-none">
+                Delete
+              </button>
+            </td>
           </tr>
         </tbody>
       </table>
