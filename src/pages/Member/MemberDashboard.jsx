@@ -271,7 +271,8 @@ const MemberDashboard = () => {
       {isLoading && <Loader />}
       {step === 1 && (
         <>
-          <div className="text-2xl font-bold">Who are you with?</div>
+          <div className="text-2xl font-bold">Name of visitors</div>
+          <label className="text-md font-light">*This includes you.</label>
           <div className="text-md font-light">
             Please input the following details required:
           </div>
