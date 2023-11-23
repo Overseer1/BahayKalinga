@@ -1,11 +1,72 @@
 import * as AlertDialog from "@radix-ui/react-alert-dialog";
 import * as Dialog from "@radix-ui/react-dialog";
 import { Cross2Icon } from "@radix-ui/react-icons";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import supabase from "../../config/supabaseClient";
+import Lightbox from "yet-another-react-lightbox";
+import "yet-another-react-lightbox/styles.css";
 
 const AdminListVisitors = () => {
   const [deniedDialog, setDeniedDialog] = useState(false);
+
+  const [visitors, setVisitors] = useState([]);
+
+  // get all visitors from database
+  const fetchVisitors = async () => {
+    let { data: visitors, error } = await supabase
+      .from("AppointmentVisitors")
+      .select(
+        `*, 
+        Appointments: appointment_id (
+          VisitorAcc: UserId (FirstName, MiddleName, LastName, EmailAddress, Address), 
+          ElderTable: ElderToVisit (NameOfElder),
+          Date
+        )`
+      )
+      .order("id", { ascending: false });
+    console.log(visitors);
+    if (error) console.log("error", error);
+    else setVisitors(visitors);
+  };
+
+  const timeSince = (date) => {
+    var seconds = Math.floor((new Date() - date) / 1000);
+    var interval = seconds / 31536000;
+
+    if (interval > 1) {
+      return Math.floor(interval) + " years";
+    }
+    interval = seconds / 2592000;
+    if (interval > 1) {
+      return Math.floor(interval) + " months";
+    }
+    interval = seconds / 86400;
+    if (interval > 1) {
+      return Math.floor(interval) + " days";
+    }
+    interval = seconds / 3600;
+    if (interval > 1) {
+      return Math.floor(interval) + " hours";
+    }
+    interval = seconds / 60;
+    if (interval > 1) {
+      return Math.floor(interval) + " minutes";
+    }
+    if (seconds < 0) return "long time";
+    return Math.floor(seconds) + " seconds";
+  };
+
+  useEffect(() => {
+    fetchVisitors();
+  }, []);
+
+  const [open, setOpen] = useState(false);
+  const [viewImage, setViewImage] = useState("");
+
+  const openImage = (imageUrl) => {
+    setViewImage(imageUrl);
+    setOpen(true);
+  };
 
   return (
     <div className="mx-4 rounded-md">
@@ -31,29 +92,42 @@ const AdminListVisitors = () => {
           </tr>
         </thead>
         <tbody>
-          <tr className="text-center">
-            <td className="py-3 px-5">Edward Guevarra</td>
-            <td className="py-3 px-5">edwardguevarra2003@gmail.com</td>
-            <td className="py-3 px-5">Lolo Juan</td>
-            <td className="py-3 px-5">5 days ago</td>
-            <td className="py-3 px-5">18 Marco St.</td>
-            <td className="py-3 px-5">
-              <img
-                className="w-14 h-14 m-auto"
-                src="https://unsplash.it/100/100"
-                alt="placeholder"
-              />
-            </td>
-            <td className="py-3 px-5">Edward Guevarra</td>
-            <td className="py-3 px-5 text-center">
-              <button className="mb-2 bg-green4 text-green11 hover:bg-green5 focus:shadow-green7 inline-flex h-[35px] items-center justify-center rounded-[4px] px-[15px] font-medium leading-none focus:shadow-[0_0_0_2px] focus:outline-none">
-                Edit
-              </button>
-              <button className="bg-red4 text-red11 hover:bg-red5 focus:shadow-red7 inline-flex h-[35px] items-center justify-center rounded-[4px] px-[15px] font-medium leading-none focus:shadow-[0_0_0_2px] focus:outline-none">
-                Delete
-              </button>
-            </td>
-          </tr>
+          {visitors.map((visitor) => (
+            <tr key={visitor.id} className="text-center">
+              <td className="py-3 px-5">{visitor.name}</td>
+              <td className="py-3 px-5">
+                {visitor?.Appointments?.VisitorAcc?.EmailAddress}
+              </td>
+              <td className="py-3 px-5">
+                {visitor?.Appointments?.VisitorAcc?.FirstName}{" "}
+                {visitor?.Appointments?.VisitorAcc?.MiddleName}{" "}
+                {visitor?.Appointments?.VisitorAcc?.LastName}
+              </td>
+              <td className="py-3 px-5">
+                {timeSince(new Date(visitor?.Appointments?.Date))} ago
+              </td>
+              <td className="py-3 px-5">
+                {visitor?.Appointments?.VisitorAcc?.Address}
+              </td>
+              <td className="py-3 px-5">
+                <img
+                  className="w-14 h-14 m-auto cursor-pointer"
+                  src={visitor?.image_url}
+                  alt="placeholder"
+                  onClick={() => openImage(visitor?.image_url)}
+                />
+              </td>
+              <td className="py-3 px-5">{visitor?.accompanied_by}</td>
+              <td className="py-3 px-5 text-center">
+                <button className="mb-2 bg-green4 text-green11 hover:bg-green5 focus:shadow-green7 inline-flex h-[35px] items-center justify-center rounded-[4px] px-[15px] font-medium leading-none focus:shadow-[0_0_0_2px] focus:outline-none">
+                  Edit
+                </button>
+                <button className="bg-red4 text-red11 hover:bg-red5 focus:shadow-red7 inline-flex h-[35px] items-center justify-center rounded-[4px] px-[15px] font-medium leading-none focus:shadow-[0_0_0_2px] focus:outline-none">
+                  Delete
+                </button>
+              </td>
+            </tr>
+          ))}
         </tbody>
       </table>
       <Dialog.Root open={deniedDialog} onOpenChange={setDeniedDialog}>
@@ -92,6 +166,11 @@ const AdminListVisitors = () => {
           </Dialog.Content>
         </Dialog.Portal>
       </Dialog.Root>
+      <Lightbox
+        open={open}
+        close={() => setOpen(false)}
+        slides={[{ src: viewImage }]}
+      />
     </div>
   );
 };
