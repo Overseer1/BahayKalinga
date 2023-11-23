@@ -71,6 +71,7 @@ const Register = () => {
   const submitToDB = async (e) => {
     try 
     {
+      //! PUT THROW ERR FOR EVERY STATEMENT
         const checker = document.getElementById("finalPass").value;
         if (!FirstName || !LastName || !Address || !EmailAddress) 
         {
