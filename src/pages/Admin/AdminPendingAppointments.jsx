@@ -107,6 +107,13 @@ const AdminPendingAppointments = () => {
             type: "cancelled",
           },
         ]);
+
+        await supabase
+          .from("AppointedDates")
+          .delete()
+          .eq("date", selectedAppointment.Date)
+          .eq("schedule", selectedAppointment.Schedule);
+
         fetchAppointments();
         setDeniedDialog(false);
       })
