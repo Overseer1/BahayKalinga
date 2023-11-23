@@ -35,80 +35,73 @@ const Register = () => {
 
   const [isSignedUp, setIsSignedUp] = useState(false);
 
-  const sendForSignUp = () =>
-  {
+  const sendForSignUp = () => {
     authValues.email = EmailAddress;
     authValues.confpassword = ConfPassword;
     addUser(EmailAddress, ConfPassword);
-  } 
-  
-  const verifier = async () => 
-  {
-    if (hasSignUp)
-    {
+  };
+
+  const verifier = async () => {
+    if (hasSignUp) {
       const { data: OTPD, error: errOTP } = await supabase.auth.verifyOtp({
         email: EmailAddress,
         token: verificationCode,
         type: "email",
       });
-      if (errOTP) 
-      {
+      if (errOTP) {
         toast.error("Wrong OTP submitted.");
-      } 
-      else if (OTPD) 
-      {
+      } else if (OTPD) {
         toast.info("OTP verified!, You have been registered.");
         navigate("/");
       }
       return;
-    }
-    else
-    {
+    } else {
       toast.warning("Please finish signing up first.");
     }
   };
- 
+
   const submitToDB = async (e) => {
-    try 
-    {
-      //! PUT THROW ERR FOR EVERY STATEMENT
-        const checker = document.getElementById("finalPass").value;
-        if (!FirstName || !LastName || !Address || !EmailAddress) 
-        {
-          alert("Please fill out the form completely empty");
-          return;
-        } 
-        else if (document.getElementById("confirmPass").value !== document.getElementById("finalPass").value) 
-        {
-          alert("Password did not match");
-        } 
-        else if (!document.getElementById("checkT").checked) 
-        {
-          alert("Please accept the Terms & Conditions.");
-        } 
-        else if (image === null) 
-        {
-          alert("Please upload a selfie for verification.");
+    try {
+      const checker = document.getElementById("finalPass").value;
+      if (!FirstName || !LastName || !Address || !EmailAddress) {
+        alert("Please fill out the form completely empty");
+        return;
+      } else if (
+        document.getElementById("confirmPass").value !==
+        document.getElementById("finalPass").value
+      ) {
+        alert("Password did not match");
+      } else if (!document.getElementById("checkT").checked) {
+        alert("Please accept the Terms & Conditions.");
+      } else if (image === null) {
+        alert("Please upload a selfie for verification.");
+      } else if (checker.length < 8) {
+        alert("Your password should be at least 8 characters");
+      } else {
+        const data = await supabase
+          .from("VisitorAcc")
+          .insert([
+            { LastName, FirstName, MiddleName, Address, EmailAddress, ImageID },
+          ])
+          .single();
+        if (data.error) throw data.error;
+        else {
+          await supabase.from("Notifications").insert([
+            {
+              message: `${EmailAddress} successfully registered`,
+              date: null,
+              type: "account",
+            },
+          ]);
+          setIsSignedUp(true);
+          setIsPressed(true);
+          toast.info("Please wait and verify your OTP.");
+          sendForSignUp();
+          imageAdd();
+          setHasSignUp(true);
+          //handleCheck();
         }
-        else if (checker.length < 8)
-        {
-          alert("Your password should be at least 8 characters");
-        }
-        else 
-        {
-          const { error } = await supabase.from("VisitorAcc").insert([{ LastName, FirstName, MiddleName, Address, EmailAddress, ImageID, },]);
-          if (error) throw error
-          else 
-          {
-            setIsSignedUp(true)
-            setIsPressed(true)
-            toast.info("Please wait and verify your OTP.")
-            sendForSignUp();
-            imageAdd();
-            setHasSignUp(true);
-            //handleCheck();
-          }
-        }
+      }
     } catch (err) {
       console.log(err);
     }
@@ -119,12 +112,9 @@ const Register = () => {
     const { data: imgData, error: imgErr } = await supabase.storage
       .from("ImageVerif")
       .upload(ImageID + "/" + ImageID, img);
-    if (imgErr) 
-    {
+    if (imgErr) {
       console.log(imgErr);
-    } 
-    else if (imgData) 
-    {
+    } else if (imgData) {
       console.log("uploaded");
     }
   };
@@ -213,11 +203,15 @@ const Register = () => {
                 <div className="flex mt-2 gap-1">
                   <input
                     id="otpHolder"
-                    className={`h-10 p-3 border border-gray-400 rounded-md grow  ${!isPressed ? "hidden" : "none"}`}
+                    className={`h-10 p-3 border border-gray-400 rounded-md grow  ${
+                      !isPressed ? "hidden" : "none"
+                    }`}
                     type="text"
                     placeholder="Verification Code"
                     value={verificationCode}
-                    onChange={(e) => {setVerificationCode(e.target.value); }}
+                    onChange={(e) => {
+                      setVerificationCode(e.target.value);
+                    }}
                   />
                   {/* <button
                     type="button"
@@ -263,7 +257,9 @@ const Register = () => {
                     className="opacity-0 absolute top-0 left-0 right-0 bottom-0 z-10 h-full w-full"
                     type="file"
                     accept="image/png, image/gif, image/jpeg"
-                    onChange={(e) => {setImage(e.target.files[0])}}
+                    onChange={(e) => {
+                      setImage(e.target.files[0]);
+                    }}
                   />
                 </label>
               </div>
@@ -298,15 +294,15 @@ const Register = () => {
                 </button>
                 <ToastContainer />
                 <button
-                    type="button"
-                    className={`bg-slate-500 text-warmGray-50 py-2 rounded-md px-8 ${
-                      !isPressed ? "hidden" : "none"
-                    }`}
-                    onClick={verifier}
-                  >
-                    Register
-                  </button>
-                  <ToastContainer />
+                  type="button"
+                  className={`bg-slate-500 text-warmGray-50 py-2 rounded-md px-8 ${
+                    !isPressed ? "hidden" : "none"
+                  }`}
+                  onClick={verifier}
+                >
+                  Register
+                </button>
+                <ToastContainer />
               </div>
             </div>
           </form>

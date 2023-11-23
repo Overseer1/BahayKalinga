@@ -6,6 +6,7 @@ import YearlyCalendar from "../../components/YearlyCalendar";
 import supabase from "../../config/supabaseClient";
 import Loader from "../../components/Loader";
 import { UserContext } from "../../providers/UserProvider";
+import relationships from "../../refs/ref_relationship";
 
 /**
  * Generates a function comment for the given function body.
@@ -18,17 +19,7 @@ import { UserContext } from "../../providers/UserProvider";
 const MemberDashboard = () => {
   const { user } = useContext(UserContext);
 
-  const relationshipOptions = [
-    "Select Relationship",
-    "Daughter",
-    "Son",
-    "Spouse",
-    "Niece",
-    "Nephew",
-    "Cousin",
-    "Granddaughter",
-    "Grandson",
-  ];
+  const relationshipOptions = relationships;
 
   const [elderOptions, setElderOptions] = useState([]);
   const [elderId, setElderId] = useState(null);
@@ -211,6 +202,15 @@ const MemberDashboard = () => {
         }
       })
     );
+
+    /* Add Notification */
+    await supabase.from("Notifications").insert([
+      {
+        message: `${user.EmailAddress} has pending appointment`,
+        date: null,
+        type: "pending",
+      },
+    ]);
 
     setIsLoading(false);
 

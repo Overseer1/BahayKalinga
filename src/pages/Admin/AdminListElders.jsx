@@ -37,28 +37,41 @@ const AdminListElders = () => {
               Attached Photo
             </th>
             <th className="py-3 px-5 border-b border-gray-200">Remarks</th>
+            <th className="py-3 px-5 border-b border-gray-200">Actions</th>
           </tr>
         </thead>
-       
+
         {tableElder && (
           <tbody>
-              {tableElder.map(elderList =>(
-                  <tr>
-                  <td className="py-3 px-5">{elderList.NameOfElder}</td>
-                  <td className="py-3 px-5">{elderList.Birthday}</td>
-                  <td className="py-3 px-5">{elderList.Age}</td>
-                  <td className="py-3 px-5">{elderList.Address}</td>
-                  <td className="py-3 px-5">{elderList.LastVisited}</td>
-                  <td className="py-3 px-5">{elderList.Family}</td>
-                  <td className="py-3 px-5">
-                   <img className="w-14 h-14 m-auto" src="https://unsplash.it/100/100" alt="placeholder"/>
-                  </td>
-                  <td className="py-3 px-5">{elderList.Remarks}</td>
-                  </tr>
-              ))}
-           </tbody>
-          )} 
-          
+            {tableElder.map((elderList) => (
+              <tr>
+                <td className="py-3 px-5">{elderList.NameOfElder}</td>
+                <td className="py-3 px-5">{elderList.Birthday}</td>
+                <td className="py-3 px-5">{elderList.Age}</td>
+                <td className="py-3 px-5">{elderList.Address}</td>
+                <td className="py-3 px-5">{elderList.LastVisited}</td>
+                <td className="py-3 px-5">{elderList.Family}</td>
+                <td className="py-3 px-5">
+                  <img
+                    className="w-14 h-14 m-auto"
+                    src="https://unsplash.it/100/100"
+                    alt="placeholder"
+                  />
+                </td>
+                <td className="py-3 px-5">{elderList.Remarks}</td>
+                <td className="py-3 px-5 text-center">
+                  <button className="mb-2 bg-green4 text-green11 hover:bg-green5 focus:shadow-green7 inline-flex h-[35px] items-center justify-center rounded-[4px] px-[15px] font-medium leading-none focus:shadow-[0_0_0_2px] focus:outline-none">
+                    Edit
+                  </button>
+                  <button className="bg-red4 text-red11 hover:bg-red5 focus:shadow-red7 inline-flex h-[35px] items-center justify-center rounded-[4px] px-[15px] font-medium leading-none focus:shadow-[0_0_0_2px] focus:outline-none">
+                    Delete
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        )}
+
         {/* <tbody>
           <tr className="text-center">
             <td className="py-3 px-5">Lolo Juan</td>

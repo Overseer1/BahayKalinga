@@ -4,7 +4,7 @@ import { Cross2Icon } from "@radix-ui/react-icons";
 import { useRef, useState } from "react";
 import supabase from "../../config/supabaseClient";
 import Loader from "../../components/Loader";
-import emailjs from '@emailjs/browser';
+import emailjs from "@emailjs/browser";
 
 const AdminPendingAppointments = () => {
   const [deniedDialog, setDeniedDialog] = useState(false);
@@ -29,7 +29,8 @@ const AdminPendingAppointments = () => {
         VisitorAcc: UserId (
           FirstName,
           MiddleName,
-          LastName
+          LastName,
+          EmailAddress
         ),
         ElderTable: ElderToVisit (
           NameOfElder
@@ -48,22 +49,26 @@ const AdminPendingAppointments = () => {
   if (loading) fetchAppointments();
 
   const form = useRef();
-  const sendEmailApproval = (e) =>
-  {
-    e.preventDefault();  
-    emailjs.sendForm('service_kyd5pgu', 'template_green', form.current, 'nvnvA876L4ftHfSIf')
-    .then(
-      (result) => {
-        console.log(result.text)
-      },
-      (error) => {
-        console.log(error.text)
-      }
-    )
-  }
+  const sendEmailApproval = (e) => {
+    e.preventDefault();
+    emailjs
+      .sendForm(
+        "service_kyd5pgu",
+        "template_green",
+        form.current,
+        "nvnvA876L4ftHfSIf"
+      )
+      .then(
+        (result) => {
+          console.log(result.text);
+        },
+        (error) => {
+          console.log(error.text);
+        }
+      );
+  };
 
   const approve = async (appointment) => {
-
     // update appointment status to approved
     setLoading(true);
     await supabase
@@ -94,8 +99,14 @@ const AdminPendingAppointments = () => {
       .from("Appointments")
       .update({ Status: "rejected", Reason: reason })
       .eq("id", selectedAppointment.id)
-      .then((data) => {
-        console.log(data);
+      .then(async (data) => {
+        await supabase.from("Notifications").insert([
+          {
+            message: `You declined ${selectedAppointment.VisitorAcc.EmailAddress}'s appointment`,
+            date: null,
+            type: "cancelled",
+          },
+        ]);
         fetchAppointments();
         setDeniedDialog(false);
       })
@@ -196,7 +207,7 @@ const AdminPendingAppointments = () => {
                       </AlertDialog.Content>
                     </AlertDialog.Portal>
                   </AlertDialog.Root>
-                </div>  
+                </div>
               </td>
             </tr>
           ))}
