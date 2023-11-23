@@ -5,14 +5,18 @@ import { useState, useEffect } from "react";
 import supabase from "../../config/supabaseClient";
 import Lightbox from "yet-another-react-lightbox";
 import "yet-another-react-lightbox/styles.css";
+import Loader from "../../components/Loader";
+import FormModal from "../../components/FormModal";
+import relationships from "../../refs/ref_relationship";
 
 const AdminListVisitors = () => {
   const [deniedDialog, setDeniedDialog] = useState(false);
-
+  const [loading, setLoading] = useState(false);
   const [visitors, setVisitors] = useState([]);
 
   // get all visitors from database
   const fetchVisitors = async () => {
+    setLoading(true);
     let { data: visitors, error } = await supabase
       .from("AppointmentVisitors")
       .select(
@@ -24,9 +28,10 @@ const AdminListVisitors = () => {
         )`
       )
       .order("id", { ascending: false });
-    console.log(visitors);
+
     if (error) console.log("error", error);
     else setVisitors(visitors);
+    setLoading(false);
   };
 
   const timeSince = (date) => {
@@ -68,8 +73,85 @@ const AdminListVisitors = () => {
     setOpen(true);
   };
 
+  const [openForm, setOpenForm] = useState(false);
+  const [formData, setFormData] = useState([
+    {
+      label: "Name",
+      type: "text",
+      id: "name",
+      name: "name",
+      value: "",
+      placeholder: "Enter name of visitor",
+      required: true,
+    },
+    {
+      label: "Relationship",
+      type: "select",
+      id: "relationship",
+      name: "relationship",
+      value: "",
+      placeholder: "Select relationship",
+      required: true,
+      options: relationships,
+    },
+    {
+      label: "Image",
+      type: "image",
+      id: "image",
+      name: "image",
+      value: "",
+      placeholder: "Upload image",
+      required: true,
+    },
+    {
+      label: "Address",
+      type: "text",
+      id: "address",
+      name: "address",
+      value: "",
+      placeholder: "Enter address of visitor",
+      required: true,
+    },
+    {
+      label: "Mobile Number",
+      type: "text",
+      id: "mobile_number",
+      name: "mobile_number",
+      value: "",
+      placeholder: "Enter mobile number of visitor",
+      required: true,
+    },
+    {
+      label: "Accompanied By",
+      type: "text",
+      id: "accompanied_by",
+      name: "accompanied_by",
+      value: "",
+      placeholder: "Enter accompanied by of visitor",
+      required: true,
+    },
+  ]);
+
+  const showEdit = (visitor) => {
+    setOpenForm(true);
+  };
+
+  const submitFormData = async (data) => {
+    console.log(data);
+  };
+
   return (
     <div className="mx-4 rounded-md">
+      {loading && <Loader />}
+      <FormModal
+        open={openForm}
+        setOpen={setOpenForm}
+        formData={formData}
+        setFormData={setFormData}
+        submitFormData={submitFormData}
+        title="Visitor Information"
+        subtitle="Edit the information of the visitor here."
+      />
       <table className="w-full bg-white">
         <thead>
           <tr>
@@ -119,7 +201,10 @@ const AdminListVisitors = () => {
               </td>
               <td className="py-3 px-5">{visitor?.accompanied_by}</td>
               <td className="py-3 px-5 text-center">
-                <button className="mb-2 bg-green4 text-green11 hover:bg-green5 focus:shadow-green7 inline-flex h-[35px] items-center justify-center rounded-[4px] px-[15px] font-medium leading-none focus:shadow-[0_0_0_2px] focus:outline-none">
+                <button
+                  onClick={() => showEdit(visitor)}
+                  className="mb-2 bg-green4 text-green11 hover:bg-green5 focus:shadow-green7 inline-flex h-[35px] items-center justify-center rounded-[4px] px-[15px] font-medium leading-none focus:shadow-[0_0_0_2px] focus:outline-none"
+                >
                   Edit
                 </button>
                 <button className="bg-red4 text-red11 hover:bg-red5 focus:shadow-red7 inline-flex h-[35px] items-center justify-center rounded-[4px] px-[15px] font-medium leading-none focus:shadow-[0_0_0_2px] focus:outline-none">

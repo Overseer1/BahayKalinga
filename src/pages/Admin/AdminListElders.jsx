@@ -3,12 +3,15 @@ import * as Dialog from "@radix-ui/react-dialog";
 import { Cross2Icon } from "@radix-ui/react-icons";
 import { useEffect, useState } from "react";
 import supabase from "../../config/supabaseClient";
+import Loader from "../../components/Loader";
 
 const AdminListElders = () => {
   const [deniedDialog, setDeniedDialog] = useState(false);
   const [tableElder, setTableElder] = useState("");
+  const [loading, setLoading] = useState(false);
   useEffect(() => {
     const reader = async () => {
+      setLoading(true);
       const { data, error } = await supabase.from("ElderTable").select();
       if (error) {
         console.log(error);
@@ -16,12 +19,14 @@ const AdminListElders = () => {
         setTableElder(data);
         console.log(data);
       }
+      setLoading(false);
     };
     reader();
   }, []);
 
   return (
     <div className="mx-4 rounded-md">
+      {loading && <Loader />}
       <table className="w-full bg-white">
         <thead>
           <tr>
@@ -44,7 +49,7 @@ const AdminListElders = () => {
         {tableElder && (
           <tbody>
             {tableElder.map((elderList) => (
-              <tr>
+              <tr key={elderList.id}>
                 <td className="py-3 px-5">{elderList.NameOfElder}</td>
                 <td className="py-3 px-5">{elderList.Birthday}</td>
                 <td className="py-3 px-5">{elderList.Age}</td>
