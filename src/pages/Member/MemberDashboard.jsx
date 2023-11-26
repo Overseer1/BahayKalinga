@@ -7,6 +7,7 @@ import supabase from "../../config/supabaseClient";
 import Loader from "../../components/Loader";
 import { UserContext } from "../../providers/UserProvider";
 import relationships from "../../refs/ref_relationship";
+import { formatISO } from "date-fns";
 
 /**
  * Generates a function comment for the given function body.
@@ -31,30 +32,7 @@ const MemberDashboard = () => {
   };
   const [step, setStep] = useState(1);
   const [details, setDetails] = useState([Object.assign({}, defaultDetail)]);
-  const addDetails = () => {
-    setDetails([
-      ...details,
-      Object.assign({}, defaultDetail, {
-        elderName: elderOptions.length ? elderOptions[0].id : 0,
-      }),
-    ]);
-  };
-  const submitDetails = async () => {
-    const emptyDetails = details.filter((detail) => {
-      return (
-        detail.fullName === "" ||
-        detail.relationship === "Select Relationship" ||
-        detail.image === null
-      );
-    });
-
-    console.log(emptyDetails.length > 0, elderId === null);
-    if (emptyDetails.length > 0 || elderId === null) {
-      alert("Please input all details");
-      return;
-    }
-
-    // Get all dates from AppointedDates table
+  const initializeAppointedDates = async () => {
     const { data: appointedDates } = await supabase
       .from("AppointedDates")
       .select("*");
@@ -89,6 +67,32 @@ const MemberDashboard = () => {
     });
 
     setMarkedDates(combinedAppointedDates);
+  };
+  const addDetails = () => {
+    setDetails([
+      ...details,
+      Object.assign({}, defaultDetail, {
+        elderName: elderOptions.length ? elderOptions[0].id : 0,
+      }),
+    ]);
+  };
+  const submitDetails = async () => {
+    const emptyDetails = details.filter((detail) => {
+      return (
+        detail.fullName === "" ||
+        detail.relationship === "Select Relationship" ||
+        detail.image === null
+      );
+    });
+
+    if (emptyDetails.length > 0 || elderId === null) {
+      alert("Please input all details");
+      return;
+    }
+
+    // Get all dates from AppointedDates table
+    initializeAppointedDates();
+
     setStep(2);
   };
   const handleInputChange = (index, field, value) => {
@@ -138,6 +142,13 @@ const MemberDashboard = () => {
     const submitDate = new Date(selectedDate);
     submitDate.setHours(0, 0, 0, 0);
     submitDate.setDate(submitDate.getDate() + 1);
+
+    // validate date should be greater than today
+    if (submitDate < new Date()) {
+      alert("Please select a date greater than today");
+      setIsLoading(false);
+      return;
+    }
 
     /* Add Appointment */
     const { data, error } = await supabase
@@ -217,54 +228,152 @@ const MemberDashboard = () => {
     setStep(3);
   };
 
+  const [appointmentStatus, setAppointmentStatus] = useState("pending");
+  const [appointmentRemarks, setAppointmentRemarks] = useState("");
+  const [appointmentId, setAppointmentId] = useState(null);
+
   useEffect(() => {
-    // validate if has appointment already
-    const getAppointment = async () => {
-      // const { data: appointments, error } = await supabase
-      //   .from("Appointments")
-      //   .select("*")
-      //   .eq("UserId", user.id)
-      //   .eq("Status", "pending");
-      // if (error) {
-      //   alert(error.message);
-      //   return;
-      // }
-      // if (appointments.length > 0) {
-      //   setStep(3);
-      // }
-    };
+    if (user) {
+      // validate if has appointment already
+      const getAppointment = async () => {
+        const currentDate = formatISO(new Date(), { representation: "date" });
 
-    getAppointment();
+        const { data: approvedAppointments, error } = await supabase
+          .from("Appointments")
+          .select("*")
+          .eq("UserId", user.id)
+          .eq("Status", "approved")
+          .gte("Date", currentDate)
+          .eq("Ignore", false);
 
-    // get ElderTable data and set to elderOptions
-    const getElderOptions = async () => {
-      const { data: elders, error } = await supabase
-        .from("ElderTable")
-        .select("*");
+        if (error) {
+          alert(error.message);
+          return;
+        }
 
-      if (error) {
-        alert(error.message);
-        return;
-      }
+        const { data: declinedAppointments, declinedError } = await supabase
+          .from("Appointments")
+          .select("*")
+          .eq("UserId", user.id)
+          .eq("Status", "rejected")
+          .eq("Ignore", false);
 
-      if (elders) {
-        setElderOptions(
-          elders.map((elder) => {
-            return {
-              id: elder.id,
-              label: elder.NameOfElder,
-            };
-          })
-        );
+        if (declinedError) {
+          alert(declinedError.message);
+          return;
+        }
 
-        setElderId(elders[0].id);
-      }
-    };
+        const { data: pendingAppointments, pendingError } = await supabase
+          .from("Appointments")
+          .select("*")
+          .eq("UserId", user.id)
+          .eq("Status", "pending")
+          .gte("Date", currentDate)
+          .eq("Ignore", false);
 
-    getElderOptions();
+        if (pendingError) {
+          alert(pendingError.message);
+          return;
+        }
+
+        if (
+          (approvedAppointments && approvedAppointments.length) ||
+          (declinedAppointments && declinedAppointments.length) ||
+          (pendingAppointments && pendingAppointments.length)
+        ) {
+          let lastAppointment = null;
+
+          if (approvedAppointments && approvedAppointments.length) {
+            lastAppointment =
+              approvedAppointments[approvedAppointments.length - 1];
+          }
+
+          if (declinedAppointments && declinedAppointments.length) {
+            lastAppointment =
+              declinedAppointments[declinedAppointments.length - 1];
+          }
+
+          if (pendingAppointments && pendingAppointments.length) {
+            lastAppointment =
+              pendingAppointments[pendingAppointments.length - 1];
+          }
+
+          setAppointmentId(lastAppointment.id);
+          setAppointmentStatus(lastAppointment.Status);
+          setAppointmentRemarks(lastAppointment.Reason);
+
+          const appointmentVisitors = await supabase
+            .from("AppointmentVisitors")
+            .select("*")
+            .eq("appointment_id", lastAppointment.id);
+
+          appointmentVisitors?.data?.forEach((visitor) => {
+            setDetails([
+              ...details,
+              Object.assign({}, defaultDetail, {
+                fullName: visitor.name,
+              }),
+            ]);
+          });
+
+          await initializeAppointedDates();
+          setSelectedDate(new Date(lastAppointment.Date));
+          setSelectedTime(lastAppointment.Schedule);
+          setStep(3);
+        }
+
+        setIsLoading(false);
+      };
+
+      getAppointment();
+
+      // get ElderTable data and set to elderOptions
+      const getElderOptions = async () => {
+        const { data: elders, error } = await supabase
+          .from("ElderTable")
+          .select("*");
+
+        if (error) {
+          alert(error.message);
+          return;
+        }
+
+        if (elders) {
+          setElderOptions(
+            elders.map((elder) => {
+              return {
+                id: elder.id,
+                label: elder.NameOfElder,
+              };
+            })
+          );
+
+          setElderId(elders[0].id);
+        }
+      };
+      getElderOptions();
+    }
   }, [user]); // Empty dependency array means this runs once on mount
 
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const confirm = async () => {
+    setIsLoading(true);
+
+    const { error } = await supabase
+      .from("Appointments")
+      .update({ Ignore: true })
+      .eq("id", appointmentId);
+
+    if (error) {
+      alert(error.message);
+      return;
+    }
+
+    setIsLoading(false);
+    setDetails([Object.assign({}, defaultDetail)]);
+    setStep(1);
+  };
 
   return (
     <div className="text-center">
@@ -458,8 +567,12 @@ const MemberDashboard = () => {
         <>
           <div className="text-2xl font-medium">Thank you!</div>
           <div className="text-lg font-light mb-5">
-            Here is the summary of your appointment. An email will be sent to
-            your email address.
+            {appointmentStatus === "pending" &&
+              "Here is the summary of your appointment. An email will be sent to your email address."}
+            {appointmentStatus === "approved" &&
+              "Your appointment has been approved. See you soon."}
+            {appointmentStatus === "rejected" &&
+              `I'm sorry. Your appointment has been declined. Reason ${appointmentRemarks}. Kindly set an appointment another time. Thank you`}
           </div>
           <div className="flex justify-center items-start gap-10">
             <div className="flex flex-col gap-3 text-left">
@@ -482,6 +595,14 @@ const MemberDashboard = () => {
               </div>
             </div>
           </div>
+          {appointmentStatus === "rejected" && (
+            <button
+              onClick={confirm}
+              className="mt-8 bg-blue-600 text-white py-2 px-4 cursor-pointer hover:bg-blue-400"
+            >
+              Confirm
+            </button>
+          )}
         </>
       )}
     </div>

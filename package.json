@@ -19,6 +19,7 @@
     "bcrypt": "^5.1.0",
     "bcryptjs-react": "^2.4.6",
     "body-parser": "^1.20.2",
+    "date-fns": "^2.30.0",
     "express": "^4.18.2",
     "ghpages": "^0.0.10",
     "git": "^0.1.5",
