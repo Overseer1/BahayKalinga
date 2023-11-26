@@ -8,6 +8,7 @@ import { Cross2Icon } from "@radix-ui/react-icons";
 import supabase from "../../config/supabaseClient";
 import relationships from "../../refs/ref_relationship";
 import Loader from "../../components/Loader";
+import uploadImage from "../../utils/uploadImage";
 
 const buttons = [
   {
@@ -164,27 +165,12 @@ const AdminLayout = () => {
     setLoading(true);
 
     // upload image
-    const BUCKET_NAME = "ImageCompanion";
-    const randomString = Math.random().toString(36).substring(2, 15);
-    const filePath = `${randomString}-${image.name}`;
-    const { error: uploadError } = await supabase.storage
-      .from(BUCKET_NAME)
-      .upload(filePath, image);
-    if (uploadError) {
-      console.error(uploadError);
-      return;
-    }
-    const response = supabase.storage.from(BUCKET_NAME).getPublicUrl(filePath);
-    const publicURL = response?.data?.publicUrl;
-
-    const { data: uploadImage, error: errorUploadImage } =
-      await supabase.storage
-        .from("images")
-        .upload(`visitor/${image.name}`, image);
+    const publicURL = await uploadImage("ImageCompanion", image);
 
     // insert "AppointmentVisitors"
-    const { data: appointmentVisitors, error: errorInsertAppointmentVisitors } =
-      await supabase.from("AppointmentVisitors").insert([
+    const { error: errorInsertAppointmentVisitors } = await supabase
+      .from("AppointmentVisitors")
+      .insert([
         {
           name: formData.nameOfVisitor,
           relationship: formData.relationshipWithElder,

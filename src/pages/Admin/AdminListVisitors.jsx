@@ -1,4 +1,3 @@
-import * as AlertDialog from "@radix-ui/react-alert-dialog";
 import * as Dialog from "@radix-ui/react-dialog";
 import { Cross2Icon } from "@radix-ui/react-icons";
 import { useState, useEffect } from "react";
@@ -8,6 +7,7 @@ import "yet-another-react-lightbox/styles.css";
 import Loader from "../../components/Loader";
 import FormModal from "../../components/FormModal";
 import relationships from "../../refs/ref_relationship";
+import uploadImage from "../../utils/uploadImage";
 
 const AdminListVisitors = () => {
   const [deniedDialog, setDeniedDialog] = useState(false);
@@ -22,9 +22,9 @@ const AdminListVisitors = () => {
       .select(
         `*, 
         Appointments: appointment_id (
-          VisitorAcc: UserId (FirstName, MiddleName, LastName, EmailAddress, Address), 
-          ElderTable: ElderToVisit (NameOfElder),
-          Date
+          *,
+          VisitorAcc: UserId (*), 
+          ElderTable: ElderToVisit (*)
         )`
       )
       .order("id", { ascending: false });
@@ -35,30 +35,34 @@ const AdminListVisitors = () => {
   };
 
   const timeSince = (date) => {
+    if (!date || date === "Invalid Date" || isNaN(date.getTime())) {
+      return "-";
+    }
+
     var seconds = Math.floor((new Date() - date) / 1000);
     var interval = seconds / 31536000;
 
     if (interval > 1) {
-      return Math.floor(interval) + " years";
+      return Math.floor(interval) + " years ago";
     }
     interval = seconds / 2592000;
     if (interval > 1) {
-      return Math.floor(interval) + " months";
+      return Math.floor(interval) + " months ago";
     }
     interval = seconds / 86400;
     if (interval > 1) {
-      return Math.floor(interval) + " days";
+      return Math.floor(interval) + " days ago";
     }
     interval = seconds / 3600;
     if (interval > 1) {
-      return Math.floor(interval) + " hours";
+      return Math.floor(interval) + " hours ago";
     }
     interval = seconds / 60;
     if (interval > 1) {
-      return Math.floor(interval) + " minutes";
+      return Math.floor(interval) + " minutes ago";
     }
-    if (seconds < 0) return "long time";
-    return Math.floor(seconds) + " seconds";
+    if (seconds < 0) return "-";
+    return Math.floor(seconds) + " seconds ago";
   };
 
   useEffect(() => {
@@ -132,12 +136,90 @@ const AdminListVisitors = () => {
     },
   ]);
 
-  const showEdit = (visitor) => {
+  const [editId, setEditId] = useState(null);
+
+  const showEdit = async (visitor) => {
+    const getFormField = (name) => {
+      const formField = formData.find((field) => {
+        return field.name === name;
+      });
+      return formField;
+    };
+
+    setLoading(true);
+
+    getFormField("name").value = visitor.name;
+    getFormField("relationship").value = visitor.relationship;
+
+    // convert image to blob
+    if (visitor.image_url) {
+      const blob = await fetch(visitor.image_url).then((r) => r.blob());
+      const file = new File([blob], "image.jpg", { type: "image/jpeg" });
+      getFormField("image").value = file;
+    }
+
+    getFormField("address").value = visitor.address;
+    getFormField("mobile_number").value = visitor.mobile_number;
+    getFormField("accompanied_by").value = visitor.accompanied_by;
+
+    setEditId(visitor.id);
+
     setOpenForm(true);
+    setLoading(false);
   };
 
   const submitFormData = async (data) => {
-    console.log(data);
+    setLoading(true);
+
+    const updateData = {
+      name: data.name,
+      relationship: data.relationship,
+      address: data.address,
+      mobile_number: data.mobile_number,
+      accompanied_by: data.accompanied_by,
+    };
+
+    // upload image
+    if (data.image) {
+      updateData.image_url = await uploadImage("ImageCompanion", data.image);
+    }
+
+    const { error } = await supabase
+      .from("AppointmentVisitors")
+      .update(updateData)
+      .eq("id", editId)
+      .single();
+
+    if (error) {
+      console.log(error);
+      setLoading(false);
+      return;
+    }
+
+    await fetchVisitors();
+
+    setLoading(false);
+    setOpenForm(false);
+  };
+
+  const deleteVisitor = async (data) => {
+    setLoading(true);
+
+    const { error } = await supabase
+      .from("AppointmentVisitors")
+      .delete()
+      .eq("id", data.id);
+
+    if (error) {
+      console.log(error);
+      setLoading(false);
+      return;
+    }
+
+    await fetchVisitors();
+
+    setLoading(false);
+    setOpenForm(false);
   };
 
   return (
@@ -178,15 +260,13 @@ const AdminListVisitors = () => {
             <tr key={visitor.id} className="text-center">
               <td className="py-3 px-5">{visitor.name}</td>
               <td className="py-3 px-5">
-                {visitor?.Appointments?.VisitorAcc?.EmailAddress}
+                {visitor?.Appointments?.VisitorAcc?.EmailAddress || "-"}
               </td>
               <td className="py-3 px-5">
-                {visitor?.Appointments?.VisitorAcc?.FirstName}{" "}
-                {visitor?.Appointments?.VisitorAcc?.MiddleName}{" "}
-                {visitor?.Appointments?.VisitorAcc?.LastName}
+                {visitor?.Appointments?.ElderTable?.NameOfElder || "-"}
               </td>
               <td className="py-3 px-5">
-                {timeSince(new Date(visitor?.Appointments?.Date))} ago
+                {timeSince(new Date(visitor?.Appointments?.Date))}
               </td>
               <td className="py-3 px-5">
                 {visitor?.Appointments?.VisitorAcc?.Address}
@@ -199,7 +279,7 @@ const AdminListVisitors = () => {
                   onClick={() => openImage(visitor?.image_url)}
                 />
               </td>
-              <td className="py-3 px-5">{visitor?.accompanied_by}</td>
+              <td className="py-3 px-5">{visitor?.accompanied_by || "-"}</td>
               <td className="py-3 px-5 text-center">
                 <button
                   onClick={() => showEdit(visitor)}
@@ -207,7 +287,10 @@ const AdminListVisitors = () => {
                 >
                   Edit
                 </button>
-                <button className="bg-red4 text-red11 hover:bg-red5 focus:shadow-red7 inline-flex h-[35px] items-center justify-center rounded-[4px] px-[15px] font-medium leading-none focus:shadow-[0_0_0_2px] focus:outline-none">
+                <button
+                  onClick={() => deleteVisitor(visitor)}
+                  className="bg-red4 text-red11 hover:bg-red5 focus:shadow-red7 inline-flex h-[35px] items-center justify-center rounded-[4px] px-[15px] font-medium leading-none focus:shadow-[0_0_0_2px] focus:outline-none"
+                >
                   Delete
                 </button>
               </td>
