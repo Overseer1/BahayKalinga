@@ -110,6 +110,34 @@ const AdminLayout = () => {
     time: "",
   });
 
+  useEffect(() => {
+    if (location.pathname === "/admin/list-visitors") {
+      setFormData({
+        nameOfVisitor: "",
+        relationshipWithElder: "",
+        nameOfElderVisited: "",
+        dateVisited: "",
+        address: "",
+        mobileNumber: "",
+        accompaniedBy: "",
+        time: "",
+      });
+      setImage(null);
+    } else {
+      setFormData({
+        nameOfElder: "",
+        age: "",
+        address: "",
+        lastVisited: "",
+        family: "",
+        imageElder: "",
+        remarks: "",
+        birthday: "",
+      });
+      setImage(null);
+    }
+  }, [location.pathname]);
+
   const onSubmitMigrate = async () => {
     if (!formData.nameOfVisitor) {
       alert("Please enter name of visitor");
@@ -184,6 +212,78 @@ const AdminLayout = () => {
 
     if (errorInsertAppointmentVisitors) {
       alert(errorInsertAppointmentVisitors.message);
+      return;
+    }
+
+    setLoading(false);
+    setOpenMigrate(false);
+  };
+
+  const onSubmitElder = async () => {
+    if (!formData.nameOfElder) {
+      alert("Please enter name of elder");
+      return;
+    }
+
+    if (!formData.age) {
+      alert("Please enter age");
+      return;
+    }
+
+    // allow only number
+    if (!/^\d+$/.test(formData.age)) {
+      alert("Please enter a valid age");
+      return;
+    }
+
+    if (!formData.address) {
+      alert("Please enter address");
+      return;
+    }
+
+    if (!formData.lastVisited) {
+      alert("Please enter last visited");
+      return;
+    }
+
+    if (!formData.family) {
+      alert("Please enter family");
+      return;
+    }
+
+    if (!formData.birthday) {
+      alert("Please enter birthday");
+      return;
+    }
+
+    if (!image) {
+      alert("Please upload an image");
+      return;
+    }
+
+    setLoading(true);
+
+    // upload image
+    const publicURL = await uploadImage("ImageElder", image);
+
+    // insert "ElderTable"
+    const { error: errorInsertElderTable } = await supabase
+      .from("ElderTable")
+      .insert([
+        {
+          NameOfElder: formData.nameOfElder,
+          Age: formData.age,
+          Address: formData.address,
+          LastVisited: formData.lastVisited,
+          Family: formData.family,
+          Birthday: formData.birthday,
+          ImageElder: publicURL,
+          Remarks: formData.remarks,
+        },
+      ]);
+
+    if (errorInsertElderTable) {
+      alert(errorInsertElderTable.message);
       return;
     }
 
@@ -272,16 +372,14 @@ const AdminLayout = () => {
             </button>
           </div>
           <div className="flex gap-3">
-            {location.pathname === "/admin/list-elders" && (
-              <button className="font-medium bg-white rounded-md h-10 hover:bg-slate-500 hover:text-white px-4">
-                Add
-              </button>
-            )}
             <Dialog.Root open={openMigrate} onOpenChange={setOpenMigrate}>
               <Dialog.Trigger asChild>
-                {location.pathname === "/admin/list-visitors" && (
+                {(location.pathname === "/admin/list-visitors" ||
+                  location.pathname === "/admin/list-elders") && (
                   <button className="font-medium bg-white rounded-md h-10 hover:bg-slate-500 hover:text-white px-4">
-                    Migrate
+                    {location.pathname === "/admin/list-visitors"
+                      ? "Migrate"
+                      : "Add"}
                   </button>
                 )}
               </Dialog.Trigger>
@@ -289,167 +387,298 @@ const AdminLayout = () => {
                 <Dialog.Overlay className="bg-blackA6 data-[state=open]:animate-overlayShow fixed inset-0" />
                 <Dialog.Content className="data-[state=open]:animate-contentShow fixed top-[50%] left-[50%] max-h-[85vh] w-[90vw] max-w-[1000px] translate-x-[-50%] translate-y-[-50%] rounded-[6px] bg-white p-[25px] shadow-[hsl(206_22%_7%_/_35%)_0px_10px_38px_-10px,_hsl(206_22%_7%_/_20%)_0px_10px_20px_-15px] focus:outline-none">
                   <Dialog.Title className="text-mauve12 m-0 text-[17px] font-medium">
-                    Migrate
+                    {location.pathname === "/admin/list-visitors"
+                      ? "Migrate"
+                      : "Create"}
                   </Dialog.Title>
                   <Dialog.Description className="text-mauve11 mt-[10px] mb-5 text-[15px] leading-normal">
-                    List of Visitors
+                    {location.pathname === "/admin/list-visitors"
+                      ? "Migrate"
+                      : "Add"}{" "}
+                    a new{" "}
+                    {location.pathname === "/admin/list-visitors"
+                      ? "visitor"
+                      : "elder"}
                   </Dialog.Description>
 
-                  <form onSubmit={() => onSubmitMigrate()}>
+                  <form
+                    onSubmit={() =>
+                      location.pathname === "/admin/list-visitors"
+                        ? onSubmitMigrate()
+                        : onSubmitElder()
+                    }
+                  >
                     <div className="flex gap-5">
                       <div className="flex-grow">
-                        <fieldset className="mb-[15px] flex items-center gap-5">
-                          <label className="text-violet11 w-[175px] text-right text-[15px]">
-                            Name of Visitor
-                          </label>
-                          <input
-                            className="text-violet11 shadow-violet7 focus:shadow-violet8 inline-flex h-[35px] w-full flex-1 items-center justify-center rounded-[4px] px-[10px] text-[15px] leading-none shadow-[0_0_0_1px] outline-none focus:shadow-[0_0_0_2px]"
-                            value={formData.nameOfVisitor}
-                            onChange={(e) =>
-                              setFormData({
-                                ...formData,
-                                nameOfVisitor: e.target.value,
-                              })
-                            }
-                          />
-                        </fieldset>
-                        <fieldset className="mb-[15px] flex items-center gap-5">
-                          <label className="text-violet11 w-[175px] text-right text-[15px]">
-                            Relationship with Elder
-                          </label>
-                          <select
-                            onChange={(e) =>
-                              setFormData({
-                                ...formData,
-                                relationshipWithElder: e.target.value,
-                              })
-                            }
-                            className="bg-white text-violet11 shadow-violet7 focus:shadow-violet8 inline-flex h-[35px] w-full flex-1 items-center justify-center rounded-[4px] px-[10px] text-[15px] leading-none shadow-[0_0_0_1px] outline-none focus:shadow-[0_0_0_2px]"
-                          >
-                            {relationshipOptions.map((relationshipOption) => (
-                              <option
-                                key={relationshipOption}
-                                value={relationshipOption}
-                              >
-                                {relationshipOption}
-                              </option>
-                            ))}
-                          </select>
-                        </fieldset>
-                        <fieldset className="mb-[15px] flex items-center gap-5">
-                          <label className="text-violet11 w-[175px] text-right text-[15px]">
-                            Name of Elder Visited
-                          </label>
-                          <select
-                            onChange={(e) =>
-                              setFormData({
-                                ...formData,
-                                nameOfElderVisited: e.target.value,
-                              })
-                            }
-                            className="bg-white text-violet11 shadow-violet7 focus:shadow-violet8 inline-flex h-[35px] w-full flex-1 items-center justify-center rounded-[4px] px-[10px] text-[15px] leading-none shadow-[0_0_0_1px] outline-none focus:shadow-[0_0_0_2px]"
-                          >
-                            {elderOptions.map((elderOption) => (
-                              <option
-                                key={elderOption.id}
-                                value={elderOption.id}
-                              >
-                                {elderOption.label}
-                              </option>
-                            ))}
-                          </select>
-                        </fieldset>
-                        <fieldset className="mb-[15px] flex items-start gap-5">
-                          <label className="text-violet11 w-[175px] text-right text-[15px] pt-1">
-                            Date Visited
-                          </label>
-                          <div className="flex-grow">
-                            <input
-                              onChange={(e) =>
-                                setFormData({
-                                  ...formData,
-                                  dateVisited: e.target.value,
-                                })
-                              }
-                              type="date"
-                              className="mb-3 text-violet11 shadow-violet7 focus:shadow-violet8 inline-flex h-[35px] w-full flex-1 items-center justify-center rounded-[4px] px-[10px] text-[15px] leading-none shadow-[0_0_0_1px] outline-none focus:shadow-[0_0_0_2px]"
-                            />
-                            <div className="flex gap-2">
-                              <button
-                                className={`text-white bg-blue-600 px-4 py-2 rounded-md hover:bg-blue-400 transition-all flex-grow ${
-                                  formData.time === "morning" &&
-                                  "opacity-50 cursor-not-allowed"
-                                }`}
-                                type="button"
-                                onClick={() =>
+                        {location.pathname === "/admin/list-visitors" ? (
+                          <>
+                            <fieldset className="mb-[15px] flex items-center gap-5">
+                              <label className="text-violet11 w-[175px] text-right text-[15px]">
+                                Name of Visitor
+                              </label>
+                              <input
+                                className="text-violet11 shadow-violet7 focus:shadow-violet8 inline-flex h-[35px] w-full flex-1 items-center justify-center rounded-[4px] px-[10px] text-[15px] leading-none shadow-[0_0_0_1px] outline-none focus:shadow-[0_0_0_2px]"
+                                value={formData.nameOfVisitor}
+                                onChange={(e) =>
                                   setFormData({
                                     ...formData,
-                                    time: "morning",
+                                    nameOfVisitor: e.target.value,
                                   })
                                 }
-                              >
-                                7:00 AM - 10:00 AM
-                              </button>
-                              <button
-                                className={`text-white bg-blue-600 px-4 py-2 rounded-md hover:bg-blue-400 transition-all flex-grow ${
-                                  formData.time === "afternoon" &&
-                                  "opacity-50 cursor-not-allowed"
-                                }}`}
-                                type="button"
-                                onClick={() =>
+                              />
+                            </fieldset>
+                            <fieldset className="mb-[15px] flex items-center gap-5">
+                              <label className="text-violet11 w-[175px] text-right text-[15px]">
+                                Relationship with Elder
+                              </label>
+                              <select
+                                onChange={(e) =>
                                   setFormData({
                                     ...formData,
-                                    time: "afternoon",
+                                    relationshipWithElder: e.target.value,
                                   })
                                 }
+                                className="bg-white text-violet11 shadow-violet7 focus:shadow-violet8 inline-flex h-[35px] w-full flex-1 items-center justify-center rounded-[4px] px-[10px] text-[15px] leading-none shadow-[0_0_0_1px] outline-none focus:shadow-[0_0_0_2px]"
                               >
-                                1:00 PM - 3:00 PM
-                              </button>
-                            </div>
-                          </div>
-                        </fieldset>
-                        <fieldset className="mb-[15px] flex items-center gap-5">
-                          <label className="text-violet11 w-[175px] text-right text-[15px]">
-                            Address
-                          </label>
-                          <input
-                            onChange={(e) =>
-                              setFormData({
-                                ...formData,
-                                address: e.target.value,
-                              })
-                            }
-                            className="text-violet11 shadow-violet7 focus:shadow-violet8 inline-flex h-[35px] w-full flex-1 items-center justify-center rounded-[4px] px-[10px] text-[15px] leading-none shadow-[0_0_0_1px] outline-none focus:shadow-[0_0_0_2px]"
-                          />
-                        </fieldset>
-                        <fieldset className="mb-[15px] flex items-center gap-5">
-                          <label className="text-violet11 w-[175px] text-right text-[15px]">
-                            Mobile Number
-                          </label>
-                          <input
-                            onChange={(e) =>
-                              setFormData({
-                                ...formData,
-                                mobileNumber: e.target.value,
-                              })
-                            }
-                            className="text-violet11 shadow-violet7 focus:shadow-violet8 inline-flex h-[35px] w-full flex-1 items-center justify-center rounded-[4px] px-[10px] text-[15px] leading-none shadow-[0_0_0_1px] outline-none focus:shadow-[0_0_0_2px]"
-                          />
-                        </fieldset>
-                        <fieldset className="mb-[15px] flex items-center gap-5">
-                          <label className="text-violet11 w-[175px] text-right text-[15px]">
-                            Accompanied by
-                          </label>
-                          <input
-                            onChange={(e) =>
-                              setFormData({
-                                ...formData,
-                                accompaniedBy: e.target.value,
-                              })
-                            }
-                            className="text-violet11 shadow-violet7 focus:shadow-violet8 inline-flex h-[35px] w-full flex-1 items-center justify-center rounded-[4px] px-[10px] text-[15px] leading-none shadow-[0_0_0_1px] outline-none focus:shadow-[0_0_0_2px]"
-                          />
-                        </fieldset>
+                                {relationshipOptions.map(
+                                  (relationshipOption) => (
+                                    <option
+                                      key={relationshipOption}
+                                      value={relationshipOption}
+                                    >
+                                      {relationshipOption}
+                                    </option>
+                                  )
+                                )}
+                              </select>
+                            </fieldset>
+                            <fieldset className="mb-[15px] flex items-center gap-5">
+                              <label className="text-violet11 w-[175px] text-right text-[15px]">
+                                Name of Elder Visited
+                              </label>
+                              <select
+                                onChange={(e) =>
+                                  setFormData({
+                                    ...formData,
+                                    nameOfElderVisited: e.target.value,
+                                  })
+                                }
+                                className="bg-white text-violet11 shadow-violet7 focus:shadow-violet8 inline-flex h-[35px] w-full flex-1 items-center justify-center rounded-[4px] px-[10px] text-[15px] leading-none shadow-[0_0_0_1px] outline-none focus:shadow-[0_0_0_2px]"
+                              >
+                                {elderOptions.map((elderOption) => (
+                                  <option
+                                    key={elderOption.id}
+                                    value={elderOption.id}
+                                  >
+                                    {elderOption.label}
+                                  </option>
+                                ))}
+                              </select>
+                            </fieldset>
+                            <fieldset className="mb-[15px] flex items-start gap-5">
+                              <label className="text-violet11 w-[175px] text-right text-[15px] pt-1">
+                                Date Visited
+                              </label>
+                              <div className="flex-grow">
+                                <input
+                                  onChange={(e) =>
+                                    setFormData({
+                                      ...formData,
+                                      dateVisited: e.target.value,
+                                    })
+                                  }
+                                  type="date"
+                                  className="mb-3 text-violet11 shadow-violet7 focus:shadow-violet8 inline-flex h-[35px] w-full flex-1 items-center justify-center rounded-[4px] px-[10px] text-[15px] leading-none shadow-[0_0_0_1px] outline-none focus:shadow-[0_0_0_2px]"
+                                />
+                                <div className="flex gap-2">
+                                  <button
+                                    className={`text-white bg-blue-600 px-4 py-2 rounded-md hover:bg-blue-400 transition-all flex-grow ${
+                                      formData.time === "morning" &&
+                                      "opacity-50 cursor-not-allowed"
+                                    }`}
+                                    type="button"
+                                    onClick={() =>
+                                      setFormData({
+                                        ...formData,
+                                        time: "morning",
+                                      })
+                                    }
+                                  >
+                                    7:00 AM - 10:00 AM
+                                  </button>
+                                  <button
+                                    className={`text-white bg-blue-600 px-4 py-2 rounded-md hover:bg-blue-400 transition-all flex-grow ${
+                                      formData.time === "afternoon" &&
+                                      "opacity-50 cursor-not-allowed"
+                                    }}`}
+                                    type="button"
+                                    onClick={() =>
+                                      setFormData({
+                                        ...formData,
+                                        time: "afternoon",
+                                      })
+                                    }
+                                  >
+                                    1:00 PM - 3:00 PM
+                                  </button>
+                                </div>
+                              </div>
+                            </fieldset>
+                            <fieldset className="mb-[15px] flex items-center gap-5">
+                              <label className="text-violet11 w-[175px] text-right text-[15px]">
+                                Address
+                              </label>
+                              <input
+                                onChange={(e) =>
+                                  setFormData({
+                                    ...formData,
+                                    address: e.target.value,
+                                  })
+                                }
+                                className="text-violet11 shadow-violet7 focus:shadow-violet8 inline-flex h-[35px] w-full flex-1 items-center justify-center rounded-[4px] px-[10px] text-[15px] leading-none shadow-[0_0_0_1px] outline-none focus:shadow-[0_0_0_2px]"
+                              />
+                            </fieldset>
+                            <fieldset className="mb-[15px] flex items-center gap-5">
+                              <label className="text-violet11 w-[175px] text-right text-[15px]">
+                                Mobile Number
+                              </label>
+                              <input
+                                onChange={(e) =>
+                                  setFormData({
+                                    ...formData,
+                                    mobileNumber: e.target.value,
+                                  })
+                                }
+                                className="text-violet11 shadow-violet7 focus:shadow-violet8 inline-flex h-[35px] w-full flex-1 items-center justify-center rounded-[4px] px-[10px] text-[15px] leading-none shadow-[0_0_0_1px] outline-none focus:shadow-[0_0_0_2px]"
+                              />
+                            </fieldset>
+                            <fieldset className="mb-[15px] flex items-center gap-5">
+                              <label className="text-violet11 w-[175px] text-right text-[15px]">
+                                Accompanied by
+                              </label>
+                              <input
+                                onChange={(e) =>
+                                  setFormData({
+                                    ...formData,
+                                    accompaniedBy: e.target.value,
+                                  })
+                                }
+                                className="text-violet11 shadow-violet7 focus:shadow-violet8 inline-flex h-[35px] w-full flex-1 items-center justify-center rounded-[4px] px-[10px] text-[15px] leading-none shadow-[0_0_0_1px] outline-none focus:shadow-[0_0_0_2px]"
+                              />
+                            </fieldset>
+                          </>
+                        ) : (
+                          <>
+                            <fieldset className="mb-[15px] flex items-center gap-5">
+                              <label className="text-violet11 w-[175px] text-right text-[15px]">
+                                Name of Elder
+                              </label>
+                              <input
+                                className="text-violet11 shadow-violet7 focus:shadow-violet8 inline-flex h-[35px] w-full flex-1 items-center justify-center rounded-[4px] px-[10px] text-[15px] leading-none shadow-[0_0_0_1px] outline-none focus:shadow-[0_0_0_2px]"
+                                value={formData.nameOfElder}
+                                onChange={(e) =>
+                                  setFormData({
+                                    ...formData,
+                                    nameOfElder: e.target.value,
+                                  })
+                                }
+                              />
+                            </fieldset>
+                            <fieldset className="mb-[15px] flex items-center gap-5">
+                              <label className="text-violet11 w-[175px] text-right text-[15px]">
+                                Age
+                              </label>
+                              <input
+                                className="text-violet11 shadow-violet7 focus:shadow-violet8 inline-flex h-[35px] w-full flex-1 items-center justify-center rounded-[4px] px-[10px] text-[15px] leading-none shadow-[0_0_0_1px] outline-none focus:shadow-[0_0_0_2px]"
+                                value={formData.age}
+                                type="number"
+                                onChange={(e) =>
+                                  setFormData({
+                                    ...formData,
+                                    age: e.target.value,
+                                  })
+                                }
+                              />
+                            </fieldset>
+                            <fieldset className="mb-[15px] flex items-center gap-5">
+                              <label className="text-violet11 w-[175px] text-right text-[15px]">
+                                Address
+                              </label>
+                              <input
+                                className="text-violet11 shadow-violet7 focus:shadow-violet8 inline-flex h-[35px] w-full flex-1 items-center justify-center rounded-[4px] px-[10px] text-[15px] leading-none shadow-[0_0_0_1px] outline-none focus:shadow-[0_0_0_2px]"
+                                value={formData.address}
+                                onChange={(e) =>
+                                  setFormData({
+                                    ...formData,
+                                    address: e.target.value,
+                                  })
+                                }
+                              />
+                            </fieldset>
+                            <fieldset className="mb-[15px] flex items-center gap-5">
+                              <label className="text-violet11 w-[175px] text-right text-[15px]">
+                                Last Visited
+                              </label>
+                              <input
+                                className="text-violet11 shadow-violet7 focus:shadow-violet8 inline-flex h-[35px] w-full flex-1 items-center justify-center rounded-[4px] px-[10px] text-[15px] leading-none shadow-[0_0_0_1px] outline-none focus:shadow-[0_0_0_2px]"
+                                value={formData.lastVisited}
+                                type="date"
+                                onChange={(e) =>
+                                  setFormData({
+                                    ...formData,
+                                    lastVisited: e.target.value,
+                                  })
+                                }
+                              />
+                            </fieldset>
+                            <fieldset className="mb-[15px] flex items-center gap-5">
+                              <label className="text-violet11 w-[175px] text-right text-[15px]">
+                                Family
+                              </label>
+                              <input
+                                className="text-violet11 shadow-violet7 focus:shadow-violet8 inline-flex h-[35px] w-full flex-1 items-center justify-center rounded-[4px] px-[10px] text-[15px] leading-none shadow-[0_0_0_1px] outline-none focus:shadow-[0_0_0_2px]"
+                                value={formData.family}
+                                onChange={(e) =>
+                                  setFormData({
+                                    ...formData,
+                                    family: e.target.value,
+                                  })
+                                }
+                              />
+                            </fieldset>
+                            <fieldset className="mb-[15px] flex items-center gap-5">
+                              <label className="text-violet11 w-[175px] text-right text-[15px]">
+                                Remarks
+                              </label>
+                              <textarea
+                                className="min-h-[100px] py-3 text-violet11 shadow-violet7 focus:shadow-violet8 inline-flex w-full flex-1 items-center justify-center rounded-[4px] px-[10px] text-[15px] leading-none shadow-[0_0_0_1px] outline-none focus:shadow-[0_0_0_2px]"
+                                value={formData.remarks}
+                                onChange={(e) =>
+                                  setFormData({
+                                    ...formData,
+                                    remarks: e.target.value,
+                                  })
+                                }
+                              ></textarea>
+                            </fieldset>
+                            <fieldset className="mb-[15px] flex items-center gap-5">
+                              <label className="text-violet11 w-[175px] text-right text-[15px]">
+                                Birthday
+                              </label>
+                              <input
+                                className="text-violet11 shadow-violet7 focus:shadow-violet8 inline-flex h-[35px] w-full flex-1 items-center justify-center rounded-[4px] px-[10px] text-[15px] leading-none shadow-[0_0_0_1px] outline-none focus:shadow-[0_0_0_2px]"
+                                type="date"
+                                value={formData.birthday}
+                                onChange={(e) =>
+                                  setFormData({
+                                    ...formData,
+                                    birthday: e.target.value,
+                                  })
+                                }
+                              />
+                            </fieldset>
+                          </>
+                        )}
                       </div>
                       <div className="shrink-0 text-center">
                         {image ? (
