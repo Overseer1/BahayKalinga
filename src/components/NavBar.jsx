@@ -6,6 +6,8 @@ import { Cross2Icon } from "@radix-ui/react-icons";
 import supabase from "../config/supabaseClient";
 import { ToastContainer, toast } from "react-toastify";
 import { UserContext } from "../providers/UserProvider";
+import { CgProfile } from "react-icons/cg";
+import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 
 const NavBar = () => {
   const navigate = useNavigate();
@@ -68,6 +70,17 @@ const NavBar = () => {
     }
 
     setLoading(false);
+  };
+
+  const logout = async () => {
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      alert(error);
+    } else {
+      localStorage.removeItem("token");
+      updateUser(null);
+      navigate("/");
+    }
   };
 
   return (
@@ -193,16 +206,45 @@ const NavBar = () => {
                 </Dialog.Content>
               </Dialog.Portal>
             </Dialog.Root>
-            <Link
-              onClick={() => {
-                setTimeout(() => {
-                  navigate("/member");
-                });
-              }}
-              className={`text-black text-3xl ${!user ? "hidden" : "none"}`}
-            >
-              Appointment
-            </Link>
+            {user && (
+              <>
+                <Link
+                  onClick={() => {
+                    setTimeout(() => {
+                      navigate("/member");
+                    });
+                  }}
+                  className={`text-black text-3xl ${!user ? "hidden" : "none"}`}
+                >
+                  Appointment
+                </Link>
+                <div>
+                  <DropdownMenu.Root>
+                    <DropdownMenu.Trigger asChild>
+                      <div className="outline-none">
+                        <CgProfile className="text-3xl" />
+                      </div>
+                    </DropdownMenu.Trigger>
+                    <DropdownMenu.Portal>
+                      <DropdownMenu.Content
+                        className="min-w-[220px] bg-white rounded-md p-[5px] shadow-[0px_10px_38px_-10px_rgba(22,_23,_24,_0.35),_0px_10px_20px_-15px_rgba(22,_23,_24,_0.2)] will-change-[opacity,transform] data-[side=top]:animate-slideDownAndFade data-[side=right]:animate-slideLeftAndFade data-[side=bottom]:animate-slideUpAndFade data-[side=left]:animate-slideRightAndFade"
+                        sideOffset={5}
+                      >
+                        <DropdownMenu.Item className="group text-[13px] leading-none text-violet11 rounded-[3px] flex items-center h-[25px] px-[5px] relative pl-[25px] select-none outline-none data-[disabled]:text-mauve8 data-[disabled]:pointer-events-none data-[highlighted]:bg-violet9 data-[highlighted]:text-violet1">
+                          Edit Profile
+                        </DropdownMenu.Item>
+                        <DropdownMenu.Item
+                          onClick={logout}
+                          className="group text-[13px] leading-none text-violet11 rounded-[3px] flex items-center h-[25px] px-[5px] relative pl-[25px] select-none outline-none data-[disabled]:text-mauve8 data-[disabled]:pointer-events-none data-[highlighted]:bg-violet9 data-[highlighted]:text-violet1"
+                        >
+                          Logout
+                        </DropdownMenu.Item>
+                      </DropdownMenu.Content>
+                    </DropdownMenu.Portal>
+                  </DropdownMenu.Root>
+                </div>
+              </>
+            )}
           </div>
         </div>
       </header>

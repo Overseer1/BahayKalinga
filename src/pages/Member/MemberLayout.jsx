@@ -1,13 +1,13 @@
 import { Outlet } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-import { useEffect, useContext } from "react";
+import { useContext } from "react";
 import { UserContext } from "../../providers/UserProvider";
 import supabase from "../../config/supabaseClient";
 
 const MemberLayout = () => {
   const navigate = useNavigate();
 
-  const { user } = useContext(UserContext);
+  const { user, updateUser } = useContext(UserContext);
 
   const logout = async () => {
     const { error } = await supabase.auth.signOut();
@@ -15,6 +15,7 @@ const MemberLayout = () => {
       alert(error);
     } else {
       localStorage.removeItem("token");
+      updateUser(null);
       navigate("/");
     }
   };
