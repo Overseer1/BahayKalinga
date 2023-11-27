@@ -4,14 +4,15 @@
 */
 
 import { BsPersonVcardFill } from "react-icons/bs";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { EventBus } from "../../eventbus";
 import TermsConditions from "./TermsConditions";
 import supabase from "../../config/supabaseClient";
 import { v4 as uuidv4 } from "uuid";
 import { addUser, authValues } from "../../components/Auth";
 import { ToastContainer, toast } from "react-toastify";
+import Select from "react-select";
+import Loader from "../../components/Loader";
 
 const Register = () => {
   const navigate = useNavigate();
@@ -61,6 +62,8 @@ const Register = () => {
   };
 
   const submitToDB = async (e) => {
+    e.preventDefault();
+
     try {
       //! PUT THROW ERR IN EVERY STATEMENT
       const checker = document.getElementById("finalPass").value;
@@ -82,7 +85,15 @@ const Register = () => {
         const data = await supabase
           .from("VisitorAcc")
           .insert([
-            { LastName, FirstName, MiddleName, Address, EmailAddress, ImageID },
+            {
+              LastName,
+              FirstName,
+              MiddleName,
+              Address,
+              EmailAddress,
+              ImageID,
+              ElderId: selectedOption.value,
+            },
           ])
           .single();
         if (data.error) throw data.error;
@@ -119,11 +130,42 @@ const Register = () => {
       console.log("uploaded");
     }
   };
+
+  const [isLoading, setIsLoading] = useState(true);
+  const [selectedOption, setSelectedOption] = useState({});
+  const [options, setOptions] = useState([]);
+
+  useEffect(() => {
+    const initializeOptions = async () => {
+      const { data: elders } = await supabase.from("ElderTable").select("*");
+
+      const options = elders.map((elder) => {
+        return {
+          label: elder.NameOfElder,
+          value: elder.id,
+        };
+      });
+
+      setOptions(options);
+      setSelectedOption(options[0]);
+      setIsLoading(false);
+    };
+
+    initializeOptions();
+  }, []);
+
+  const onChangeSelectedOption = (data) => {
+    setSelectedOption(data);
+  };
+
+  const [hasRelatedElder, setHasRelatedElder] = useState(false);
+
   return (
     <div
       className="bg-cover py-10"
       // style={{ backgroundImage: `url(${FirstSection})` }}
     >
+      {isLoading && <Loader />}
       <div className="max-w-[1920px] m-auto px-5">
         <div className="py-10 max-w-7xl mx-auto text-center bg-white">
           <div>
@@ -199,6 +241,31 @@ const Register = () => {
                     id="finalPass"
                     onChange={(e) => setConfPassword(e.target.value)}
                   />
+                  <label className="text-left flex gap-3 cursor-pointer">
+                    <input
+                      value={hasRelatedElder}
+                      onChange={(e) => {
+                        setHasRelatedElder(e.target.checked);
+                      }}
+                      type="checkbox"
+                    />
+                    <div>
+                      Are you related to one of the Elders at Bahay Kalinga?
+                    </div>
+                  </label>
+                  {hasRelatedElder && (
+                    <div className="text-left mt-5">
+                      <label htmlFor="selectElder" className="mb-2 block">
+                        Select Elder
+                      </label>
+                      <Select
+                        value={selectedOption}
+                        onChange={onChangeSelectedOption}
+                        options={options}
+                        id="selectElder"
+                      />
+                    </div>
+                  )}
                 </div>
                 {/* //!OTP AREA */}
                 <div className="flex mt-2 gap-1">

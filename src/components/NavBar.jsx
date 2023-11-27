@@ -13,6 +13,7 @@ const NavBar = () => {
   const { updateUser } = useContext(UserContext);
 
   // Login
+  const [loading, setLoading] = useState(false);
   const [openLogin, setOpenLogin] = useState(false);
   const [loginForm, setLoginForm] = useState({
     email: "",
@@ -34,27 +35,29 @@ const NavBar = () => {
   //   onLoginSubmit(authValues.email, authValues.password);
   // }
   const onLoginSubmit = async (e) => {
+    e.preventDefault();
+
+    setLoading(true);
+
     try {
       const { data, error } = await supabase.auth.signInWithPassword({
         email: loginForm.email,
         password: loginForm.password,
       });
       if (error) throw error;
-      else if (data) 
-      {
+      else if (data) {
         const response = await supabase
           .from("VisitorAcc")
           .select("*")
           .eq("EmailAddress", data.user.email)
           .single();
-        if (response.error) 
-        {
+
+        if (response.error) {
           alert(response.error.message);
           return;
         }
 
-        if (response.data) 
-        {
+        if (response.data) {
           updateUser(response.data);
         }
         setIsLoggedIn(true);
@@ -63,8 +66,10 @@ const NavBar = () => {
         navigate("/member");
       }
     } catch (error) {
-      console.log(error);
+      toast.error(error.message);
     }
+
+    setLoading(false);
   };
   useEffect(() => {
     if (localStorage.getItem("token")) {
@@ -72,18 +77,14 @@ const NavBar = () => {
     } else {
       setIsLoggedIn(false);
     }
-  });
+  }, []);
 
   return (
     <>
       <header className="h-20 bg-main">
-        <div className="max-w-[1920px] h-full m-auto justify-between flex items-start px-5">
-          <div className="mt-5 w-32 relative">
-            <img
-              className="w-full absolute rounded-full"
-              src={logo}
-              alt="AbaKa Logo"
-            />
+        <div className="max-w-[1920px] h-full m-auto justify-between flex items-center px-5">
+          <div className="w-14 relative">
+            <img className="w-full rounded-full" src={logo} alt="AbaKa Logo" />
           </div>
           <div className="h-full flex item gap-8 items-center">
             <Link
@@ -137,11 +138,7 @@ const NavBar = () => {
                   <Dialog.Description className="text-mauve11 mt-[10px] mb-5 text-[15px] leading-normal">
                     Input your login credentials here.
                   </Dialog.Description>
-                  <form
-                    onSubmit={() => {
-                      onLoginSubmit();
-                    }}
-                  >
+                  <form onSubmit={onLoginSubmit}>
                     <fieldset className="mb-[15px] flex items-center gap-5">
                       <label
                         className="text-violet11 w-[90px] text-right text-[15px]"
@@ -184,9 +181,10 @@ const NavBar = () => {
                     <div className="mt-[25px] flex justify-end">
                       <button
                         type="submit"
+                        disabled={loading}
                         className="bg-green4 text-green11 hover:bg-green5 focus:shadow-green7 inline-flex h-[35px] items-center justify-center rounded-[4px] px-[15px] font-medium leading-none focus:shadow-[0_0_0_2px] focus:outline-none"
                       >
-                        Log in
+                        {loading ? "Loading..." : "Log in"}
                       </button>
                       <ToastContainer />
                     </div>
