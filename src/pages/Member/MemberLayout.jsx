@@ -19,12 +19,6 @@ const MemberLayout = () => {
     }
   };
 
-  useEffect(() => {
-    if (!localStorage.getItem("token")) {
-      navigate("/");
-    }
-  }, []);
-
   return (
     <div className="max-w-7xl mx-auto px-5 flex min-h-[calc(100vh-144px)]">
       <div className="p-5 bg-white">

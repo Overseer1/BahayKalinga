@@ -10,7 +10,7 @@ import { UserContext } from "../providers/UserProvider";
 const NavBar = () => {
   const navigate = useNavigate();
 
-  const { updateUser } = useContext(UserContext);
+  const { updateUser, user } = useContext(UserContext);
 
   // Login
   const [loading, setLoading] = useState(false);
@@ -19,7 +19,6 @@ const NavBar = () => {
     email: "",
     password: "",
   });
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const scrollIntoView = (id) => {
     const element = document.getElementById(id);
     if (id === "home") {
@@ -60,7 +59,6 @@ const NavBar = () => {
         if (response.data) {
           updateUser(response.data);
         }
-        setIsLoggedIn(true);
         setOpenLogin(false);
         localStorage.setItem("token", JSON.stringify(data));
         navigate("/member");
@@ -71,13 +69,6 @@ const NavBar = () => {
 
     setLoading(false);
   };
-  useEffect(() => {
-    if (localStorage.getItem("token")) {
-      setIsLoggedIn(true);
-    } else {
-      setIsLoggedIn(false);
-    }
-  }, []);
 
   return (
     <>
@@ -113,19 +104,21 @@ const NavBar = () => {
             >
               About Us
             </Link>
-            <Link
-              onClick={() => {
-                setTimeout(() => {
-                  navigate("/register");
-                });
-              }}
-              className="text-black text-3xl"
-            >
-              Register
-            </Link>
+            {!user && (
+              <Link
+                onClick={() => {
+                  setTimeout(() => {
+                    navigate("/register");
+                  });
+                }}
+                className="text-black text-3xl"
+              >
+                Register
+              </Link>
+            )}
             <Dialog.Root open={openLogin} onOpenChange={setOpenLogin}>
               <Dialog.Trigger asChild>
-                <Link className="text-black text-3xl" hidden={isLoggedIn}>
+                <Link className="text-black text-3xl" hidden={user}>
                   Login
                 </Link>
               </Dialog.Trigger>
@@ -206,9 +199,7 @@ const NavBar = () => {
                   navigate("/member");
                 });
               }}
-              className={`text-black text-3xl ${
-                !isLoggedIn ? "hidden" : "none"
-              }`}
+              className={`text-black text-3xl ${!user ? "hidden" : "none"}`}
             >
               Appointment
             </Link>

@@ -1,12 +1,14 @@
 import { Outlet } from "react-router-dom";
 import NavBar from "../components/NavBar";
 import Footer from "../components/Footer";
-import { useEffect, useContext } from "react";
+import { useEffect, useContext, useState } from "react";
 import supabase from "../config/supabaseClient";
 import { UserContext } from "../providers/UserProvider";
+import Loader from "../components/Loader";
 
 const FrontLayout = () => {
   const { updateUser } = useContext(UserContext);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const setUserData = async () => {
@@ -30,23 +32,28 @@ const FrontLayout = () => {
           updateUser(response.data);
         }
       }
+
+      setLoading(false);
     };
 
     setUserData();
   }, []);
 
   return (
-    <div>
-      <header className="sticky top-0">
-        <NavBar />
-      </header>
-      <main className="min-h-[calc(100vh-144px)]">
-        <Outlet />
-      </main>
-      <footer>
-        <Footer />
-      </footer>
-    </div>
+    <>
+      {loading && <Loader />}
+      <div>
+        <header className="sticky top-0">
+          <NavBar />
+        </header>
+        <main className="min-h-[calc(100vh-144px)]">
+          <Outlet />
+        </main>
+        <footer>
+          <Footer />
+        </footer>
+      </div>
+    </>
   );
 };
 

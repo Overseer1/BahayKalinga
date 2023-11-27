@@ -23,7 +23,7 @@ const MemberDashboard = () => {
   const relationshipOptions = relationships;
 
   const [elderOptions, setElderOptions] = useState([]);
-  const [elderId, setElderId] = useState(null);
+  const [elderId, setElderId] = useState("");
 
   const defaultDetail = {
     fullName: "",
@@ -321,11 +321,7 @@ const MemberDashboard = () => {
           setSelectedTime(lastAppointment.Schedule);
           setStep(3);
         }
-
-        setIsLoading(false);
       };
-
-      getAppointment();
 
       // get ElderTable data and set to elderOptions
       const getElderOptions = async () => {
@@ -348,10 +344,17 @@ const MemberDashboard = () => {
             })
           );
 
-          setElderId(elders[0].id);
+          setElderId(user.ElderId || elders[0].id);
         }
       };
-      getElderOptions();
+
+      const initialize = async () => {
+        await getAppointment();
+        await getElderOptions();
+        setIsLoading(false);
+      };
+
+      initialize();
     }
   }, [user]); // Empty dependency array means this runs once on mount
 
@@ -391,6 +394,7 @@ const MemberDashboard = () => {
               <select
                 className="h-12 px-4 rounded-md border border-gray-400 bg-white"
                 placeholder="Relationship with the elder"
+                value={elderId}
                 onChange={(e) => setElderId(e.target.value)}
               >
                 {elderOptions.map((option) => (
