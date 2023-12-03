@@ -8,6 +8,8 @@ import Loader from "../../components/Loader";
 import { UserContext } from "../../providers/UserProvider";
 import relationships from "../../refs/ref_relationship";
 import { formatISO } from "date-fns";
+import { Navigate, useNavigate } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
 
 /**
  * Generates a function comment for the given function body.
@@ -232,7 +234,12 @@ const MemberDashboard = () => {
   const [appointmentRemarks, setAppointmentRemarks] = useState("");
   const [appointmentId, setAppointmentId] = useState(null);
 
+  const navigate = useNavigate();
   useEffect(() => {
+    if(!localStorage.getItem("token"))
+    {
+      navigate("/");
+    }
     if (user) {
       // validate if has appointment already
       const getAppointment = async () => {
@@ -384,7 +391,7 @@ const MemberDashboard = () => {
       {step === 1 && (
         <>
           <div className="text-2xl font-bold">Name of visitors</div>
-          <label className="text-md font-light">*This includes you.</label>
+          <label className="text-md font-light">*This includes you and your companions.</label>
           <div className="text-md font-light">
             Please input the following details required:
           </div>
@@ -412,6 +419,7 @@ const MemberDashboard = () => {
                 className="flex gap-10 items-start justify-center mt-10"
                 key={index}
               >
+                <Cross2Icon/>
                 <div className="flex flex-col gap-2 grow">
                   <label className="text-left">Visitor Details</label>
                   <input

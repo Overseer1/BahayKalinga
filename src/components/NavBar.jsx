@@ -45,8 +45,11 @@ const NavBar = () => {
         email: loginForm.email,
         password: loginForm.password,
       });
-      if (error) throw error;
-      else if (data) {
+      if (error) throw error;   
+      else if (data) 
+      {
+        toast.success("Logged in!",{position:"top-center", autoClose:1500});
+        
         const response = await supabase
           .from("VisitorAcc")
           .select("*")
@@ -66,7 +69,7 @@ const NavBar = () => {
         navigate("/member");
       }
     } catch (error) {
-      toast.error(error.message);
+      toast.error("Incorrect username/password");
     }
 
     setLoading(false);
@@ -248,6 +251,7 @@ const NavBar = () => {
           </div>
         </div>
       </header>
+      <ToastContainer/>
     </>
   );
 };

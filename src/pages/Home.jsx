@@ -48,6 +48,17 @@ const Home = () => {
             </div>
             <img src="https://picsum.photos/585/385" alt="" />
           </div>
+          <div className="bg-main p-10 grid grid-cols-2 gap-16 rounded-2xl">
+            <img src="https://picsum.photos/585/385" alt="" />
+            <div className="flex flex-col justify-evenly">
+              <div className="text-5xl">A safehaven</div>
+              <div className="text-2xl leading-loose">
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+                eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
+                enim ad minim veniam, quis nostrud exercitation{" "}
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>

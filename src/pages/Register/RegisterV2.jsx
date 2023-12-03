@@ -1,8 +1,3 @@
-/*
-    register: clean up
-    reconstruct code (e.g. register first before verify OTP)
-*/
-
 import { BsPersonVcardFill } from "react-icons/bs";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
@@ -65,7 +60,6 @@ const Register = () => {
     e.preventDefault();
 
     try {
-      //! PUT THROW ERR IN EVERY STATEMENT
       const checker = document.getElementById("finalPass").value;
       if (!FirstName || !LastName || !Address || !EmailAddress) {
         alert("Please fill out the form completely empty");
