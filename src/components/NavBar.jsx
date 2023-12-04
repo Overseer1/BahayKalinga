@@ -8,6 +8,8 @@ import { ToastContainer, toast } from "react-toastify";
 import { UserContext } from "../providers/UserProvider";
 import { CgProfile } from "react-icons/cg";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 
 const NavBar = () => {
   const navigate = useNavigate();
@@ -86,6 +88,9 @@ const NavBar = () => {
     }
   };
 
+  const [visible, setVisible] = useState(false);
+  const isOpen = visible ? "text" : "password";
+  
   return (
     <>
       <header className="h-20 bg-main">
@@ -177,7 +182,7 @@ const NavBar = () => {
                       <input
                         className="text-violet11 shadow-violet7 focus:shadow-violet8 inline-flex h-[35px] w-full flex-1 items-center justify-center rounded-[4px] px-[10px] text-[15px] leading-none shadow-[0_0_0_1px] outline-none focus:shadow-[0_0_0_2px]"
                         id="password"
-                        type="password"
+                        type={isOpen}
                         value={loginForm.password}
                         onChange={(e) =>
                           setLoginForm({
@@ -186,6 +191,12 @@ const NavBar = () => {
                           })
                         }
                       />
+                      <div
+                    onClick={() => setVisible(!visible)}
+                    className="float-none cursor-pointer mt-[2px] -ml-[12px] text-[20px]"
+                  >
+                    {visible ? <VisibilityIcon /> : <VisibilityOffIcon />}
+                  </div>
                     </fieldset>
                     <div className="mt-[25px] flex justify-end">
                       <button

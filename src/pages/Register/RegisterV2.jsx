@@ -8,6 +8,8 @@ import { addUser, authValues } from "../../components/Auth";
 import { ToastContainer, toast } from "react-toastify";
 import Select from "react-select";
 import Loader from "../../components/Loader";
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 
 const Register = () => {
   const navigate = useNavigate();
@@ -47,7 +49,7 @@ const Register = () => {
       if (errOTP) {
         toast.error("Wrong OTP submitted.");
       } else if (OTPD) {
-        toast.info("OTP verified!, You have been registered.");
+        toast.info("OTP verified! You have been registered.");
         navigate("/");
       }
       return;
@@ -154,6 +156,12 @@ const Register = () => {
 
   const [hasRelatedElder, setHasRelatedElder] = useState(false);
 
+
+  const [visible, setVisible] = useState(false);
+  const isOpen = visible ? "text" : "password";
+
+  const [confVisible, setConfVisible] = useState(false);
+  const isOpenConf = confVisible ? "text" : "password";
   return (
     <div
       className="bg-cover py-10"
@@ -217,24 +225,38 @@ const Register = () => {
                     value={EmailAddress}
                     onChange={(e) => setEmailAddress(e.target.value)}
                   />
+                  <div className="grid grid-flow-col">
                   <input
                     className="h-10 p-3 border border-gray-400 rounded-md"
-                    type="password"
+                    type={isOpen}
                     placeholder="Password"
                     disabled={isSignedUp}
                     id="confirmPass"
                     value={Password}
                     onChange={(e) => setPassword(e.target.value)}
                   />
+                   <div
+                    onClick={() => setVisible(!visible)}
+                    className="cursor-pointer mt-[2px] text-[20px] "
+                  >
+                    {visible ? <VisibilityIcon /> : <VisibilityOffIcon />}
+                  </div>
                   <input
-                    className="h-10 p-3 border border-gray-400 rounded-md"
-                    type="password"
+                    className="h-10 p-3 border border-gray-400 rounded-md -mr-10"
+                    type={isOpenConf}
                     placeholder="Confirm password"
                     disabled={isSignedUp}
                     value={ConfPassword}
                     id="finalPass"
                     onChange={(e) => setConfPassword(e.target.value)}
                   />
+                  <div
+                    onClick={() => setConfVisible(!confVisible)}
+                    className="cursor-pointer mt-[2px] text-[20px] ml-10"
+                  >
+                    {confVisible ? <VisibilityIcon /> : <VisibilityOffIcon />}
+                  </div>
+                  </div>
                   <label className="text-left flex gap-3 cursor-pointer">
                     <input
                       value={hasRelatedElder}

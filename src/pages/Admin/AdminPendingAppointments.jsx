@@ -1,7 +1,7 @@
 import * as AlertDialog from "@radix-ui/react-alert-dialog";
 import * as Dialog from "@radix-ui/react-dialog";
 import { Cross2Icon } from "@radix-ui/react-icons";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import supabase from "../../config/supabaseClient";
 import Loader from "../../components/Loader";
 import emailjs from "@emailjs/browser";
@@ -15,10 +15,6 @@ const AdminPendingAppointments = () => {
   // get appointments from database
   const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
-
-  const [visitor_name, setvisitorName] = useState(true);
-  const [dateOfAppointment, setAppointmentDate] = useState(true);
-  const [timeSched, setTimeSched] = useState(true);
 
   const fetchAppointments = async () => {
     // join users and elder table
@@ -48,14 +44,24 @@ const AdminPendingAppointments = () => {
   };
   if (loading) fetchAppointments();
 
-  const form = useRef();
-  const sendEmailApproval = (e) => {
-    e.preventDefault();
-    emailjs
-      .sendForm(
+  const approve = async (appointment) => {
+    // update appointment status to approved
+    setLoading(true);
+    await supabase
+      .from("Appointments")
+      .update({ Status: "approved" })
+      .eq("id", appointment.id)
+      .then((data) => {
+        emailjs
+      .send(
         "service_kyd5pgu",
         "template_green",
-        form.current,
+        {
+          user_email:`${appointment.VisitorAcc.EmailAddress}`,
+          visitor_name:`${appointment.VisitorAcc.FirstName}`,
+          dateOfAppointment:`${appointment.Date}`,
+          timeSched: `${appointment.Schedule}`
+        },
         "nvnvA876L4ftHfSIf"
       )
       .then(
@@ -66,17 +72,6 @@ const AdminPendingAppointments = () => {
           console.log(error.text);
         }
       );
-  };
-
-  const approve = async (appointment) => {
-    // update appointment status to approved
-    setLoading(true);
-    await supabase
-      .from("Appointments")
-      .update({ Status: "approved" })
-      .eq("id", appointment.id)
-      .then((data) => {
-        console.log(data);
         fetchAppointments();
       })
       .catch((error) => {
@@ -100,6 +95,24 @@ const AdminPendingAppointments = () => {
       .update({ Status: "rejected", Reason: reason })
       .eq("id", selectedAppointment.id)
       .then(async (data) => {
+        emailjs.send("service_kyd5pgu", "template_red",
+          {
+            user_email:`${selectedAppointment.VisitorAcc.EmailAddress}`,
+            visitor_name:`${selectedAppointment.VisitorAcc.FirstName}`,
+            dateOfAppointment:`${selectedAppointment.Date}`,
+            timeSched: `${selectedAppointment.Schedule}`,
+            message: reason
+          },
+          "nvnvA876L4ftHfSIf"
+        )
+        .then(
+          (result) => {
+            console.log(result.text);
+          },
+          (error) => {
+            console.log(error.text);
+          }
+        );
         await supabase.from("Notifications").insert([
           {
             message: `You declined ${selectedAppointment.VisitorAcc.EmailAddress}'s appointment`,
@@ -122,6 +135,11 @@ const AdminPendingAppointments = () => {
       });
     setLoading(false);
   };
+useEffect(() => {
+
+
+ 
+})
 
   return (
     <div className="mx-4 rounded-md">
@@ -134,11 +152,14 @@ const AdminPendingAppointments = () => {
             <th className="py-3 px-5 border-b border-gray-200">
               Date of Appointment
             </th>
+            <th className="py-3 px-5 border-b border-gray-200">
+              Email address
+            </th>
             <th className="py-3 px-5 border-b border-gray-200">Time</th>
             <th className="py-3 px-5 border-b border-gray-200">Actions</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody id="myTable">
           {appointments.map((appointment) => (
             <tr key={appointment.id} className="text-center">
               <td className="py-3 px-5">
@@ -150,6 +171,7 @@ const AdminPendingAppointments = () => {
                 {appointment.ElderTable.NameOfElder}
               </td>
               <td className="py-3 px-5">{appointment.Date}</td>
+              <td className="py-3 px-5" id="visEma">{appointment.VisitorAcc.EmailAddress}</td>
               <td className="py-3 px-5">
                 {appointment.Schedule === "morning"
                   ? "7:00 AM - 10:00 AM"
@@ -157,13 +179,6 @@ const AdminPendingAppointments = () => {
               </td>
               <td className="py-3 px-5">
                 <div className="flex items-center gap-2 justify-center">
-                  {/* <form ref={form} onSubmit={sendEmailApproval} hidden={true}>
-                    <input type="text" name="visitor_name" value={appointment.VisitorAcc.FirstName + " " +appointment.VisitorAcc.MiddleName + " " +appointment.VisitorAcc.LastName}/>
-                    <input type="text" name="dateOfAppointment" value={appointment.Date}/>
-                    <input type="text" name="timeSched" value={appointment.Schedule === "morning"
-                  ? "7:00 AM - 10:00 AM"
-                  : "1:00 PM - 3:00 PM"}/>
-                  </form> */}
                   <button
                     type="submit"
                     onClick={() => approve(appointment)}
