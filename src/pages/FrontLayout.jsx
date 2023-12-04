@@ -14,7 +14,7 @@ const FrontLayout = () => {
     const setUserData = async () => {
       const user = localStorage.getItem("token")
         ? JSON.parse(localStorage.getItem("token"))
-        : null;
+        : "";
 
       if (user) {
         const response = await supabase

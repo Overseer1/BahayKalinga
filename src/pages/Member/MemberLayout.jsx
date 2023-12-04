@@ -22,7 +22,7 @@ const MemberLayout = () => {
 
   return (
     <div className="max-w-7xl mx-auto px-5 flex min-h-[calc(100vh-144px)]">
-      <div className="p-5 bg-white">
+      {/* <div className="p-5 bg-white">
         {user && (
           <>
             <div className="text-center">
@@ -42,7 +42,7 @@ const MemberLayout = () => {
             </div>
           </>
         )}
-      </div>
+      </div> */}
       <div className="grow bg-gray-50 p-5">
         <Outlet />
       </div>

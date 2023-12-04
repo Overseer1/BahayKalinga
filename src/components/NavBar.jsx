@@ -69,7 +69,7 @@ const NavBar = () => {
         navigate("/member");
       }
     } catch (error) {
-      toast.error("Incorrect username/password");
+      toast.error("Incorrect username/password", {position:"top-center", autoClose:1500});
     }
 
     setLoading(false);
@@ -195,9 +195,9 @@ const NavBar = () => {
                       >
                         {loading ? "Loading..." : "Log in"}
                       </button>
-                      <ToastContainer />
                     </div>
                   </form>
+                  <ToastContainer/>
                   <Dialog.Close asChild>
                     <button
                       className="text-violet11 hover:bg-violet4 focus:shadow-violet7 absolute top-[10px] right-[10px] inline-flex h-[25px] w-[25px] appearance-none items-center justify-center rounded-full focus:shadow-[0_0_0_2px] focus:outline-none"
@@ -250,8 +250,8 @@ const NavBar = () => {
             )}
           </div>
         </div>
+        <ToastContainer/>
       </header>
-      <ToastContainer/>
     </>
   );
 };
