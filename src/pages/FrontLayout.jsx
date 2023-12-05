@@ -27,6 +27,7 @@ const FrontLayout = () => {
 
         if (response.error) {
           alert(response.error.message);
+          throw response.error;
           return;
         }
 
