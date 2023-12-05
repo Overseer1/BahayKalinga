@@ -12,7 +12,9 @@ const FrontLayout = () => {
 
   useEffect(() => {
     const setUserData = async () => {
-      const user = localStorage.getItem("token")
+      try
+      {
+        const user = localStorage.getItem("token")
         ? JSON.parse(localStorage.getItem("token"))
         : "";
 
@@ -34,8 +36,13 @@ const FrontLayout = () => {
       }
 
       setLoading(false);
+      }
+      catch (err)
+      {
+        setLoading(false);
+      }
+      
     };
-
     setUserData();
   }, []);
 
