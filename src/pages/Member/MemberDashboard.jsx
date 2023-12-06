@@ -10,7 +10,7 @@ import relationships from "../../refs/ref_relationship";
 import { formatISO } from "date-fns";
 import { Navigate, useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
-import PersonIcon from '@mui/icons-material/Person';
+import PersonIcon from "@mui/icons-material/Person";
 
 /**
  * Generates a function comment for the given function body.
@@ -78,6 +78,13 @@ const MemberDashboard = () => {
         elderName: elderOptions.length ? elderOptions[0].id : 0,
       }),
     ]);
+  };
+  const deleteDetails = () => {
+    if (details.length > 1) {
+      const updatedDetails = [...details];
+      updatedDetails.pop();
+      setDetails(updatedDetails);
+    }
   };
   const submitDetails = async () => {
     const emptyDetails = details.filter((detail) => {
@@ -237,8 +244,7 @@ const MemberDashboard = () => {
 
   const navigate = useNavigate();
   useEffect(() => {
-    if(!localStorage.getItem("token"))
-    {
+    if (!localStorage.getItem("token")) {
       navigate("/");
     }
     if (user) {
@@ -392,7 +398,9 @@ const MemberDashboard = () => {
       {step === 1 && (
         <>
           <div className="text-2xl font-bold">Name of visitors</div>
-          <label className="text-md font-light">*This includes you and your companions.</label>
+          <label className="text-md font-light">
+            *This includes you and your companions.
+          </label>
           <div className="text-md font-light">
             Please input the following details required:
           </div>
@@ -420,7 +428,7 @@ const MemberDashboard = () => {
                 className="flex gap-10 items-start justify-center mt-10"
                 key={index}
               >
-                <Cross2Icon/>
+                <Cross2Icon />
                 <div className="flex flex-col gap-2 grow">
                   <label className="text-left">Visitor Details</label>
                   <input
@@ -461,9 +469,8 @@ const MemberDashboard = () => {
                     </div>
                   ) : (
                     <div className="rounded-lg font-bold text-9xl bg-gray-200 aspect-video flex items-center justify-center w-[300px]">
-                      <PersonIcon fontSize=""/>
+                      <PersonIcon fontSize="" />
                     </div>
-                    
                   )}
                   <div className="font-light text-sm mt-2">
                     <span className="text-red-600">*</span> Attach a picture of
@@ -486,12 +493,20 @@ const MemberDashboard = () => {
               </div>
             );
           })}
-          <button
-            onClick={addDetails}
-            className="mt-5 h-10 text-blue-600 border border-blue-600 px-6 rounded-md"
-          >
-            + Add More
-          </button>
+          <div className="flex gap-2 justify-center">
+            <button
+              onClick={addDetails}
+              className="mt-5 h-10 text-blue-600 border border-blue-600 px-6 rounded-md"
+            >
+              + Add More
+            </button>
+            <button
+              onClick={deleteDetails}
+              className="mt-5 h-10 text-red-600 border border-red-600 px-6 rounded-md"
+            >
+              Delete
+            </button>
+          </div>
           <div className="flex justify-between mt-8">
             <div className="text-xl">
               Read the{" "}
