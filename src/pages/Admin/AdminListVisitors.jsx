@@ -8,6 +8,7 @@ import Loader from "../../components/Loader";
 import FormModal from "../../components/FormModal";
 import relationships from "../../refs/ref_relationship";
 import uploadImage from "../../utils/uploadImage";
+import ViewVisitorModal from "../../components/ViewVisitorModal";
 
 const AdminListVisitors = () => {
   const [deniedDialog, setDeniedDialog] = useState(false);
@@ -222,6 +223,9 @@ const AdminListVisitors = () => {
     setOpenForm(false);
   };
 
+  const [viewVisitor, setViewVisitor] = useState(false);
+  const [viewVisitorData, setViewVisitorData] = useState({});
+
   return (
     <div className="mx-4 rounded-md">
       {loading && <Loader />}
@@ -279,7 +283,12 @@ const AdminListVisitors = () => {
                   onClick={() => openImage(visitor?.image_url)}
                 />
               </td>
-              <td className="py-3 px-5">{visitor?.accompanied_by || "-"}</td>
+              <td className="py-3 px-5">
+                <div onClick={() => {
+                  setViewVisitorData(visitor);
+                    setViewVisitor(true);
+                }} className="text-blue-600 text-lg cursor-pointer">See More</div>
+              </td>
               <td className="py-3 px-5 text-center">
                 <button
                   onClick={() => showEdit(visitor)}
@@ -339,6 +348,7 @@ const AdminListVisitors = () => {
         close={() => setOpen(false)}
         slides={[{ src: viewImage }]}
       />
+      <ViewVisitorModal visitor={viewVisitorData} open={viewVisitor} setOpen={setViewVisitor} />
     </div>
   );
 };

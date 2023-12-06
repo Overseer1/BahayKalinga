@@ -402,10 +402,12 @@ const AdminLayout = () => {
                   </Dialog.Description>
 
                   <form
-                    onSubmit={() =>
+                    onSubmit={(event) => {
+                      event.preventDefault();
                       location.pathname === "/admin/list-visitors"
-                        ? onSubmitMigrate()
-                        : onSubmitElder()
+                          ? onSubmitMigrate()
+                          : onSubmitElder()
+                    }
                     }
                   >
                     <div className="flex gap-5">
