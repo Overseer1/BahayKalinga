@@ -10,6 +10,7 @@ import relationships from "../../refs/ref_relationship";
 import { formatISO } from "date-fns";
 import { Navigate, useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
+import PersonIcon from '@mui/icons-material/Person';
 
 /**
  * Generates a function comment for the given function body.
@@ -459,9 +460,10 @@ const MemberDashboard = () => {
                       />
                     </div>
                   ) : (
-                    <div className="rounded-lg font-bold text-6xl bg-gray-200 aspect-video flex items-center justify-center w-[300px]">
-                      +
+                    <div className="rounded-lg font-bold text-9xl bg-gray-200 aspect-video flex items-center justify-center w-[300px]">
+                      <PersonIcon fontSize=""/>
                     </div>
+                    
                   )}
                   <div className="font-light text-sm mt-2">
                     <span className="text-red-600">*</span> Attach a picture of

@@ -764,7 +764,7 @@ const AdminLayout = () => {
                       {notifications.map((notification) => (
                         <tr key={notification.id}>
                           <td>{notification.message}</td>
-                          <td className="text-center flex gap-1 justify-center">
+                          <td className="text-center flex gap-1 justify-center mb-5">
                             <button
                               onClick={() => viewNotification(notification)}
                               className="text-white bg-green-600 px-4 py-2 rounded-md hover:bg-green-400 transition-all"
@@ -781,7 +781,9 @@ const AdminLayout = () => {
                         </tr>
                       ))}
                     </tbody>
+                    
                   </table>
+                  
 
                   <Dialog.Close asChild>
                     <button
