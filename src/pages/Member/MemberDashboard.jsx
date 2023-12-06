@@ -428,7 +428,6 @@ const MemberDashboard = () => {
                 className="flex gap-10 items-start justify-center mt-10"
                 key={index}
               >
-                <Cross2Icon />
                 <div className="flex flex-col gap-2 grow">
                   <label className="text-left">Visitor Details</label>
                   <input

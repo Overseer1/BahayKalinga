@@ -187,7 +187,7 @@ const Register = () => {
                     <input
                       className="h-10 p-3 border border-gray-400 rounded-md"
                       type="text"
-                      placeholder="First Name"
+                      placeholder="First Name*"
                       disabled={isSignedUp}
                       value={FirstName}
                       onChange={(e) => setFirstName(e.target.value)}
@@ -203,7 +203,7 @@ const Register = () => {
                     <input
                       className="h-10 p-3 border border-gray-400 rounded-md"
                       type="text"
-                      placeholder="Last Name"
+                      placeholder="Last Name*"
                       disabled={isSignedUp}
                       value={LastName}
                       onChange={(e) => setLastName(e.target.value)}
@@ -212,7 +212,7 @@ const Register = () => {
                   <input
                     className="h-10 p-3 border border-gray-400 rounded-md"
                     type="text"
-                    placeholder="Address"
+                    placeholder="Address*"
                     disabled={isSignedUp}
                     value={Address}
                     onChange={(e) => setAddress(e.target.value)}
@@ -220,7 +220,7 @@ const Register = () => {
                   <input
                     className="h-10 p-3 border border-gray-400 rounded-md"
                     type="email"
-                    placeholder="Email Address"
+                    placeholder="Email Address*"
                     disabled={isSignedUp}
                     value={EmailAddress}
                     onChange={(e) => setEmailAddress(e.target.value)}
@@ -229,7 +229,7 @@ const Register = () => {
                   <input
                     className="h-10 p-3 border border-gray-400 rounded-md"
                     type={isOpen}
-                    placeholder="Password"
+                    placeholder="Password*"
                     disabled={isSignedUp}
                     id="confirmPass"
                     value={Password}
@@ -244,7 +244,7 @@ const Register = () => {
                   <input
                     className="h-10 p-3 border border-gray-400 rounded-md -mr-10"
                     type={isOpenConf}
-                    placeholder="Confirm password"
+                    placeholder="Confirm password*"
                     disabled={isSignedUp}
                     value={ConfPassword}
                     id="finalPass"
@@ -366,6 +366,9 @@ const Register = () => {
                   </TermsConditions>
                 </div>
               </label>
+              <div className="font-light text-sm">
+                    <span className="text-red-600">*</span> Please fill up all required fields.
+                  </div>
               <div className="flex mt-2 gap-1">
                 <button
                   type="submit"

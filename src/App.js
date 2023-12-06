@@ -23,9 +23,9 @@ function App() {
     <UserProvider>
       <div>
         <Routes>
-        <Route path="resetPass" element={<PasswordReset />} />
           {/* Front */}
           <Route path="/" element={<FrontLayout />}>
+          <Route path="resetPass" element={<PasswordReset />} />
             <Route index element={<Home />} />
             <Route path="register" element={<Register />} />
             <Route path="member" element={<MemberLayout />}>

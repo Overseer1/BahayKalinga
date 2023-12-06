@@ -199,7 +199,13 @@ const NavBar = () => {
                     {visible ? <VisibilityIcon /> : <VisibilityOffIcon />}
                   </div>
                     </fieldset>
-                    <div className="mt-[25px] flex justify-end">
+                    <div className="mt-[25px] grid grid-cols-2 justify-end">
+                    <Link
+              className="text-violet11 w-[90px] text-right text-[15px] "
+              onClick={() => {navigate("/#/resetPass");}}
+            >
+              fuck
+            </Link>
                       <button
                         type="submit"
                         disabled={loading}
