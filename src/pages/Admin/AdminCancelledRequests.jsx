@@ -24,7 +24,8 @@ const AdminCancelledRequests = () => {
         VisitorAcc: UserId (
           FirstName,
           MiddleName,
-          LastName
+          LastName,
+          EmailAddress
         ),
         ElderTable: ElderToVisit (
           NameOfElder
@@ -50,6 +51,7 @@ const AdminCancelledRequests = () => {
           <tr>
             <th className="py-3 px-5 border-b border-gray-200">User Name</th>
             <th className="py-3 px-5 border-b border-gray-200">Elder Name</th>
+            <th className="py-3 px-5 border-b border-gray-200">fuck u</th>
             <th className="py-3 px-5 border-b border-gray-200">
               Date of Appointment
             </th>
@@ -60,12 +62,15 @@ const AdminCancelledRequests = () => {
           {appointments.map((appointment) => (
             <tr key={appointment.id} className="text-center">
               <td className="py-3 px-5">
-                {appointment.ElderTable.NameOfElder}
-              </td>
-              <td className="py-3 px-5">
                 {appointment.VisitorAcc.FirstName}{" "}
                 {appointment.VisitorAcc.MiddleName}{" "}
                 {appointment.VisitorAcc.LastName}
+              </td>
+              <td className="py-3 px-5">
+                {appointment.ElderTable.NameOfElder}
+              </td>
+              <td className="py-3 px-5">
+                {appointment.VisitorAcc.EmailAddress}
               </td>
               <td className="py-3 px-5">{appointment.Date}</td>
               <td className="py-3 px-5">

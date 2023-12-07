@@ -472,8 +472,8 @@ const MemberDashboard = () => {
                     </div>
                   )}
                   <div className="font-light text-sm mt-2">
-                    <span className="text-red-600">*</span> Attach a picture of
-                    who you are with
+                    {/* <span className="text-red-600">*</span> Attach a picture of
+                    who you are with */}
                   </div>
                   <label className="relative block">
                     <button className="mt-5 h-10 text-blue-600 border border-blue-600 px-6 rounded-md">
@@ -596,7 +596,7 @@ const MemberDashboard = () => {
           <div className="text-2xl font-medium">Thank you!</div>
           <div className="text-lg font-light mb-5">
             {appointmentStatus === "pending" &&
-              "Here is the summary of your appointment. An email will be sent to your email address."}
+              "Here is the summary of your appointment. You will receive a notification when your appointment gets approved or declined."}
             {appointmentStatus === "approved" &&
               "Your appointment has been approved. See you soon."}
             {appointmentStatus === "rejected" &&
@@ -604,7 +604,7 @@ const MemberDashboard = () => {
           </div>
           <div className="flex justify-center items-start gap-10">
             <div className="flex flex-col gap-3 text-left">
-              <div className="text-lg font-bold">You are with:</div>
+              <div className="text-lg font-bold">Name of visitors:</div>
               <ul className="font-normal text-base flex flex-col gap-2">
                 {details.map((detail, index) => (
                   <li key={index}>{detail.fullName}</li>
