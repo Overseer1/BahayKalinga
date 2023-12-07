@@ -33,9 +33,7 @@ const Home = () => {
             <div className="flex flex-col justify-evenly">
               <div className="text-5xl">About us</div>
               <div className="text-2xl leading-loose">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-                eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-                enim ad minim veniam, quis nostrud exercitation{" "}
+                Bahay Kalinga is a Home for the Elderly, located in Santa Maria, Bulacan. It is one of the few Retirement Homes in the Philippines.{" "}
               </div>
             </div>
           </div>
