@@ -93,11 +93,13 @@ const NavBar = () => {
 
   const forResetPass = async() => {
    console.log(loginForm.email)
-   const { data, error } = await supabase.auth.resetPasswordForEmail(loginForm.email)
+   const { data, error } = await supabase.auth.resetPasswordForEmail(loginForm.email, {
+    redirectTo: 'https://overseer1.github.io/BahayKalinga/#/resetPass',
+  })
    if (data) 
    {
-     console.log("email send ");
-     setResetPressed(false);
+      toast.success("Recovery email has been sent.");
+      setResetPressed(false);
    }
    else if (error)
    {

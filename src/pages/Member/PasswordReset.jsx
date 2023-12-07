@@ -7,7 +7,6 @@ import { toast, ToastContainer } from 'react-toastify';
 
 const PasswordReset = () => 
 {
-//TODO: add UI and logic to passwordReset
   const [Password, setPassword] = useState("");
   const [ConfPassword, setConfPassword] = useState("");
 
