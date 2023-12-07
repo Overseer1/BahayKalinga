@@ -8,6 +8,7 @@ const relationships = [
   "Cousin",
   "Granddaughter",
   "Grandson",
+  "Non-related"
 ];
 
 export default relationships;
