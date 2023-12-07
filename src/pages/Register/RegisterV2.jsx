@@ -16,6 +16,7 @@ const Register = () => {
 
   const [terms, setTerms] = useState(false);
   const [ImageID] = useState(uuidv4);
+  
   //for insert data
   const [FirstName, setFirstName] = useState("");
   const [MiddleName, setMiddleName] = useState("");

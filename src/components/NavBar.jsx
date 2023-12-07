@@ -15,6 +15,8 @@ const NavBar = () => {
   const navigate = useNavigate();
 
   const { updateUser, user } = useContext(UserContext);
+ // resetPass
+ const [isResetPressed, setResetPressed] = useState(false);
 
   // Login
   const [loading, setLoading] = useState(false);
@@ -89,6 +91,20 @@ const NavBar = () => {
     }
   };
 
+  const forResetPass = async() => {
+   console.log(loginForm.email)
+   const { data, error } = await supabase.auth.resetPasswordForEmail(loginForm.email)
+   if (data) 
+   {
+     console.log("email send ");
+     setResetPressed(false);
+   }
+   else if (error)
+   {
+    console.log(error);
+   }
+  };
+
   const [visible, setVisible] = useState(false);
   const isOpen = visible ? "text" : "password";
   
@@ -148,10 +164,10 @@ const NavBar = () => {
                 <Dialog.Overlay className="bg-blackA6 data-[state=open]:animate-overlayShow fixed inset-0" />
                 <Dialog.Content className="data-[state=open]:animate-contentShow fixed top-[50%] left-[50%] max-h-[85vh] w-[90vw] max-w-[450px] translate-x-[-50%] translate-y-[-50%] rounded-[6px] bg-white p-[25px] shadow-[hsl(206_22%_7%_/_35%)_0px_10px_38px_-10px,_hsl(206_22%_7%_/_20%)_0px_10px_20px_-15px] focus:outline-none">
                   <Dialog.Title className="text-mauve12 m-0 text-[17px] font-medium">
-                    Login
+                  {isResetPressed ? "Password recovery" : "Log in"}
                   </Dialog.Title>
                   <Dialog.Description className="text-mauve11 mt-[10px] mb-5 text-[15px] leading-normal">
-                    Input your login credentials here.
+                    {isResetPressed ? "Please type your email" : "Input your login credentials here"}
                   </Dialog.Description>
                   <form onSubmit={onLoginSubmit}>
                     <fieldset className="mb-[15px] flex items-center gap-5">
@@ -175,13 +191,13 @@ const NavBar = () => {
                     </fieldset>
                     <fieldset className="mb-[15px] flex items-center gap-5">
                       <label
-                        className="text-violet11 w-[90px] text-right text-[15px]"
+                        className={`text-violet11 w-[90px] text-right text-[15px] ${isResetPressed ? "hidden" : ""}`}
                         htmlFor="password"
                       >
                         Password
                       </label>
                       <input
-                        className="text-violet11 shadow-violet7 focus:shadow-violet8 inline-flex h-[35px] w-full flex-1 items-center justify-center rounded-[4px] px-[10px] text-[15px] leading-none shadow-[0_0_0_1px] outline-none focus:shadow-[0_0_0_2px]"
+                        className={`text-violet11 shadow-violet7 focus:shadow-violet8 inline-flex h-[35px] w-full flex-1 items-center justify-center rounded-[4px] px-[10px] text-[15px] leading-none shadow-[0_0_0_1px] outline-none focus:shadow-[0_0_0_2px] ${isResetPressed ? "hidden" : ""}`}
                         id="password"
                         type={isOpen}
                         value={loginForm.password}
@@ -194,27 +210,39 @@ const NavBar = () => {
                       />
                       <div
                     onClick={() => setVisible(!visible)}
-                    className="float-none cursor-pointer mt-[2px] -ml-[12px] text-[20px]"
+                    className={`float-none cursor-pointer mt-[2px] -ml-[12px] text-[20px] ${isResetPressed ? "hidden" : ""}`}
                   >
                     {visible ? <VisibilityIcon /> : <VisibilityOffIcon />}
                   </div>
                     </fieldset>
-                    <div className="mt-[25px] grid grid-cols-2 justify-end">
+                    <div className="mt-[25px] grid grid-cols-2 justify-end gap-56">
                     <Link
-              className="text-violet11 w-[90px] text-right text-[15px] "
-              onClick={() => {navigate("/#/resetPass");}}
-            >
-              fuck
-            </Link>
+                    className={`text-violet11 w-[100px] text-left text-[15px] ${isResetPressed ? "hidden" : ""}`}
+                    onClick={() => {
+                      setTimeout(() => {
+                        setResetPressed(true)
+                      });
+                    }}
+                    >
+                    Forgot password?
+                    </Link>
                       <button
                         type="submit"
                         disabled={loading}
-                        className="bg-green4 text-green11 hover:bg-green5 focus:shadow-green7 inline-flex h-[35px] items-center justify-center rounded-[4px] px-[15px] font-medium leading-none focus:shadow-[0_0_0_2px] focus:outline-none"
+                        className={`bg-green4 text-green11 hover:bg-green5 focus:shadow-green7 inline-flex h-[35px] items-center justify-center rounded-[4px] px-[15px] font-medium leading-none focus:shadow-[0_0_0_2px] focus:outline-none ${isResetPressed ? "hidden" : ""}`}
                       >
                         {loading ? "Loading..." : "Log in"}
                       </button>
                     </div>
                   </form>
+                  <Dialog.Close asChild>
+                  <button
+                        onClick={forResetPass}
+                        className={`bg-green4 text-green11 hover:bg-green5 focus:shadow-green7 inline-flex h-[35px] items-center justify-center rounded-[4px] px-[15px] font-medium leading-none focus:shadow-[0_0_0_2px] focus:outline-none ${isResetPressed ? "" : "hidden"}`}
+                      >
+                        Send recovery link
+                  </button>
+                  </Dialog.Close>
                   <Dialog.Close asChild>
                     <button
                       className="text-violet11 hover:bg-violet4 focus:shadow-violet7 absolute top-[10px] right-[10px] inline-flex h-[25px] w-[25px] appearance-none items-center justify-center rounded-full focus:shadow-[0_0_0_2px] focus:outline-none"
@@ -264,7 +292,7 @@ const NavBar = () => {
             )}
           </div>
         </div>
-        <ToastContainer className="float-none"/>
+        <ToastContainer/>
       </header>
     </>
   );
