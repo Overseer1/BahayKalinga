@@ -9,7 +9,12 @@ const PasswordReset = () =>
 {
   const [Password, setPassword] = useState("");
   const [ConfPassword, setConfPassword] = useState("");
-
+  supabase.auth.onAuthStateChange((event, session) => {
+    console.log(session + " " + event)
+    if (event == 'PASSWORD_RECOVERY') {
+      console.log('PASSWORD_RECOVERY', session + " " + event)
+    }
+  })
   const resetPassword = async() =>
   {
     if (Password !== ConfPassword)
@@ -18,10 +23,14 @@ const PasswordReset = () =>
     }
     else
     {
-      const { data, error } = await supabase.auth.updateUser({
-      password: ConfPassword,
-      })
-      if (data) toast.success("Password changed");
+      const { data, error } = await supabase.auth.updateUser(
+      {password: ConfPassword}
+      )
+      if (data) 
+      {
+        console.log(data);
+        toast.success("Password changed");
+      }
       else if (error) console.log(error);
     }
    
@@ -29,11 +38,6 @@ const PasswordReset = () =>
   
   useEffect(() => {
 
-    supabase.auth.onAuthStateChange((event, session) => {
-      if (event == 'PASSWORD_RECOVERY') {
-        console.log('PASSWORD_RECOVERY', session + " " + event)
-      }
-    })
   })
   
   const [visible, setVisible] = useState(false);
@@ -47,7 +51,7 @@ const PasswordReset = () =>
         <div className="text-lg font-light mb-20">
               Please input the following details required:
             </div>
-        <div className="ml-10 grid grid-flow-col gap-5 text-center">
+             <div className="ml-10 grid grid-flow-col gap-5 text-center">
                   <input
                     className="h-10 p-3 border border-gray-400 rounded-md"
                     type={isOpen}
