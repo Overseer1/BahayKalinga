@@ -50,7 +50,7 @@ const Register = () => {
       if (errOTP) {
         toast.error("Wrong OTP submitted.");
       } else if (OTPD) {
-        toast.info("OTP verified! You have been registered.");
+        toast.success("OTP verified! You have been registered.");
         navigate("/");
       }
       return;

@@ -217,7 +217,7 @@ const NavBar = () => {
                     {visible ? <VisibilityIcon /> : <VisibilityOffIcon />}
                   </div>
                     </fieldset>
-                    <div className="mt-[25px] grid grid-cols-2 justify-end gap-56">
+                    <div className="mt-[25px] grid grid-cols-2 justify-end gap-56 items-center">
                     <Link
                     className={`text-violet11 w-[100px] text-left text-[15px] ${isResetPressed ? "hidden" : ""}`}
                     onClick={() => {

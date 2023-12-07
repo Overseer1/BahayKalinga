@@ -4,16 +4,16 @@ import supabase from '../../config/supabaseClient'
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import { toast, ToastContainer } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
 
 const PasswordReset = () => 
 {
   const [Password, setPassword] = useState("");
   const [ConfPassword, setConfPassword] = useState("");
+  const navigate = useNavigate();
   supabase.auth.onAuthStateChange((event, session) => {
     console.log(session + " " + event)
-    if (event == 'PASSWORD_RECOVERY') {
-      console.log('PASSWORD_RECOVERY', session + " " + event)
-    }
+    
   })
   const resetPassword = async() =>
   {
@@ -29,9 +29,10 @@ const PasswordReset = () =>
       if (data) 
       {
         console.log(data);
-        toast.success("Password changed");
+        toast.success("Password changed", {position:"top-center", autoClose:1500});
+        navigate("/")
       }
-      else if (error) console.log(error);
+      else if (error) toast.error(error);
     }
    
   }
