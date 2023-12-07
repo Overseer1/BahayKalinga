@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import supabase from "../../config/supabaseClient";
 import Loader from "../../components/Loader";
 import emailjs from "@emailjs/browser";
+import ViewVisitorModal from "../../components/ViewVisitorModal";
 
 const AdminPendingAppointments = () => {
   const [deniedDialog, setDeniedDialog] = useState(false);
@@ -141,26 +142,31 @@ useEffect(() => {
  
 })
 
+  const [viewVisitor, setViewVisitor] = useState(false);
+  const [viewVisitorData, setViewVisitorData] = useState({});
+
   return (
     <div className="mx-4 rounded-md">
       {loading && <Loader />}
+      <ViewVisitorModal visitor={viewVisitorData} open={viewVisitor} setOpen={setViewVisitor} />
       <table className="w-full bg-white">
         <thead>
-          <tr>
-            <th className="py-3 px-5 border-b border-gray-200">User Name</th>
-            <th className="py-3 px-5 border-b border-gray-200">Elder Name</th>
-            <th className="py-3 px-5 border-b border-gray-200">
-              Date of Appointment
-            </th>
-            <th className="py-3 px-5 border-b border-gray-200">
-              Email address
-            </th>
-            <th className="py-3 px-5 border-b border-gray-200">Time</th>
-            <th className="py-3 px-5 border-b border-gray-200">Actions</th>
-          </tr>
+        <tr>
+          <th className="py-3 px-5 border-b border-gray-200">User Name</th>
+          <th className="py-3 px-5 border-b border-gray-200">Elder Name</th>
+          <th className="py-3 px-5 border-b border-gray-200">
+            Date of Appointment
+          </th>
+          <th className="py-3 px-5 border-b border-gray-200">
+            Email address
+          </th>
+          <th className="py-3 px-5 border-b border-gray-200">Time</th>
+          <th className="py-3 px-5 border-b border-gray-200">Accompanied By</th>
+          <th className="py-3 px-5 border-b border-gray-200">Actions</th>
+        </tr>
         </thead>
         <tbody id="myTable">
-          {appointments.map((appointment) => (
+        {appointments.map((appointment) => (
             <tr key={appointment.id} className="text-center">
               <td className="py-3 px-5">
                 {appointment.VisitorAcc.FirstName}{" "}
@@ -174,15 +180,22 @@ useEffect(() => {
               <td className="py-3 px-5" id="visEma">{appointment.VisitorAcc.EmailAddress}</td>
               <td className="py-3 px-5">
                 {appointment.Schedule === "morning"
-                  ? "7:00 AM - 10:00 AM"
-                  : "1:00 PM - 3:00 PM"}
+                    ? "7:00 AM - 10:00 AM"
+                    : "1:00 PM - 3:00 PM"}
+              </td>
+              <td className="py-3 px-5">
+                <div onClick={() => {
+                  setViewVisitorData({ appointment_id: appointment.id });
+                  setViewVisitor(true);
+                }} className="text-blue-600 text-lg cursor-pointer">See More
+                </div>
               </td>
               <td className="py-3 px-5">
                 <div className="flex items-center gap-2 justify-center">
                   <button
-                    type="submit"
-                    onClick={() => approve(appointment)}
-                    className="cursor-pointer text-blue-600"
+                      type="submit"
+                      onClick={() => approve(appointment)}
+                      className="cursor-pointer text-blue-600"
                   >
                     Approve
                   </button>
@@ -190,37 +203,39 @@ useEffect(() => {
                   <AlertDialog.Root>
                     <AlertDialog.Trigger asChild>
                       <div
-                        onClick={() => decline(appointment)}
-                        className="cursor-pointer text-blue-600"
+                          onClick={() => decline(appointment)}
+                          className="cursor-pointer text-blue-600"
                       >
                         Decline
                       </div>
                     </AlertDialog.Trigger>
                     <AlertDialog.Portal>
-                      <AlertDialog.Overlay className="bg-blackA6 data-[state=open]:animate-overlayShow fixed inset-0" />
-                      <AlertDialog.Content className="data-[state=open]:animate-contentShow fixed top-[50%] left-[50%] max-h-[85vh] w-[90vw] max-w-[500px] translate-x-[-50%] translate-y-[-50%] rounded-[6px] bg-white p-[25px] shadow-[hsl(206_22%_7%_/_35%)_0px_10px_38px_-10px,_hsl(206_22%_7%_/_20%)_0px_10px_20px_-15px] focus:outline-none">
+                      <AlertDialog.Overlay className="bg-blackA6 data-[state=open]:animate-overlayShow fixed inset-0"/>
+                      <AlertDialog.Content
+                          className="data-[state=open]:animate-contentShow fixed top-[50%] left-[50%] max-h-[85vh] w-[90vw] max-w-[500px] translate-x-[-50%] translate-y-[-50%] rounded-[6px] bg-white p-[25px] shadow-[hsl(206_22%_7%_/_35%)_0px_10px_38px_-10px,_hsl(206_22%_7%_/_20%)_0px_10px_20px_-15px] focus:outline-none">
                         {selectedAppointment && (
-                          <AlertDialog.Title className="text-mauve12 m-0 text-[17px] font-medium">
-                            Are you sure you want to deny{" "}
-                            {selectedAppointment.VisitorAcc.FirstName}{" "}
-                            {selectedAppointment.VisitorAcc.MiddleName}{" "}
-                            {selectedAppointment.VisitorAcc.LastName}
-                            's appointment?
-                          </AlertDialog.Title>
+                            <AlertDialog.Title className="text-mauve12 m-0 text-[17px] font-medium">
+                              Are you sure you want to deny{" "}
+                              {selectedAppointment.VisitorAcc.FirstName}{" "}
+                              {selectedAppointment.VisitorAcc.MiddleName}{" "}
+                              {selectedAppointment.VisitorAcc.LastName}
+                              's appointment?
+                            </AlertDialog.Title>
                         )}
                         <AlertDialog.Description className="text-mauve11 mt-4 mb-5 text-[15px] leading-normal">
                           This action cannot be undone.
                         </AlertDialog.Description>
                         <div className="flex justify-end gap-[25px]">
                           <AlertDialog.Cancel asChild>
-                            <button className="text-mauve11 bg-mauve4 hover:bg-mauve5 focus:shadow-mauve7 inline-flex h-[35px] items-center justify-center rounded-[4px] px-[15px] font-medium leading-none outline-none focus:shadow-[0_0_0_2px]">
+                            <button
+                                className="text-mauve11 bg-mauve4 hover:bg-mauve5 focus:shadow-mauve7 inline-flex h-[35px] items-center justify-center rounded-[4px] px-[15px] font-medium leading-none outline-none focus:shadow-[0_0_0_2px]">
                               Cancel
                             </button>
                           </AlertDialog.Cancel>
                           <AlertDialog.Action asChild>
                             <button
-                              onClick={onDecline}
-                              className="text-red11 bg-red4 hover:bg-red5 focus:shadow-red7 inline-flex h-[35px] items-center justify-center rounded-[4px] px-[15px] font-medium leading-none outline-none focus:shadow-[0_0_0_2px]"
+                                onClick={onDecline}
+                                className="text-red11 bg-red4 hover:bg-red5 focus:shadow-red7 inline-flex h-[35px] items-center justify-center rounded-[4px] px-[15px] font-medium leading-none outline-none focus:shadow-[0_0_0_2px]"
                             >
                               Yes
                             </button>
@@ -232,7 +247,7 @@ useEffect(() => {
                 </div>
               </td>
             </tr>
-          ))}
+        ))}
         </tbody>
       </table>
       <Dialog.Root open={deniedDialog} onOpenChange={setDeniedDialog}>
