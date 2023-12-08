@@ -51,7 +51,7 @@ const AdminCancelledRequests = () => {
           <tr>
             <th className="py-3 px-5 border-b border-gray-200">User Name</th>
             <th className="py-3 px-5 border-b border-gray-200">Elder Name</th>
-            <th className="py-3 px-5 border-b border-gray-200">fuck u</th>
+            <th className="py-3 px-5 border-b border-gray-200">Email Address</th>
             <th className="py-3 px-5 border-b border-gray-200">
               Date of Appointment
             </th>

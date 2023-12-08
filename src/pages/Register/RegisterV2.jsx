@@ -323,10 +323,13 @@ const Register = () => {
                   <div className="mb-2">
                     <BsPersonVcardFill className="text-[100px] mx-auto text-gray-700" />
                     <div className="text-[12px]">
-                      Attach a selfie with your valid ID.
+                      *Attach a selfie with your valid ID.
                     </div>
                     <div className="text-[12px]">
                       Please make sure the image is clear.
+                    </div>
+                    <div className="text-[12px]">
+                      
                     </div>
                   </div>
                 )}
