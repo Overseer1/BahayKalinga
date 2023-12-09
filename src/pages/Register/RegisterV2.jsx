@@ -21,7 +21,16 @@ const Register = () => {
   const [FirstName, setFirstName] = useState("");
   const [MiddleName, setMiddleName] = useState("");
   const [LastName, setLastName] = useState("");
+
+  //Address holder
   const [Address, setAddress] = useState("");
+
+  const [HouseApptBlkNo, setHouseNo] = useState("");
+  const [Street, setStreet] = useState("");
+  const [Barangay, setBrgy] = useState("");
+  const [CityMunicipality, setCitMun] = useState("");
+  const [Province, setProv] = useState("");
+
   const [EmailAddress, setEmailAddress] = useState("");
   const [Password, setPassword] = useState("");
   const [ConfPassword, setConfPassword] = useState("");
@@ -39,6 +48,24 @@ const Register = () => {
     authValues.confpassword = ConfPassword;
     addUser(EmailAddress, ConfPassword);
   };
+
+  const [counter, setCounter] = useState(300);
+  const [intervalId, setIntervalId] = useState(null)
+
+  const formatTime = (time) => {
+    let minutes = Math.floor(time/60);
+    let seconds = Math.floor(time - minutes * 60);
+    if (minutes <= 10) minutes = '0' + minutes;
+    if (seconds <= 10) seconds = '0' + seconds;
+    return minutes + ":" + seconds;
+}
+  function timer () {
+    if (counter > 0) {
+        const id = setInterval(() => setCounter(counter => counter - 1), 1000);
+        setIntervalId(id)
+    }
+    
+  }
 
   const verifier = async () => {
     if (hasSignUp) {
@@ -61,10 +88,10 @@ const Register = () => {
 
   const submitToDB = async (e) => {
     e.preventDefault();
-
+    setAddress(HouseApptBlkNo + " " + Street  + ", " + Barangay  + ", " + CityMunicipality + ", " + Province);
     try {
       const checker = document.getElementById("finalPass").value;
-      if (!FirstName || !LastName || !Address || !EmailAddress) {
+      if (!FirstName || !LastName || !HouseApptBlkNo || !Street || !Barangay || !CityMunicipality || !Province || !EmailAddress) {
         alert("Please fill out the form completely empty");
         return;
       } else if (
@@ -110,12 +137,15 @@ const Register = () => {
           setHasSignUp(true);
           //handleCheck();
         }
+        setIsSignedUp(true);
+        forSec();
+        toast.info("Please wait and verify your OTP.");
+        setHasSignUp(true);
       }
     } catch (err) {
       console.log(err);
     }
   };
-
   const imageAdd = async (e) => {
     let img = image;
     const { data: imgData, error: imgErr } = await supabase.storage
@@ -127,7 +157,19 @@ const Register = () => {
       console.log("uploaded");
     }
   };
-
+  const forSec = () =>
+  {
+    setIsPressed(true);
+    if (isPressed)
+    {
+      timer()
+    }
+    else
+    {
+      console.log("else")
+      
+    }
+  }
   const [isLoading, setIsLoading] = useState(true);
   const [selectedOption, setSelectedOption] = useState({});
   const [options, setOptions] = useState([]);
@@ -210,14 +252,48 @@ const Register = () => {
                       onChange={(e) => setLastName(e.target.value)}
                     />
                   </div>
+                  <div className="grid grid-cols-5 gap-2">
+                    <input
+                    className="h-10 p-3 border border-gray-400 rounded-md"
+                    type="text"
+                    placeholder="House/Appt/Blk No.*"
+                    disabled={isSignedUp}
+                    value={HouseApptBlkNo}
+                    onChange={(e) => setHouseNo(e.target.value)}
+                  />
                   <input
                     className="h-10 p-3 border border-gray-400 rounded-md"
                     type="text"
-                    placeholder="Address*"
+                    placeholder="Street*"
                     disabled={isSignedUp}
-                    value={Address}
-                    onChange={(e) => setAddress(e.target.value)}
+                    value={Street}
+                    onChange={(e) => setStreet(e.target.value)}
                   />
+                  <input
+                    className="h-10 p-3 border border-gray-400 rounded-md"
+                    type="text"
+                    placeholder="Barangay*"
+                    disabled={isSignedUp}
+                    value={Barangay}
+                    onChange={(e) => setBrgy(e.target.value)}
+                  />
+                  <input
+                    className="h-10 p-3 border border-gray-400 rounded-md"
+                    type="text"
+                    placeholder="City/Municipality*"
+                    disabled={isSignedUp}
+                    value={CityMunicipality}
+                    onChange={(e) => setCitMun(e.target.value)}
+                  />
+                  <input
+                    className="h-10 p-3 border border-gray-400 rounded-md"
+                    type="text"
+                    placeholder="Province*"
+                    disabled={isSignedUp}
+                    value={Province}
+                    onChange={(e) => setProv(e.target.value)}
+                  />
+                  </div>
                   <input
                     className="h-10 p-3 border border-gray-400 rounded-md"
                     type="email"
@@ -285,31 +361,32 @@ const Register = () => {
                   )}
                 </div>
                 {/* //!OTP AREA */}
-                <div className="flex mt-2 gap-1">
+                <div className={`flex mt-2 gap-10`}>
                   <input
                     id="otpHolder"
                     className={`h-10 p-3 border border-gray-400 rounded-md grow  ${
-                      !isPressed ? "hidden" : "none"
+                      !isPressed ? "none" : "none"
                     }`}
                     type="text"
-                    placeholder="Verification Code"
+                    placeholder={`Verification Code (${formatTime(counter)})`}
                     value={verificationCode}
                     onChange={(e) => {
                       setVerificationCode(e.target.value);
                     }}
                   />
-                  {/* <button
+                  <button
                     type="button"
                     id="sendVerify"
+                    
                     className={`bg-slate-500 text-white px-4 rounded-md ${
-                      !isPressed ? "hidden" : "none"
+                      !isPressed ? "none" : "none"
                     }`}
                     // onClick={() => {
                     //   setIsPressed(true);}}
                   >
-                    Send Code
+                    Resend Code
                   </button>
-                  <ToastContainer /> */}
+                  <ToastContainer />
                 </div>
               </div>
               <div className="text-center shrink-0">
@@ -329,7 +406,7 @@ const Register = () => {
                       Please make sure the image is clear.
                     </div>
                     <div className="text-[12px]">
-                      
+                      Valid IDs: National ID, Passport, <br/>Driver's License, SSS UMID, PRC ID,<br/> Voter's ID, Postal ID.
                     </div>
                   </div>
                 )}
@@ -376,6 +453,7 @@ const Register = () => {
               <div className="flex mt-2 gap-1">
                 <button
                   type="submit"
+                  onClick={forSec}
                   className={`bg-slate-500 text-warmGray-50 py-2 rounded-md px-8 ${
                     !isPressed ? "none" : "hidden"
                   }`}
