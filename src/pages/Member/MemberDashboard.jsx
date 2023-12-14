@@ -197,7 +197,7 @@ const MemberDashboard = () => {
 
         /* Add Notification */
         await supabase.from("Notifications").insert([{
-            message: `${user.EmailAddress} has pending appointment`, date: null, type: "pending",
+            message: `${user.EmailAddress === null ? user.ContactNumber : user.EmailAddress} has pending appointment`, date: null, type: "pending",
         },]);
 
         setIsLoading(false);

@@ -27,7 +27,8 @@ const AdminPendingAppointments = () => {
           FirstName,
           MiddleName,
           LastName,
-          EmailAddress
+          EmailAddress,
+          ContactNumber
         ),
         ElderTable: ElderToVisit (
           NameOfElder
@@ -116,7 +117,7 @@ const AdminPendingAppointments = () => {
         );
         await supabase.from("Notifications").insert([
           {
-            message: `You declined ${selectedAppointment.VisitorAcc.EmailAddress}'s appointment`,
+            message: `You declined ${selectedAppointment.VisitorAcc.EmailAddress === null ? selectedAppointment.VisitorAcc.ContactNumber : selectedAppointment.VisitorAcc.EmailAddress}'s appointment`,
             date: null,
             type: "cancelled",
           },
@@ -158,6 +159,9 @@ useEffect(() => {
             Date of Appointment
           </th>
           <th className="py-3 px-5 border-b border-gray-200">
+            Contact number
+          </th>
+          <th className="py-3 px-5 border-b border-gray-200">
             Email address
           </th>
           <th className="py-3 px-5 border-b border-gray-200">Time</th>
@@ -177,7 +181,8 @@ useEffect(() => {
                 {appointment.ElderTable.NameOfElder}
               </td>
               <td className="py-3 px-5">{appointment.Date}</td>
-              <td className="py-3 px-5" id="visEma">{appointment.VisitorAcc.EmailAddress}</td>
+              <td className="py-3 px-5" id="visEma">{appointment.VisitorAcc.ContactNumber === null ? "N/A" : appointment.VisitorAcc.ContactNumber}</td>
+              <td className="py-3 px-5" id="visEma">{appointment.VisitorAcc.EmailAddress === null ? "N/A" : appointment.VisitorAcc.EmailAddress}</td>
               <td className="py-3 px-5">
                 {appointment.Schedule === "morning"
                     ? "7:00 AM - 10:00 AM"

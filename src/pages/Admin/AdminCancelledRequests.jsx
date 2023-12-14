@@ -25,7 +25,8 @@ const AdminCancelledRequests = () => {
           FirstName,
           MiddleName,
           LastName,
-          EmailAddress
+          EmailAddress,
+          ContactNumber
         ),
         ElderTable: ElderToVisit (
           NameOfElder
@@ -52,6 +53,7 @@ const AdminCancelledRequests = () => {
             <th className="py-3 px-5 border-b border-gray-200">User Name</th>
             <th className="py-3 px-5 border-b border-gray-200">Elder Name</th>
             <th className="py-3 px-5 border-b border-gray-200">Email Address</th>
+            <th className="py-3 px-5 border-b border-gray-200">Contact number</th>
             <th className="py-3 px-5 border-b border-gray-200">
               Date of Appointment
             </th>
@@ -70,7 +72,10 @@ const AdminCancelledRequests = () => {
                 {appointment.ElderTable.NameOfElder}
               </td>
               <td className="py-3 px-5">
-                {appointment.VisitorAcc.EmailAddress}
+                {appointment.VisitorAcc.EmailAddress === null ? "N/A" : appointment.VisitorAcc.EmailAddress}
+              </td>
+              <td className="py-3 px-5">
+                {appointment.VisitorAcc.ContactNumber === null ? "N/A" : appointment.VisitorAcc.ContactNumber}
               </td>
               <td className="py-3 px-5">{appointment.Date}</td>
               <td className="py-3 px-5">

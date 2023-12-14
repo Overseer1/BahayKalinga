@@ -16,6 +16,7 @@ export const authValues = {
   lastname: null,
   address: null,
   email: null,
+  contactNumber: null,
   password: null,
   confpassword: null,
   verificationCode: null,
@@ -62,6 +63,24 @@ export const onLoginAdminSubmit = async (Email, Password) => {
 export const addUser = async (userEmailR, userPassword) => {
   const { data, error } = await supabase.auth.signUp({
     email: userEmailR,
+    password: userPassword,
+  });
+  if (error) {
+    console.log(error);
+  }
+  else if (data) {
+    console.log(data);
+    const { error } = await supabase.auth.signOut();
+    if (error)
+    {
+      console.log(error)
+    }
+  }
+};
+
+export const addUserWithConNum = async (userPhone, userPassword) => {
+  const { data, error } = await supabase.auth.signUp({
+    phone: userPhone,
     password: userPassword,
   });
   if (error) {

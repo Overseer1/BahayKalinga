@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import TermsConditions from "./TermsConditions";
 import supabase from "../../config/supabaseClient";
 import { v4 as uuidv4 } from "uuid";
-import { addUser, authValues } from "../../components/Auth";
+import { addUser, addUserWithConNum, authValues } from "../../components/Auth";
 import { ToastContainer, toast } from "react-toastify";
 import Select from "react-select";
 import Loader from "../../components/Loader";
@@ -32,6 +32,7 @@ const Register = () => {
   const [Province, setProv] = useState("");
 
   const [EmailAddress, setEmailAddress] = useState("");
+  const [ContactNumber, setConNum] = useState("");
   const [Password, setPassword] = useState("");
   const [ConfPassword, setConfPassword] = useState("");
   const [verificationCode, setVerificationCode] = useState("");
@@ -43,10 +44,21 @@ const Register = () => {
 
   const [isSignedUp, setIsSignedUp] = useState(false);
 
+  const [isNumVerified, setIsNumVerif] = useState(false);
+
+  const [noEmail, setNoEmail] = useState(false);
+  
+
   const sendForSignUp = () => {
     authValues.email = EmailAddress;
     authValues.confpassword = ConfPassword;
     addUser(EmailAddress, ConfPassword);
+  };
+
+  const sendForSignUpConNum = () => {
+    authValues.contactNumber = ContactNumber;
+    authValues.confpassword = ConfPassword;
+    addUserWithConNum(ContactNumber, ConfPassword);
   };
 
   const [counter, setCounter] = useState(300);
@@ -67,7 +79,8 @@ const Register = () => {
     
   }
 
-  const verifier = async () => {
+  const verifier = async () => 
+  {
     if (hasSignUp) {
       const { data: OTPD, error: errOTP } = await supabase.auth.verifyOtp({
         email: EmailAddress,
@@ -86,26 +99,111 @@ const Register = () => {
     }
   };
 
+  const verifierPhone = async () => 
+  {
+    if (hasSignUp) {
+      const { data: OTPD, error: errOTP } = await supabase.auth.verifyOtp({
+        phone: ContactNumber,
+        token: verificationCode,
+        type: "sms",
+      });
+      if (errOTP) {
+        toast.error("Wrong OTP submitted.");
+      } else if (OTPD) {
+        toast.success("OTP verified! You have been registered.");
+        navigate("/");
+      }
+      return;
+    } else {
+      toast.warning("Please finish signing up first.");
+    }
+  };
+  const verifierPicker = () =>
+  {
+    if(noEmail)
+    {
+      verifierPhone();
+    }
+    else
+    {
+      verifier();
+    }
+  }
   const submitToDB = async (e) => {
     e.preventDefault();
-    setAddress(HouseApptBlkNo + " " + Street  + ", " + Barangay  + ", " + CityMunicipality + ", " + Province);
     try {
       const checker = document.getElementById("finalPass").value;
-      if (!FirstName || !LastName || !HouseApptBlkNo || !Street || !Barangay || !CityMunicipality || !Province || !EmailAddress) {
-        alert("Please fill out the form completely empty");
+      if (!FirstName || !LastName || !HouseApptBlkNo || !Street || !Barangay || !CityMunicipality || !Province) 
+      {
+        alert("Please fill out the form completely");
         return;
-      } else if (
-        document.getElementById("confirmPass").value !==
-        document.getElementById("finalPass").value
-      ) {
+      } 
+      else if (document.getElementById("confirmPass").value !== document.getElementById("finalPass").value) 
+      {
         alert("Password did not match");
-      } else if (!document.getElementById("checkT").checked) {
+      } 
+      else if (!document.getElementById("checkT").checked) 
+      {
         alert("Please accept the Terms & Conditions.");
-      } else if (image === null) {
+      } 
+      else if (image === null) 
+      {
         alert("Please upload a selfie for verification.");
-      } else if (checker.length < 8) {
+      } 
+      else if (checker.length < 8) 
+      {
         alert("Your password should be at least 8 characters");
-      } else {
+      } 
+      else if (noEmail)
+      {
+        if (!FirstName || !LastName || !HouseApptBlkNo || !Street || !Barangay || !CityMunicipality || !Province || !ContactNumber)
+        {
+          alert("Please fill out the form completely");
+        }
+        else
+        {
+          const data = await supabase
+          .from("VisitorAcc")
+          .insert([
+            {
+              LastName,
+              FirstName,
+              MiddleName,
+              Address,
+              ContactNumber,
+              ImageID,
+              ElderId: selectedOption.value,
+            },
+          ])
+          .single();
+        if (data.error) throw data.error;
+        else {
+          await supabase.from("Notifications").insert([
+            {
+              message: `${ContactNumber} successfully registered`,
+              date: null,
+              type: "account",
+            },
+          ]);
+          setIsSignedUp(true);
+          setIsPressed(true);
+          toast.info("Please wait and verify your OTP.");
+          sendForSignUpConNum();
+          imageAdd();
+          setHasSignUp(true);
+          //handleCheck();
+        }
+        setIsSignedUp(true);
+        forSec();
+        setHasSignUp(true);
+        }
+      }
+      else if (!EmailAddress)
+      {
+        alert("Please fill out the form completely pls 2");
+      }
+      else 
+      {
         const data = await supabase
           .from("VisitorAcc")
           .insert([
@@ -115,6 +213,7 @@ const Register = () => {
               MiddleName,
               Address,
               EmailAddress,
+              ContactNumber,
               ImageID,
               ElderId: selectedOption.value,
             },
@@ -139,7 +238,6 @@ const Register = () => {
         }
         setIsSignedUp(true);
         forSec();
-        toast.info("Please wait and verify your OTP.");
         setHasSignUp(true);
       }
     } catch (err) {
@@ -159,6 +257,7 @@ const Register = () => {
   };
   const forSec = () =>
   {
+    setAddress(HouseApptBlkNo + " " + Street  + ", " + Barangay  + ", " + CityMunicipality + ", " + Province);
     setIsPressed(true);
     if (isPressed)
     {
@@ -167,7 +266,6 @@ const Register = () => {
     else
     {
       console.log("else")
-      
     }
   }
   const [isLoading, setIsLoading] = useState(true);
@@ -295,13 +393,33 @@ const Register = () => {
                   />
                   </div>
                   <input
-                    className="h-10 p-3 border border-gray-400 rounded-md"
+                    className = {`h-10 p-3 border border-gray-400 rounded-md ${noEmail ? "" : ""}`} 
                     type="email"
                     placeholder="Email Address*"
-                    disabled={isSignedUp}
+                    disabled={!noEmail ? isSignedUp : !isSignedUp}
                     value={EmailAddress}
                     onChange={(e) => setEmailAddress(e.target.value)}
                   />
+                  <input
+                    className = {`h-10 p-3 border border-gray-400 rounded-md ${!noEmail ? "" : ""}`} 
+                    type="text"
+                    placeholder={`Contact number* (e.g. 639123456789)`} 
+                    disabled={isSignedUp}
+                    value={ContactNumber}
+                    onChange={(e) => setConNum(e.target.value)}
+                  />
+                  <label className="text-left flex gap-3 cursor-pointer">
+                    <input
+                      value={noEmail}
+                      onChange={(e) => {
+                        setNoEmail(e.target.checked);
+                      }}
+                      type="checkbox"
+                    />
+                    <div>
+                      I do not have an email address
+                    </div>
+                  </label>
                   <div className="grid grid-flow-col">
                   <input
                     className="h-10 p-3 border border-gray-400 rounded-md"
@@ -374,7 +492,7 @@ const Register = () => {
                       setVerificationCode(e.target.value);
                     }}
                   />
-                  <button
+                  {/* <button
                     type="button"
                     id="sendVerify"
                     
@@ -385,7 +503,7 @@ const Register = () => {
                     //   setIsPressed(true);}}
                   >
                     Resend Code
-                  </button>
+                  </button> */}
                   <ToastContainer />
                 </div>
               </div>
@@ -467,7 +585,7 @@ const Register = () => {
                   className={`bg-slate-500 text-warmGray-50 py-2 rounded-md px-8 ${
                     !isPressed ? "hidden" : "none"
                   }`}
-                  onClick={verifier}
+                  onClick={verifierPicker}
                 >
                   Register
                 </button>

@@ -22,9 +22,11 @@ const NavBar = () => {
   const [loading, setLoading] = useState(false);
   const [openLogin, setOpenLogin] = useState(false);
   const [loginForm, setLoginForm] = useState({
+    contactNumber: "",
     email: "",
     password: "",
   });
+  const [logInChecker, setChecker] = useState(true);
   const scrollIntoView = (id) => {
     const element = document.getElementById(id);
     if (id === "home") {
@@ -40,13 +42,57 @@ const NavBar = () => {
   //   onLoginSubmit(authValues.email, authValues.password);
   // }
   const onLoginSubmit = async (e) => {
-    e.preventDefault();
-
+    setLoading(true);
+    if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(loginForm.email)) 
+    {
+      try {
+          const { data, error } = await supabase.auth.signInWithPassword({
+            email: loginForm.email,
+            password: loginForm.password,
+          });
+          if (error) throw error;   
+          else if (data) 
+          {
+            toast.success("Logged in!",{position:"top-center", autoClose:1500});
+            const response = await supabase
+              .from("VisitorAcc")
+              .select("*")
+              .eq("EmailAddress", data.user.email)
+              .single();
+    
+            if (response.error) {
+              alert(response.error.message);
+              return;
+            }
+    
+            if (response.data) {
+              updateUser(response.data);
+            }
+            setOpenLogin(false);
+            localStorage.setItem("token", JSON.stringify(data));
+            loginForm.email = ""
+            loginForm.password = ""
+            navigate("/member");
+          }
+        } catch (error) {
+          toast.error("Incorrect username/password", {position:"top-center", autoClose:1500});
+        }
+    } 
+    else
+    {
+      loginForm.contactNumber = loginForm.email
+      onLoginSubmitPhone();
+    }
+    setLoading(false);
+  };
+  const onLoginSubmitPhone = async (e) => 
+  {
+    console.log(" onPhone" );
     setLoading(true);
 
     try {
       const { data, error } = await supabase.auth.signInWithPassword({
-        email: loginForm.email,
+        phone: loginForm.contactNumber,
         password: loginForm.password,
       });
       if (error) throw error;   
@@ -57,7 +103,7 @@ const NavBar = () => {
         const response = await supabase
           .from("VisitorAcc")
           .select("*")
-          .eq("EmailAddress", data.user.email)
+          .eq("ContactNumber", data.user.phone)
           .single();
 
         if (response.error) {
@@ -70,7 +116,7 @@ const NavBar = () => {
         }
         setOpenLogin(false);
         localStorage.setItem("token", JSON.stringify(data));
-        loginForm.email = ""
+        loginForm.contactNumber = ""
         loginForm.password = ""
         navigate("/member");
       }
@@ -79,7 +125,7 @@ const NavBar = () => {
     }
     setLoading(false);
   };
-
+  
   const logout = async () => {
     const { error } = await supabase.auth.signOut();
     if (error) {
@@ -171,7 +217,7 @@ const NavBar = () => {
                   <Dialog.Description className="text-mauve11 mt-[10px] mb-5 text-[15px] leading-normal">
                     {isResetPressed ? "Please type your email" : "Input your login credentials here"}
                   </Dialog.Description>
-                  <form onSubmit={onLoginSubmit}>
+                  <form onSubmit={logInChecker ? onLoginSubmit : onLoginSubmitPhone}>
                     <fieldset className="mb-[15px] flex items-center gap-5">
                       <label
                         className="text-violet11 w-[90px] text-right text-[15px]"
@@ -229,7 +275,6 @@ const NavBar = () => {
                     Forgot password?
                     </Link>
                       <button
-                        type="submit"
                         disabled={loading}
                         className={`bg-green4 text-green11 hover:bg-green5 focus:shadow-green7 inline-flex h-[35px] items-center justify-center rounded-[4px] px-[15px] font-medium leading-none focus:shadow-[0_0_0_2px] focus:outline-none ${isResetPressed ? "hidden" : ""}`}
                       >
